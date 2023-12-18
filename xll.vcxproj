@@ -57,6 +57,7 @@
       <ConformanceMode>true</ConformanceMode>
       <TreatWarningAsError>true</TreatWarningAsError>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -78,6 +79,7 @@
       <TreatWarningAsError>true</TreatWarningAsError>
       <AdditionalOptions>/J /utf-8 %(AdditionalOptions)</AdditionalOptions>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -92,9 +94,13 @@
   <ItemGroup>
     <ClInclude Include="XLCALL.H" />
     <ClInclude Include="xlerror.h" />
+    <ClInclude Include="xlexcel.h" />
     <ClInclude Include="xll.h" />
+    <ClInclude Include="xloper.h" />
+    <ClInclude Include="xlregister.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="xlauto.cpp" />
     <ClCompile Include="XLCALL.CPP" />
     <ClCompile Include="xldebug.cpp" />
