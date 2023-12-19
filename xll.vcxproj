@@ -92,6 +92,7 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="ensure.h" />
     <ClInclude Include="XLCALL.H" />
     <ClInclude Include="xlerror.h" />
     <ClInclude Include="xlexcel.h" />

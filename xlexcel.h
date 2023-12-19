@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <array>
 #include <stdexcept>
+#include "ensure.h"
 #include "xloper.h"
 
 namespace xll {
@@ -16,14 +17,9 @@ namespace xll {
 		LPXLOPER12 as[sizeof...(ts)];
 		std::transform(os.begin(), os.end(), as, [](OPER12& o) { return &o; });
 
-		int ret = ::Excel12v(fn, &res, sizeof...(ts), &as[0]);
-		if (ret != xlretSuccess) {
-			throw std::runtime_error("Excel12v failed");
-		}
-		else {
-			if (res.xltype == xltypeStr) {
-				res.xltype |= xlbitXLFree;
-			}
+		ensure(xlretSuccess == ::Excel12v(fn, &res, sizeof...(ts), &as[0]));
+		if (res.xltype == xltypeStr) {
+			res.xltype |= xlbitXLFree;
 		}
 
 		return res;

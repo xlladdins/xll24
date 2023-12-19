@@ -20,6 +20,8 @@ xlAutoOpen(void)
 		auto od = Excel12(xlfDate, 2023, 1, 2);
 		//auto of = Excel12(xlcFormatNumber, od.val.num, L"yyyy-mm-dd");
 		//of = of;
+		int test_xll;
+		test_xll = xll::test();
 	}
 	catch (const std::exception& ex) {
 		XLL_ERROR(ex.what());
