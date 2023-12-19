@@ -16,9 +16,9 @@ namespace xll {
 	}
 	*/
 
-	inline OPER12 Register(const XLOPER12& ai)
+	inline OPER Register(const XLOPER12& ai)
 	{
-		OPER12 res;
+		OPER res;
 		XLOPER12 as[32];
 
 		for (int i = 0; i < 32; ++i) {

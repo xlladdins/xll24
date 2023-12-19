@@ -9,13 +9,13 @@
 namespace xll {
 
 	template<class... Ts>
-	inline OPER12 Excel12(int fn, Ts... ts)
+	inline OPER Excel12(int fn, Ts... ts)
 	{
-		OPER12 res;
+		OPER res;
 
-		std::array os{ std::move(OPER12(ts))... };
+		std::array os{ std::move(OPER(ts))... };
 		LPXLOPER12 as[sizeof...(ts)];
-		std::transform(os.begin(), os.end(), as, [](OPER12& o) { return &o; });
+		std::transform(os.begin(), os.end(), as, [](OPER& o) { return &o; });
 
 		ensure(xlretSuccess == ::Excel12v(fn, &res, sizeof...(ts), &as[0]));
 		if (res.xltype == xltypeStr) {

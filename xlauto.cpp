@@ -14,7 +14,7 @@ xlAutoOpen(void)
 		//XLL_ERROR("error");
 		//XLL_WARNING("warning");
 		//XLL_INFORMATION("info");
-		OPER12 o(L"abc");
+		OPER o(L"abc");
 		auto o2{ o };
 		o = o2;
 		auto od = Excel12(xlfDate, 2023, 1, 2);
