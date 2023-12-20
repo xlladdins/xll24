@@ -98,6 +98,7 @@
     <ClInclude Include="xlexcel.h" />
     <ClInclude Include="xll.h" />
     <ClInclude Include="xloper.h" />
+    <ClInclude Include="xlref.h" />
     <ClInclude Include="xlregister.h" />
   </ItemGroup>
   <ItemGroup>

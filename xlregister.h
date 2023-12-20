@@ -4,22 +4,17 @@
 
 namespace xll {
 	/*
-	inline OPER12 Function(const OPER12& name, const OPER12& args, const OPER12& macro)
-	{
-		OPER12 x;
-
-		x.xltype = xltypeStr;
-		x.val.str = name.val.str;
-		Excel12(xlfRegister, 0, 3, &x, &args, &macro);
-
-		return x;
-	}
+	struct Function {
+		OPER arg[32];
+	};
+	struct Macro {
+	};
 	*/
 
 	inline OPER Register(const XLOPER12& ai)
 	{
 		OPER res;
-		XLOPER12 as[32];
+		LPXLOPER12 as[32];
 
 		for (int i = 0; i < 32; ++i) {
 			as[i] = &ai[i];

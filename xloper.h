@@ -7,26 +7,10 @@
 #include <compare>
 #include <span>
 #include <string_view>
-#define WIN32_LEAN_AND_MEAN
-#include <windows.h>
-#include "XLCALL.H"
-#include "ensure.h"
+#include "xlref.h"
 
 namespace xll {
 
-	// strong double comparison
-	constexpr auto compare(double x, double y)
-	{
-		int64_t lx = std::bit_cast<int64_t>(x);
-		int64_t ly = std::bit_cast<int64_t>(y);
-
-		return lx <=> ly;
-	}
-#ifdef _DEBUG
-	static_assert(compare(1.23, 1.23) == 0);
-	static_assert(compare(-1.23, 1.23) < 0);
-	static_assert(compare(1.23, -1.23) > 0);
-#endif // _DEBUG
 	constexpr int xltypeNull = xltypeNil | xltypeMissing;
 	constexpr int xltypeScalar = xltypeNum | xltypeBool | xltypeErr | xltypeSRef | xltypeInt | xltypeNull;
 	constexpr int xlbitFree = xlbitDLLFree | xlbitXLFree;
@@ -54,7 +38,7 @@ namespace xll {
 		case xltypeMulti:
 			return x.val.array.rows;
 		case xltypeSRef:
-			return x.val.sref.ref.rwLast - x.val.sref.ref.rwFirst + 1;
+			return rows(x.val.sref.ref);
 		case xltypeMissing:
 		case xltypeNil:
 			return 0;
@@ -68,7 +52,7 @@ namespace xll {
 		case xltypeMulti:
 			return x.val.array.columns;
 		case xltypeSRef:
-			return x.val.sref.ref.colLast - x.val.sref.ref.colFirst + 1;
+			return columns(x.val.sref.ref);
 		case xltypeMissing:
 		case xltypeNil:
 			return 0;
@@ -119,36 +103,22 @@ namespace xll {
 		return XLOPER12{ .xltype = xltypeNil };
 	}
 
-	constexpr XLREF12 XLRef(int r, int c, int w = 1, int h = 1)
-	{
-		return XLREF12{ .rwFirst = r, .rwLast = r + w - 1, .colFirst = c, .colLast = c + h - 1};
-	}
-	constexpr XLOPER12 SRef(int r, int c, int w = 1, int h = 1)
-	{
-		return XLOPER12{ .val = {.sref = {.count = 1, .ref = XLRef(r, c, w, h)}}, .xltype = xltypeSRef};
-	}
-	static_assert(type(SRef(2, 3)) == xltypeSRef); // B3
-	static_assert(rows(SRef(2, 3)) == 1);
-	static_assert(columns(SRef(2, 3)) == 1);
-	static_assert(size(SRef(2, 3)) == 1);
-	static_assert(type(SRef(2, 3, 4, 5)) == xltypeSRef); // B3:E8
-	static_assert(rows(SRef(2, 3, 4, 5)) == 4);
-	static_assert(columns(SRef(2, 3, 4, 5)) == 5);
-	static_assert(size(SRef(2, 3, 4, 5)) == 20);
-
 	constexpr XLOPER12 Int(int w)
 	{
 		return XLOPER12{ .val = {.w = w}, .xltype = xltypeInt };
 	}
 	static_assert(type(Int(123)) == xltypeInt);
 
-	// counted string
+	// counted static string
 	constexpr XLOPER12 Str(const XCHAR* str = L"\000")
 	{
 		return XLOPER12{ .val = {.str = const_cast<wchar_t*>(str)}, .xltype = xltypeStr };
 	}
 	static_assert(type(Str()) == xltypeStr);
 	static_assert(Str().val.str[0] == 0);
+	static_assert(type(Str(L"\003abc")) == xltypeStr);
+	static_assert(Str(L"\003abc").val.str[0] == 3);
+	static_assert(Str(L"\003abc").val.str[3] == L'c');
 
 	constexpr XLOPER12 Multi(int r, int c)
 	{
@@ -159,59 +129,58 @@ namespace xll {
 	static_assert(columns(Multi(2, 3)) == 3);
 	static_assert(size(Multi(2, 3)) == 6);
 
-	static_assert(type(Str(L"\03" L"abc")) == xltypeStr);
-	static_assert(view(Str(L"\03" L"abc")) == L"abc");
-
-
-	constexpr auto operator<=>(const XLOPER12& x, const XLOPER12& y)
+	constexpr bool equal(const XLOPER12& x, const XLOPER12& y)
 	{
 		int xtype = type(x);
 		int ytype = type(y);
 
 		if (xtype != ytype) {
-			return xtype <=> ytype;
+			return xtype == ytype;
 		}
 
 		switch (xtype) {
 		case xltypeNum:
-			return compare(x.val.num, y.val.num);
+			return x.val.num == y.val.num;
 		case xltypeStr:
 			if (x.val.str && y.val.str) {
-				return std::lexicographical_compare_three_way(
+				return std::equal(
 					view(x).begin(), view(x).end(),
 					view(y).begin(), view(y).end());
 			}
 			else if (x.val.str) {
-				return 1 <=> 0;
+				return false;
 			}
 			else if (y.val.str) {
-				return -1 <=> 0;
+				return false;
 			}
 			else {
-				return 0 <=> 0;
+				return true;
 			}
 		case xltypeBool:
-			return x.val.xbool <=> y.val.xbool;
+			return x.val.xbool == y.val.xbool;
 		case xltypeErr:
-			return x.val.err <=> y.val.err;
+			return x.val.err == y.val.err;
 		case xltypeMulti:
-			return 0 <=> 0;
-			/*
-			return std::lexicographical_compare_three_way(
+			return std::equal(
 				span(x).begin(), span(x).end(),
-				span(y).begin(), span(y).end());
-				*/
+				span(y).begin(), span(y).end(), xll::equal);
+	
 		case xltypeInt:
-			return x.val.w <=> y.val.w;
+			return x.val.w == y.val.w;
 		case xltypeSRef:
-			return 0 <=> 0;
+			return x.val.sref.ref == y.val.sref.ref;
 		case xltypeRef:
-			return 0 <=> 0;
+			return 0 == 0;
 		default:
-			return 0 <=> 0;
+			return false;
 		}
 	}
-	static_assert(Num(1.23) <=> Num(1.23) == 0);
+	static_assert(equal(Num(1.23), Num(1.23)));
+	constexpr bool operator==(const XLOPER12& x, const XLOPER12& y)
+	{
+		return equal(x, y);
+	}
+	static_assert(Num(1.23) == Num(1.23));
 
 	struct OPER : public XLOPER12 {
 		// Nil
@@ -338,19 +307,18 @@ namespace xll {
 			}
 		}
 	private:
+		// Str
 		constexpr void alloc(const XCHAR* str, XCHAR len)
 		{
-			val.str = const_cast<wchar_t*>(new wchar_t[1 + len]);
+			val.str = new wchar_t[1 + len];
 			val.str[0] = len;
 			std::copy_n(str, len, val.str + 1);
-
 		}
+		// Multi
 		constexpr void alloc(int r, int c)
 		{
-			xltype = xltypeMulti;
 			val.array.rows = r;
 			val.array.columns = c;
-			val.array.lparray = nullptr;
 			if (r && c) {
 				val.array.lparray = new XLOPER12[r * c];
 			}
@@ -395,15 +363,16 @@ namespace xll {
 			static_assert(Str(L"\03" L"abc").val.str[0] == 3);
 			static_assert(Str(L"\03" L"abc").val.str[3] == L'c');
 
-			static_assert(Str() <=> Str() == 0);
-			static_assert(Str(L"") <=> Str(L"") == 0);
-			static_assert((Str(L"\001a") <=> Str(L"\001b")) < 0);
-			static_assert((Str(L"\001a") <=> Str(L"\001a")) == 0);
-			static_assert((Str(L"\001b") <=> Str(L"\001a")) > 0);
-			static_assert((Str(L"\002aa") <=> Str(L"\001a")) > 0);
+			static_assert(Str() == Str());
+			static_assert(Str(L"") == Str(L""));
+			//static_assert((Str(L"\001a") == Str(L"\001b")) < 0);
+			static_assert((Str(L"\001a") == Str(L"\001a")));
+			//static_assert((Str(L"\001b") == Str(L"\001a")) > 0);
+			//static_assert((Str(L"\002aa") == Str(L"\001a")) > 0);
 		}
 		{
-
+			OPER m({ OPER(1.23), OPER(L"abc") });
+			assert(type(m) == xltypeMulti);
 		}
 
 		return 0;
