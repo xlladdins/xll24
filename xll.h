@@ -4,7 +4,7 @@
 #include <windows.h>
 #include "XLCALL.h"
 #include "xlerror.h"
-#include "xlexcel.h"
+#include "xlregister.h"
 
 namespace xll {
 

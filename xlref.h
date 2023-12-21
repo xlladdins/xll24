@@ -7,6 +7,19 @@
 
 namespace xll {
 
+	constexpr int rows(const XLREF12& r)
+	{
+		return r.rwLast - r.rwFirst + 1;
+	}
+	constexpr int columns(const XLREF12& r)
+	{
+		return r.colLast - r.colFirst + 1;
+	}
+	constexpr int size(const XLREF12& r)
+	{
+		return rows(r) * columns(r);
+	}
+
 	struct REF : public XLREF12 {
 		constexpr REF(const XLREF12& r) noexcept
 			: XLREF12(r)
@@ -27,24 +40,12 @@ namespace xll {
 		}
 		
 	};
-	constexpr int rows(const XLREF12& r)
-	{
-		return r.rwLast - r.rwFirst + 1;
-	}
-	constexpr int columns(const XLREF12& r)
-	{
-		return r.colLast - r.colFirst + 1;
-	}
-	constexpr int size(const XLREF12& r)
-	{
-		return rows(r) * columns(r);
-	}
 
 } // namespace xll
 
 constexpr bool operator==(const XLREF12& r, const XLREF12& s)
 {
-	return r == s;
+	return xll::REF(r) == xll::REF(s);
 }
 #ifdef _DEBUG
 static_assert(xll::REF(1, 2).operator==(xll::REF(1, 2)));

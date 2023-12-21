@@ -164,7 +164,7 @@ namespace xll {
 			return std::equal(
 				span(x).begin(), span(x).end(),
 				span(y).begin(), span(y).end(), xll::equal);
-	
+
 		case xltypeInt:
 			return x.val.w == y.val.w;
 		case xltypeSRef:
@@ -191,9 +191,12 @@ namespace xll {
 		constexpr explicit OPER(double num) noexcept
 			: XLOPER12{ Num(num) }
 		{ }
-		// Str
+		constexpr bool operator==(double num) const
+		{
+			return type() == xltypeNum && val.num == num;
+		}
+		// string and length
 		constexpr OPER(const XCHAR* str, XCHAR len)
-			: XLOPER12{ Str() }
 		{
 			if (str) {
 				alloc(str, len);
@@ -203,13 +206,17 @@ namespace xll {
 		constexpr explicit OPER(const XCHAR* str)
 			: OPER(str, static_cast<XCHAR>(wcslen(str)))
 		{ }
+		constexpr bool operator==(const XCHAR* str) const
+		{
+			return type() == xltypeStr && view(*this) == str;
+		}
 		// Bool
 		constexpr explicit OPER(bool xbool)
-			: XLOPER12{ Bool(xbool)}
+			: XLOPER12{ Bool(xbool) }
 		{ }
 		// Int
 		constexpr explicit OPER(int w) noexcept
-			: XLOPER12{ Int(w)}
+			: XLOPER12{ Int(w) }
 		{ }
 		// Err
 		constexpr explicit OPER(xll::xlerr err) noexcept
@@ -217,16 +224,11 @@ namespace xll {
 		{ }
 		// Multi
 		constexpr OPER(int r, int c, const XLOPER12* a)
-			: XLOPER12{ Multi(r, c) }
 		{
-			alloc(r, c);
-			if (a) {
-				ensure(r * c == xll::size(*a))
-				std::copy_n(a, r * c, val.array.lparray);
-			}
+			alloc(r, c, a);
 		}
 		constexpr OPER(std::initializer_list<XLOPER12> a)
-			: OPER(static_cast<int>(a.size()), 1, a.begin())
+			: OPER(1, static_cast<int>(a.size()), a.begin())
 		{ }
 		OPER& reshape(int r, int c)
 		{
@@ -237,24 +239,33 @@ namespace xll {
 			return *this;
 		}
 
-		constexpr OPER(const OPER& o)
+		constexpr OPER(const XLOPER12& o)
 			: XLOPER12{ o }
 		{
-			if (xltype == xltypeStr) {
-				new (this) OPER(val.str + 1, val.str[0]);
+			if (xll::type(o) == xltypeStr) {
+				alloc(val.str + 1, val.str[0]);
+			}
+			else if (xll::type(o) == xltypeMulti) {
+				alloc(rows(o), columns(o), o.val.array.lparray);
 			}
 		}
-		OPER& operator=(const OPER& o)
+		constexpr OPER(const OPER& o)
+			: OPER(static_cast<const XLOPER12&>(o))
+		{ }
+
+		OPER& operator=(const XLOPER12& x)
 		{
-			dealloc();
-			if (type() == xltypeStr) {
-				new (this) OPER(o);
-			}
-			else {
-				*this = o;
+			if (this != &x) {
+				OPER o(x);
+				dealloc();
+				*this = std::move(o);
 			}
 
 			return *this;
+		}
+		OPER& operator=(const OPER& o)
+		{
+			return operator=(static_cast<const XLOPER12&>(o));
 		}
 		OPER(OPER&& o) noexcept
 			: XLOPER12{ .val = o.val , .xltype = std::exchange(o.xltype, xltypeNil) }
@@ -306,21 +317,47 @@ namespace xll {
 				return *this;
 			}
 		}
+
+		OPER& operator()(int i, int j)
+		{
+			if (type() == xltypeMulti) {
+				return (OPER&)val.array.lparray[i * columns(*this) + j];
+			}
+			else {
+				ensure(i == 0 && j == 0);
+				return *this;
+			}
+		}
+		const OPER& operator()(int i, int j) const
+		{
+			if (type() == xltypeMulti) {
+				return (const OPER&)val.array.lparray[i * columns(*this) + j];
+			}
+			else {
+				ensure(i == 0 && j == 0);
+				return *this;
+			}
+		}
 	private:
 		// Str
 		constexpr void alloc(const XCHAR* str, XCHAR len)
 		{
+			xltype = xltypeStr;
 			val.str = new wchar_t[1 + len];
 			val.str[0] = len;
 			std::copy_n(str, len, val.str + 1);
 		}
 		// Multi
-		constexpr void alloc(int r, int c)
+		constexpr void alloc(int r, int c, const XLOPER12* a)
 		{
+			xltype = xltypeMulti;
 			val.array.rows = r;
 			val.array.columns = c;
 			if (r && c) {
 				val.array.lparray = new XLOPER12[r * c];
+				for (int i = 0; i < r * c; ++i) {
+					new (val.array.lparray + i) OPER(a[i]);
+				}
 			}
 		}
 		void dealloc()
@@ -337,8 +374,10 @@ namespace xll {
 				}
 				delete[] val.array.lparray;
 			}
+
+			xltype = xltypeNil;
 		}
-	
+
 	};
 #ifdef _DEBUG
 	//static_assert(Nil().xltype == xltypeNil);
@@ -373,6 +412,18 @@ namespace xll {
 		{
 			OPER m({ OPER(1.23), OPER(L"abc") });
 			assert(type(m) == xltypeMulti);
+			assert(rows(m) == 1);
+			assert(columns(m) == 2);
+			assert(size(m) == 2);
+			assert(m[0] == 1.23);
+			assert(m[1] == L"abc");
+			m[0] = m;
+			m[1] = m;
+			m[1][1] = m;
+			OPER m2{ m };
+			assert(m == m2);
+			m = m2;
+			assert(!(m != m2));
 		}
 
 		return 0;

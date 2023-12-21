@@ -17,8 +17,8 @@ xlAutoOpen(void)
 		OPER o(L"abc");
 		auto o2{ o };
 		o = o2;
-		auto od = Excel12(xlfDate, 2023, 1, 2);
-		//auto of = Excel12(xlcFormatNumber, od.val.num, L"yyyy-mm-dd");
+		auto od = Excel(xlfDate, 2023, 1, 2);
+		//auto of = Excel(xlcFormatNumber, od.val.num, L"yyyy-mm-dd");
 		//of = of;
 		int test_xll;
 		test_xll = xll::test();

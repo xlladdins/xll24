@@ -8,8 +8,9 @@
 
 namespace xll {
 
+	// Convert to array of pointers to LPXLOPER12.
 	template<class... Ts>
-	inline OPER Excel12(int fn, Ts... ts)
+	inline OPER Excel(int fn, Ts... ts)
 	{
 		OPER res;
 
@@ -18,7 +19,7 @@ namespace xll {
 		std::transform(os.begin(), os.end(), as, [](OPER& o) { return &o; });
 
 		ensure(xlretSuccess == ::Excel12v(fn, &res, sizeof...(ts), &as[0]));
-		if (res.xltype == xltypeStr) {
+		if (!(res.xltype & xltypeScalar)) {
 			res.xltype |= xlbitXLFree;
 		}
 
