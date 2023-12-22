@@ -21,22 +21,34 @@
     <ClInclude Include="xll.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="xlerror.h">
+    <ClInclude Include="error.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="xlexcel.h">
+    <ClInclude Include="excel.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="xloper.h">
+    <ClInclude Include="oper.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="xlregister.h">
+    <ClInclude Include="register.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ensure.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="xlref.h">
+    <ClInclude Include="ref.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="defines.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="auto.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="xloper.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="utf8.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

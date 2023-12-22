@@ -1,6 +1,6 @@
 // xlregister.h - Excel registration functions
 #pragma once
-#include "xlexcel.h"
+#include "excel.h"
 
 namespace xll {
 	/*
@@ -41,25 +41,29 @@ namespace xll {
 		OPER argumentHelp18;
 		OPER argumentHelp19;
 		OPER argumentHelp20;
+		OPER argumentHelp21;
+		OPER argumentHelp22;
 	};
 	struct Macro : public Args {
-		Macro(const OPER& procedure, const OPER& functionText, const OPER& shortcut)
-			: Args{ .procedure = procedure, .functionText = functionText, .macroType = OPER(2), .shortcutText = shortcut }
+		Macro(const XCHAR* procedure, const XCHAR* functionText, const XCHAR* shortcut)
+			: Args{ .procedure = OPER(procedure), .functionText = OPER(functionText), .macroType = OPER(2), .shortcutText = OPER(shortcut) }
 		{ }
+	};
+	struct Function : public Args {
 	};
 
 	inline OPER Register(Args args)
 	{
 		OPER res;
 		LPXLOPER12 as[32];
-		ensure(xlretSuccess == Excel12v(xlGetName, &args.moduleText, 0, 0));
+		args.moduleText = Excel(xlGetName);
 		auto arg = &args.moduleText;
 
 		for (int i = 0; i < 32; ++i) {
 			as[i] = (LPXLOPER12)(arg + i);
 		}
 
-		ensure(xlretSuccess == Excel12(xlfRegister, &res, 32, &as[0]));
+		ensure(xlretSuccess == Excel12(xlfRegister, &res, 30, &as[0]));
 
 		return res;
 	}

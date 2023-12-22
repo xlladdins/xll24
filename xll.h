@@ -3,8 +3,8 @@
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 #include "XLCALL.h"
-#include "xlerror.h"
-#include "xlregister.h"
+#include "error.h"
+#include "register.h"
 
 namespace xll {
 

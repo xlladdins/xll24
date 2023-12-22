@@ -92,14 +92,18 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="auto.h" />
+    <ClInclude Include="defines.h" />
     <ClInclude Include="ensure.h" />
+    <ClInclude Include="utf8.h" />
     <ClInclude Include="XLCALL.H" />
-    <ClInclude Include="xlerror.h" />
-    <ClInclude Include="xlexcel.h" />
+    <ClInclude Include="error.h" />
+    <ClInclude Include="excel.h" />
     <ClInclude Include="xll.h" />
+    <ClInclude Include="oper.h" />
+    <ClInclude Include="ref.h" />
+    <ClInclude Include="register.h" />
     <ClInclude Include="xloper.h" />
-    <ClInclude Include="xlref.h" />
-    <ClInclude Include="xlregister.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />

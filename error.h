@@ -1,6 +1,6 @@
 // xlerror.h - Error handling
 #pragma once
-#include <WinUser.h>
+#include <Windows.h>
 #include "XLCALL.H"
 
 enum xll_alert_type {

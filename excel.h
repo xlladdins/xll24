@@ -3,8 +3,7 @@
 #include <algorithm>
 #include <array>
 #include <stdexcept>
-#include "ensure.h"
-#include "xloper.h"
+#include "oper.h"
 
 namespace xll {
 
@@ -19,6 +18,17 @@ namespace xll {
 		std::transform(os.begin(), os.end(), as, [](OPER& o) { return &o; });
 
 		ensure(xlretSuccess == ::Excel12v(fn, &res, sizeof...(ts), &as[0]));
+		if (!(res.xltype & xltypeScalar)) {
+			res.xltype |= xlbitXLFree;
+		}
+
+		return res;
+	}
+	inline OPER Excel(int fn)
+	{
+		OPER res;
+
+		ensure(xlretSuccess == ::Excel12v(fn, &res, 0, nullptr));
 		if (!(res.xltype & xltypeScalar)) {
 			res.xltype |= xlbitXLFree;
 		}
