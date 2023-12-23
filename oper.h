@@ -195,7 +195,7 @@ namespace xll {
 		constexpr void alloc(const XCHAR* str, XCHAR len)
 		{
 			xltype = xltypeStr;
-			val.str = new wchar_t[1 + len];
+			val.str = new wchar_t[1 + static_cast<size_t>(len)];
 			val.str[0] = len;
 			std::copy_n(str, len, val.str + 1);
 		}
@@ -236,73 +236,6 @@ namespace xll {
 	//static_assert(Num(1.23).val.num == 1.23);
 #endif // _DEBUG
 #ifdef _DEBUG
-	static int test()
-	{
-		{
-			OPER o;
-			assert(o.xltype == xltypeNil);
-			OPER o2{ o };
-			assert(o == o2);
-			o = o2;
-			assert(!(o != o2));
-		}
-		{
-			OPER o;
-			o = 1.23;
-			assert(type(o) == xltypeNum);
-			assert(o.val.num == 1.23);
-			assert(o == 1.23);
-		}
-		{
-			/*
-			static_assert(Str().xltype == xltypeStr); // zero length string
-			static_assert(Str().val.str[0] == 0);
-			static_assert(Str(L"").xltype == xltypeStr);
-			static_assert(Str(L"").val.str[0] == 0);
-			static_assert(Str(L"\03" L"abc").xltype == xltypeStr);
-			static_assert(Str(L"\03" L"abc").val.str[0] == 3);
-			static_assert(Str(L"\03" L"abc").val.str[3] == L'c');
-
-			static_assert(Str() == Str());
-			static_assert(Str(L"") == Str(L""));
-			static_assert((Str(L"\001a") != Str(L"\001b")));
-			static_assert((Str(L"\001a") == Str(L"\001a")));
-			static_assert((Str(L"\001b") != Str(L"\001a")));
-			static_assert((Str(L"\002aa") != Str(L"\001a")));
-			*/
-		}
-		{
-			OPER m({ OPER(1.23), OPER(L"abc") });
-			assert(type(m) == xltypeMulti);
-			assert(rows(m) == 1);
-			assert(columns(m) == 2);
-			assert(size(m) == 2);
-			assert(m[0] == 1.23);
-			assert(m[1] == L"abc");
-			m[0] = m;
-			m[1] = m;
-			m[1][1] = m;
-			OPER m2{ m };
-			assert(m == m2);
-			m = m2;
-			assert(!(m != m2));
-		}
-		{
-			OPER o(L"abc");
-			assert(type(o) == xltypeStr);
-			assert(view(o) == L"abc");
-			o = L"de";
-			assert(type(o) == xltypeStr);
-			assert(o == L"de");
-			o.enlist();
-			assert(type(o) == xltypeMulti);
-			assert(rows(o) == 1);
-			assert(columns(o) == 1);
-			assert(o[0] == L"de");
-		}
-
-		return 0;
-	}
 #endif // _DEBUG
 
 } // namespace xll

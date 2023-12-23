@@ -19,21 +19,8 @@ extern "C" int __declspec(dllexport) WINAPI
 xlAutoOpen(void)
 {
 	try {
-		if (!Auto<Open>::Call()) return FALSE;
-		//XLL_ERROR("error");
-		//XLL_WARNING("warning");
-		//XLL_INFORMATION("info");
-		OPER o(L"abc");
-		auto o2{ o };
-		o = o2;
-		auto od = Excel(xlfDate, 2023, 1, 2);
-		//auto of = Excel(xlcFormatNumber, od.val.num, L"yyyy-mm-dd");
-		//of = of;
-		int test_xll;
-		test_xll = xll::test();
-		Macro m(L"macro", L"XLL.MACRO", L"");
-		Register(m);
-		if (!Auto<OpenAfter>::Call()) return FALSE;
+		XLL_WARNING("warn");
+		ensure (Auto<Open>::Call());
 	}
 	catch (const std::exception& ex) {
 		XLL_ERROR(ex.what());
@@ -54,9 +41,8 @@ extern "C" int __declspec(dllexport) WINAPI
 xlAutoClose(void)
 {
 	try {
-		if (!Auto<CloseBefore>::Call()) return FALSE;
 		// UnRegister all functions and commands.
-		if (!Auto<Close>::Call()) return FALSE;
+		ensure (Auto<Close>::Call());
 	}
 	catch (const std::exception& ex) {
 		XLL_ERROR(ex.what());

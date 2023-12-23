@@ -5,6 +5,15 @@
 
 namespace xll {
 
+	constexpr int type(const XLOPER& x) noexcept
+	{
+		return x.xltype & ~(xlbitFree);
+	}
+	constexpr int type(const XLOPER12& x) noexcept
+	{
+		return x.xltype & ~(xlbitFree);
+	}
+
 	constexpr int rows(const XLOPER12& x) noexcept
 	{
 		switch (type(x)) {
@@ -51,47 +60,32 @@ namespace xll {
 		case xltypeNum:
 			return x.val.num == y.val.num;
 		case xltypeStr:
-			if (x.val.str && y.val.str) {
-				return std::equal(
-					view(x).begin(), view(x).end(),
-					view(y).begin(), view(y).end());
-			}
-			else if (x.val.str) {
-				return false;
-			}
-			else if (y.val.str) {
-				return false;
-			}
-			else {
-				return true;
-			}
+			return std::equal(view(x).begin(), view(x).end(), view(y).begin(), view(y).end());
 		case xltypeBool:
 			return x.val.xbool == y.val.xbool;
 		case xltypeErr:
 			return x.val.err == y.val.err;
 		case xltypeMulti:
-			return std::equal(
-				span(x).begin(), span(x).end(),
-				span(y).begin(), span(y).end(), xll::equal);
+			return std::equal(span(x).begin(), span(x).end(), span(y).begin(), span(y).end(), xll::equal);
 		case xltypeInt:
 			return x.val.w == y.val.w;
 		case xltypeSRef:
-			return x.val.sref.ref == y.val.sref.ref;
+			return SRef(x) == SRef(y);
 		case xltypeRef:
 			return x.val.mref.idSheet == y.val.mref.idSheet
-				&& x.val.mref.lpmref->count == y.val.mref.lpmref->count
-				&& std::equal(
-					x.val.mref.lpmref->reftbl, x.val.mref.lpmref->reftbl + x.val.mref.lpmref->count,
-					y.val.mref.lpmref->reftbl, y.val.mref.lpmref->reftbl + y.val.mref.lpmref->count);
+				&& std::equal(ref(x).begin(), ref(x).end(), ref(y).begin(), ref(y).end());
+		case xltypeBigData:
+			return blob(x).size() == blob(y).size()
+				&& std::equal(blob(x).begin(), blob(x).end(), blob(y).begin(), blob(y).end());
 		default:
 			return true;
 		}
 	}
-	static_assert(equal(Num(1.23), Num(1.23)));
-	constexpr bool operator==(const XLOPER12& x, const XLOPER12& y)
-	{
-		return equal(x, y);
-	}
-	static_assert(Num(1.23) == Num(1.23));
-
 } // namespace xll
+
+static_assert(xll::equal(xll::Num(1.23), xll::Num(1.23)));
+constexpr bool operator==(const XLOPER12& x, const XLOPER12& y)
+{
+	return xll::equal(x, y);
+}
+static_assert(xll::Num(1.23) == xll::Num(1.23));

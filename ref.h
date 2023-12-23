@@ -37,6 +37,9 @@ namespace xll {
 		}
 		
 	};
+	static_assert(rows(REF(1,2,3,4)) == 3);
+	static_assert(columns(REF(1, 2, 3, 4)) == 4);
+	static_assert(size(REF(1, 2, 3, 4)) == 12);
 
 } // namespace xll
 
