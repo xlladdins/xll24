@@ -1,6 +1,7 @@
 // defines.h - Base definitions for the xll add-in library.
 #pragma once
 #include <string_view>
+#include <span>
 #define WIN32_LEAN_AND_MEAN
 #include <Windows.h>
 #include "XLCALL.H"
@@ -8,15 +9,16 @@
 
 namespace xll {
 
-	// xltypeX, XLOPER12::val.X, X, XLL_X, description
+	// xltypeX, XLOPER12::val.X, X, description
 #define XLL_TYPE_SCALAR(X) \
     X(Num,  num,      double,  "IEEE 64-bit floating point")          \
     X(Bool, xbool,    BOOL,    "Boolean value")                       \
     X(Err,  err,      int,     "Error type")                          \
-    X(SRef, sref.ref, XLREF12, "Single refernce")                     \
+    X(SRef, sref.ref, XLREF12, "Single reference")                     \
     X(Int,  w,        int,     "32-bit signed integer")               \
 
 	constexpr int xltypeScalar = xltypeNum | xltypeBool | xltypeErr | xltypeSRef | xltypeInt;
+	
 	template<int X> struct type_traits {};
 #define XLL_TYPE(X, v, t, d) template<> struct type_traits<xltype##X> { using type = t; };
 	XLL_TYPE_SCALAR(XLL_TYPE)
@@ -31,6 +33,8 @@ namespace xll {
 	static_assert(Bool(true).xltype == xltypeBool);
 	static_assert(Bool(true).val.xbool == TRUE);
 	static_assert(Bool(false).val.xbool == FALSE);
+	static_assert(Err(xlerrNA).xltype == xltypeErr);
+	static_assert(Err(xlerrNA).val.err == xlerrNA);
 	static_assert(Int(123).xltype == xltypeInt);
 	static_assert(Int(123).val.w == 123);
 
@@ -56,10 +60,10 @@ namespace xll {
 	}
 	constexpr auto blob(const XLOPER12& x) noexcept
 	{
-		return std::span(x.val.bigdata.h.lpbData, x.val.bigdata.h.lpbData + x.val.bigdata.cbData);
+		return std::span(x.val.bigdata.h.lpbData, x.val.bigdata.cbData);
 	}
 
-// xllbitX, description
+// xlbitX, description
 #define XLL_BIT(X) \
 	X(XLFree,  "Excel owns memory")    \
 	X(DLLFree, "AutoFree owns memory") \
@@ -90,7 +94,7 @@ namespace xll {
 	X(Div0,  "#DIV/0!", "formula divides by zero")                          \
 	X(Value, "#VALUE!", "variable in formula has wrong type")               \
 	X(Ref,   "#REF!",   "formula contains an invalid cell reference")       \
-	X(Name,  "#NAME?",  "unrecognised formula name or text")                \
+	X(Name,  "#NAME?",  "unrecognized formula name or text")                \
 	X(Num,   "#NUM!",   "invalid number")                                   \
 	X(NA,    "#N/A",    "value not available to a formula.")                \
 
