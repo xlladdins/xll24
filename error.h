@@ -49,10 +49,12 @@ inline HWND xllGetHwnd(void)
 inline int XLL_ALERT(int level, LPCSTR text, LPCSTR caption, UINT type = 0)
 {
 	int alert_level = get_alert_level();
-	int ret = MessageBoxA(xllGetHwnd(), text, caption, MB_OKCANCEL | type);
-	if (ret == IDCANCEL) {
-		alert_level &= ~level;
-		set_alert_level(alert_level);
+	if (alert_level & level) {
+		int ret = MessageBoxA(xllGetHwnd(), text, caption, MB_OKCANCEL | type);
+		if (ret == IDCANCEL) {
+			alert_level &= ~level;
+			set_alert_level(alert_level);
+		}
 	}
 
 	return alert_level;

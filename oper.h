@@ -94,6 +94,7 @@ namespace xll {
 
 			return *this;
 		}
+		// key-value pairs
 		OPER(std::initializer_list<std::pair<const XCHAR*, OPER>> o)
 		{
 			alloc(2, (int)o.size(), nullptr);
@@ -150,9 +151,13 @@ namespace xll {
 			dealloc();
 		}
 
-		constexpr std::span<OPER> span()
+		constexpr std::span<OPER> span() noexcept
 		{
 			return std::span((OPER*)val.array.lparray, size(*this));
+		}
+		constexpr std::span<OPER> row(int r) noexcept
+		{
+			return std::span((OPER*)val.array.lparray + r * columns(*this), columns(*this));
 		}
 
 		OPER& operator[](int i)
@@ -196,6 +201,50 @@ namespace xll {
 				return *this;
 			}
 		}
+
+		// Find index of string in first row
+		constexpr int index(const XCHAR* str) const
+		{
+			int i = 0;
+
+			while (i < columns(*this) && view(operator()(0, i)) != str) {
+				++i;
+			}
+
+			return i;
+		}
+		// JSON like object with keys in first row.
+		constexpr bool is_object() const
+		{
+			if (type(*this) != xltypeMulti || rows(*this) != 2) {
+				return false;
+			}
+
+			for (int i = 0; i < columns(*this); ++i) {
+				if (type(operator()(0, i)) != xltypeStr) {
+					return false;
+				}
+			}
+
+			return true;
+		}
+		OPER& operator[](const XCHAR* str)
+		{
+			ensure(is_object());
+			int i = index(str);
+			ensure(i < columns(*this));
+
+			return operator()(1, i);
+		}
+		const OPER& operator[](const XCHAR* str) const
+		{
+			ensure(is_object());
+			int i = index(str);
+			ensure(i < columns(*this));
+
+			return operator()(1, i);
+		}
+
 	private:
 		// Str
 		constexpr void alloc(const XCHAR* str, XCHAR len)
@@ -212,7 +261,7 @@ namespace xll {
 			val.array.rows = r;
 			val.array.columns = c;
 			if (r && c) {
-				val.array.lparray = new XLOPER12[r * c];
+				val.array.lparray = new XLOPER12[(size_t)r * c];
 				for (int i = 0; i < r * c; ++i) {
 					new (val.array.lparray + i) OPER(a ? a[i] : OPER{});
 				}
