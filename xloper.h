@@ -1,6 +1,5 @@
 // xloper.h - XLOPER12 helpers
 #pragma once
-#include <span>
 #include "ref.h"
 
 namespace xll {
@@ -42,7 +41,7 @@ namespace xll {
 			return 1;
 		}
 	}
-	constexpr auto size(const XLOPER12& x) noexcept
+	constexpr int size(const XLOPER12& x) noexcept
 	{
 		return rows(x) * columns(x);
 	}
@@ -53,7 +52,7 @@ namespace xll {
 		int ytype = type(y);
 
 		if (xtype != ytype) {
-			return xtype == ytype;
+			return false;
 		}
 
 		switch (xtype) {

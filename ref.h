@@ -1,4 +1,4 @@
-// ref.h - XLREF type
+// ref.h - REF class to construct XLREF12 type
 #pragma once
 #include "defines.h"
 

@@ -2,11 +2,7 @@
 #ifdef _DEBUG
 #include <cassert>
 #endif // _DEBUG
-#include <algorithm>
-#include <bit>
-#include <compare>
-#include <span>
-#include <string_view>
+#include <initializer_list>
 #include "xloper.h"
 
 namespace xll {
@@ -97,6 +93,16 @@ namespace xll {
 			}
 
 			return *this;
+		}
+		OPER(std::initializer_list<std::pair<const XCHAR*, OPER>> o)
+		{
+			alloc(2, (int)o.size(), nullptr);
+			int i = 0;
+			for (auto [k, v] : o) {
+				operator()(0, i) = k;
+				operator()(1, i) = v;
+				++i;
+			}
 		}
 
 		constexpr OPER(const XLOPER12& o)
@@ -208,7 +214,7 @@ namespace xll {
 			if (r && c) {
 				val.array.lparray = new XLOPER12[r * c];
 				for (int i = 0; i < r * c; ++i) {
-					new (val.array.lparray + i) OPER(a[i]);
+					new (val.array.lparray + i) OPER(a ? a[i] : OPER{});
 				}
 			}
 		}
