@@ -1,5 +1,6 @@
 // defines.h - Base definitions for the xll add-in library.
 #pragma once
+#include <span>
 #include <string_view>
 #include <span>
 #define WIN32_LEAN_AND_MEAN
@@ -24,6 +25,10 @@ namespace xll {
 	XLL_TYPE_SCALAR(XLL_TYPE)
 #undef XLL_TYPE
 	static_assert(std::is_same_v<type_traits<xltypeNum>::type, double>);
+	static_assert(std::is_same_v<type_traits<xltypeBool>::type, BOOL>);
+	static_assert(std::is_same_v<type_traits<xltypeErr>::type, int>);
+	static_assert(std::is_same_v<type_traits<xltypeSRef>::type, XLREF12>);
+	static_assert(std::is_same_v<type_traits<xltypeInt>::type, int>);
 
 #define XLL_SCALAR(n, v, t, d) constexpr XLOPER12 n(t x) { XLOPER12 o; o.xltype = xltype##n; o.val.v = x; return o; }
 	XLL_TYPE_SCALAR(XLL_SCALAR)
@@ -38,8 +43,15 @@ namespace xll {
 	static_assert(Int(123).xltype == xltypeInt);
 	static_assert(Int(123).val.w == 123);
 
-// types requiring allocation where xX is pointer to data
-// xltypeX, XLOPERX::val.X, xX, XLL_X, description
+#define XLL_SCALAR(n, v, t, d) constexpr t n(const XLOPER12& x) { return x.val.v; }
+	XLL_TYPE_SCALAR(XLL_SCALAR)
+#undef XLL_SCALAR
+	static_assert(Num(Num(1.23)) == 1.23);
+	static_assert(Bool(Bool(true)) == TRUE);
+	static_assert(Int(Int(123)) == 123);
+
+	// types requiring allocation where xX is pointer to data
+	// xltypeX, XLOPERX::val.X, xX, XLL_X, description
 #define XLL_TYPE_ALLOC(X) \
     X(Str,     str,     str, PSTRING, "Pointer to a counted Pascal string")    \
     X(Multi,   array,   multi, LPOPER,  "Two dimensional array of OPER types") \
@@ -63,21 +75,12 @@ namespace xll {
 		return std::span(x.val.bigdata.h.lpbData, x.val.bigdata.cbData);
 	}
 
-// xlbitX, description
+// xllbitX, description
 #define XLL_BIT(X) \
 	X(XLFree,  "Excel owns memory")    \
 	X(DLLFree, "AutoFree owns memory") \
 
 	constexpr int xlbitFree = xlbitXLFree | xlbitDLLFree;
-
-	constexpr int type(const XLOPER& x) noexcept
-	{
-		return x.xltype & ~(xlbitFree);
-	}
-	constexpr int type(const XLOPER12& x) noexcept
-	{
-		return x.xltype & ~(xlbitFree);
-	}
 
 #define XLL_NULL_TYPE(X)                    \
 	X(Missing, "missing function argument") \
@@ -86,10 +89,11 @@ namespace xll {
 #define XLL_NULL(t, d) constexpr XLOPER12 t() { return XLOPER12{ .xltype = xltype##t }; }
 	XLL_NULL_TYPE(XLL_NULL)
 #undef XLL_NULL
-	static_assert(type(Missing()) == xltypeMissing);
+	static_assert(Missing().xltype == xltypeMissing);
+	static_assert(Nil().xltype == xltypeNil);
 
-// xlerrX, Excel error string, error description
-#define XLL_ERR(X)                                                          \
+	// xlerrX, Excel error string, error description
+#define XLL_TYPE_ERR(X)                                                          \
 	X(Null,  "#NULL!",  "intersection of two ranges that do not intersect") \
 	X(Div0,  "#DIV/0!", "formula divides by zero")                          \
 	X(Value, "#VALUE!", "variable in formula has wrong type")               \
@@ -98,17 +102,24 @@ namespace xll {
 	X(Num,   "#NUM!",   "invalid number")                                   \
 	X(NA,    "#N/A",    "value not available to a formula.")                \
 
+#define XLL_ERR(e, s, d) constexpr XLOPER12 Err##e = XLOPER12{ .val = {.err = xlerr##e}, .xltype = xltypeErr };
+	XLL_TYPE_ERR(XLL_ERR)
+#undef XLL_ERR
+	static_assert(ErrNull.xltype == xltypeErr);
+	static_assert(ErrNull.val.err == xlerrNull);
+
 	enum class xlerr {
 #define XLL_ERR_ENUM(e, s, d) e = xlerr##e, 
-		XLL_ERR(XLL_ERR_ENUM)
+		XLL_TYPE_ERR(XLL_ERR_ENUM)
 #undef XLL_ERR_ENUM
 	};
+	static_assert((int)xlerr::Null == xlerrNull);
 
 	constexpr const char* xlerr_string(xlerr err)
 	{
 #define XLL_ERR_STRING(e, s, d) if (err == xlerr::##e) return s;
-		XLL_ERR(XLL_ERR_STRING)
-		return "unknown xlerr type";
+		XLL_TYPE_ERR(XLL_ERR_STRING)
+			return "unknown xlerr type";
 #undef XLL_ERR_STRING
 	}
 	static_assert(std::string_view(xlerr_string(xlerr::Null)) == "#NULL!");
@@ -116,10 +127,37 @@ namespace xll {
 	constexpr const char* xlerr_desription(xlerr err)
 	{
 #define XLL_ERR_DESC(e, s, d) if (err == xlerr::##e) return d;
-		XLL_ERR(XLL_ERR_DESC)
-		return "unknown xlerr type";
+		XLL_TYPE_ERR(XLL_ERR_DESC)
+			return "unknown xlerr type";
 #undef XLL_ERR_DESC
 	}
 	static_assert(std::string_view(xlerr_desription(xlerr::Null)) == "intersection of two ranges that do not intersect");
+
+	// Argument types for Excel Functions
+	// XLL_XXX, Excel4, Excel12, description
+	#define XLL_ARG_TYPE(X)                                                      \
+	X(BOOL,     "A", "A",  "short int used as logical")                          \
+	X(DOUBLE,   "B", "B",  "double")                                             \
+	X(CSTRING,  "C", "C%", "XCHAR* to C style NULL terminated unicode string")   \
+	X(PSTRING,  "D", "D%", "XCHAR* to Pascal style byte counted unicode string") \
+	X(DOUBLE_,  "E", "E",  "pointer to double")                                  \
+	X(CSTRING_, "F", "F%", "reference to a null terminated unicode string")      \
+	X(PSTRING_, "G", "G%", "reference to a byte counted unicode string")         \
+	X(USHORT,   "H", "H",  "unsigned 2 byte int")                                \
+	X(WORD,     "H", "H",  "unsigned 2 byte int")                                \
+	X(SHORT,    "I", "I",  "signed 2 byte int")                                  \
+	X(LONG,     "J", "J",  "signed 4 byte int")                                  \
+	X(FP,       "K", "K%", "pointer to struct FP")                               \
+	X(BOOL_,    "L", "L",  "reference to a boolean")                             \
+	X(SHORT_,   "M", "M",  "reference to signed 2 byte int")                     \
+	X(LONG_,    "N", "N",  "reference to signed 4 byte int")                     \
+	X(LPOPER,   "P", "Q",  "pointer to OPER struct (never a reference type)")    \
+	X(LPXLOPER, "R", "U",  "pointer to XLOPER struct")                           \
+	X(VOLATILE, "!", "!",  "called every time sheet is recalced")                \
+	X(UNCALCED, "#", "#",  "dereferencing uncalced cells returns old value")     \
+	X(VOID,     "",  ">",  "return type to use for asynchronous functions")      \
+	X(THREAD_SAFE,  "", "$", "declares function to be thread safe")              \
+	X(CLUSTER_SAFE, "", "&", "declares function to be cluster safe")             \
+	X(ASYNCHRONOUS, "", "X", "declares function to be asynchronous")             \
 
 } // namespace xll
