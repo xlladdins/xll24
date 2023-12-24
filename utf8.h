@@ -4,6 +4,8 @@
 #include <memory>
 
 namespace utf8 {
+
+	//!!! return std::wstring_view to allocated string
 	
 	// Multi-byte character string to counted wide character string allocated by new[].
 	// Returned string is null terminated if n is -1.

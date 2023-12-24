@@ -168,6 +168,7 @@ namespace xll {
 		XLL_ARG_TYPE(XLL_ARG)
 #undef XLL_ARG
 
+	// xlretX, description
 #define XLL_RET_TYPE(X) \
 	X(xlretSuccess,                "success") \
 	X(xlretAbort,                  "macro halted") \
