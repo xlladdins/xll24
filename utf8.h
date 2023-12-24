@@ -1,29 +1,36 @@
-﻿﻿// utf8.h - convert utf-8 to counted, allocated string and vice versa
-// Loss-free conversion from UTF-16 to MBCS and back
-// https://docs.microsoft.com/en-us/archive/msdn-magazine/2016/september/c-unicode-encoding-conversions-with-stl-strings-and-win32-apis
-#pragma once
-#include <string>
+﻿#pragma once
 #include <stringapiset.h>
-#include "ensure.h"
+#include <string_view>
+#include <memory>
 
 namespace utf8 {
-
+	
 	// Multi-byte character string to counted wide character string allocated by new[].
-	// Returned string is null terminated.
+	// Returned string is null terminated if n is -1.
 	inline wchar_t* mbstowcs(const char* s, int n = -1)
 	{
-		//ensure(0 != n);
 		wchar_t* ws = nullptr;
 
-		int wn = 0;
-		if (n != 0) {
-			ensure(0 != (wn = MultiByteToWideChar(CP_UTF8, 0, s, n, nullptr, 0)));
+		if (!s || n == 0) { // empty string
+			ws = new wchar_t[1];
+			ws[0] = 0;
+
+			return ws;
 		}
 
-		ws = new wchar_t[wn + 2];
+		int wn = MultiByteToWideChar(CP_UTF8, 0, s, n, nullptr, 0);
+		if (wn == 0) {
+			return nullptr;
+		}
+
+		ws = new wchar_t[static_cast<size_t>(wn) + 2];
 		if (ws) {
-			ensure(!n || wn == MultiByteToWideChar(CP_UTF8, 0, s, n, ws + 1, wn));
-			ensure(wn <= WCHAR_MAX);
+			if (wn != MultiByteToWideChar(CP_UTF8, 0, s, n, ws + 1, wn)) {
+				delete [] ws;
+
+				return nullptr;
+			}
+			ensure(wn <= WCHAR_MAX/2);
 			// MBTWC includes terminating null if n == -1
 			ws[0] = static_cast<wchar_t>(wn - (n == -1));
 			ws[ws[0] + 1] = 0;
@@ -37,48 +44,48 @@ namespace utf8 {
 
 		wchar_t* pws = mbstowcs(s, n);
 		ensure(pws);
-		if (pws) {
-			ws.assign(pws + 1, pws[0]);
-			free(pws);
-		}
+		ws.assign(pws + 1, pws[0]);
+		delete [] pws;
 
 		return ws;
 	}
-
-	// Wide character string to counted multi-byte character string allocated by malloc
-	// Returned string is null terminated.
-	inline char* wcstombs(const wchar_t* ws, int wn = -1)
+#ifdef _DEBUG
+	inline int test()
 	{
-		//ensure(0 != wn);
-		char* s = nullptr;
-
-		int n = 0;
-		if (wn) {
-			ensure(0 != (n = WideCharToMultiByte(CP_UTF8, 0, ws, wn, NULL, 0, NULL, NULL)));
+		using uptr = std::unique_ptr<wchar_t[]>;
+		{
+			uptr s{mbstowcs(nullptr)};
+			ensure(s[0] == 0);
 		}
-
-		s = new char[n + 2);
-		if (nullptr != s) {
-			ensure(!wn || n == WideCharToMultiByte(CP_UTF8, 0, ws, wn, s + 1, n, NULL, NULL));
-			// ???NormalizeString
-			ensure(n <= SHRT_MAX);
-			// WCTMBS includes terminating null if wn == -1
-			s[0] = static_cast<char>(n - (wn == -1));
-			s[s[0] + 1] = 0;
+		{
+			uptr s{ mbstowcs("")};
+			ensure(s[0] == 0);
 		}
-
-		return s;
+		{
+			uptr s{ mbstowcs("abc", 0) };
+			ensure(s[0] == 0);
+		}
+		{
+			uptr s{utf8::mbstowcs("")};
+			ensure(s[0] == 0);
+			ensure(s[1] == L'\0'); // null terminated
+		}
+		{
+			uptr s{ utf8::mbstowcs("abc") };
+			ensure(s[0] == 3);
+			ensure(s[1] == L'a');
+			ensure(s[2] == L'b');
+			ensure(s[3] == L'c');
+			ensure(s[4] == L'\0'); // null terminated
+		}
+		{
+			auto ws = utf8::mbstowstring("abc");
+			ensure(ws[0] == L'a');
+			ensure(ws[1] == L'b');
+			ensure(ws[2] == L'c');
+			ensure(ws[3] == L'\0'); // null terminated
+		}
+		return 0;
 	}
-	inline std::string wcstostring(const wchar_t* ws, int wn = -1)
-	{
-		std::string s;
-
-		char* ps = wcstombs(ws, wn);
-		if (nullptr != ps) {
-			s.assign(ps + 1, ps[0]);
-			free(ps);
-		}
-
-		return s;
-	}
+#endif // _DEBUG
 } // namespace utf8

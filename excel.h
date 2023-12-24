@@ -17,7 +17,10 @@ namespace xll {
 		LPXLOPER12 as[sizeof...(ts)];
 		std::transform(os.begin(), os.end(), as, [](OPER& o) { return &o; });
 
-		ensure(xlretSuccess == ::Excel12v(fn, &res, sizeof...(ts), &as[0]));
+		int ret = ::Excel12v(fn, &res, sizeof...(ts), &as[0]);
+		if (ret != xlretSuccess) {
+			throw std::runtime_error(xlret_description(ret));
+		}
 		if (!(res.xltype & xltypeScalar)) {
 			res.xltype |= xlbitXLFree;
 		}

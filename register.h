@@ -3,13 +3,11 @@
 #include "excel.h"
 
 namespace xll {
-	/*
-	struct Function {
-		OPER arg[32];
+
+	struct Arg {
+		OPER type, name, text;
 	};
-	struct Macro {
-	};
-	*/
+	
 	struct Args {
 		OPER moduleText;
 		OPER procedure;
@@ -43,21 +41,67 @@ namespace xll {
 		OPER argumentHelp20;
 		OPER argumentHelp21;
 		OPER argumentHelp22;
+		int nargs = 0;
 	};
 	struct Macro : public Args {
-		Macro(const XCHAR* procedure, const XCHAR* functionText, const XCHAR* shortcut)
+		Macro(const XCHAR* procedure, const XCHAR* functionText, const XCHAR* shortcut = 0)
 			: Args{ .procedure = OPER(procedure), .functionText = OPER(functionText), .macroType = OPER(2), .shortcutText = OPER(shortcut) }
 		{ }
 	};
 	struct Function : public Args {
+		Function& Arguments(const std::initializer_list<Arg>& args)
+		{
+			int i = 0;
+			OPER* fh = &functionHelp;
+			OPER comma = OPER(L"");
+			for (auto& arg : args) {
+				ensure(nargs < 22);
+				typeText = typeText & arg.type;
+				functionText = comma & functionText;
+				fh[i] = arg.text;
+				comma = OPER(L", ");
+				++nargs;
+			}
+
+			return *this;
+		}
+		Function& Uncalced()
+		{
+			typeText = OPER(XLL_UNCALCED) & typeText;
+
+			return *this;
+		}
+		Function& Volatile()
+		{
+			typeText = OPER(XLL_VOLATILE) & typeText;
+
+			return *this;
+		}
+		Function& ThreadSafe()
+		{
+			typeText = OPER(XLL_THREAD_SAFE) & typeText;
+
+			return *this;
+		}
+		Function& Asynchronous()
+		{
+			typeText = OPER(XLL_ASYNCHRONOUS) & typeText;
+
+			return *this;
+		}
 	};
 
 	inline OPER Register(Args args)
 	{
 		OPER res;
 		LPXLOPER12 as[32];
+
 		args.moduleText = Excel(xlGetName);
-		auto arg = &args.moduleText;
+		ensure(type(args.procedure) == xltypeStr)
+		if (args.procedure.val.str[1] != L'?') {
+			args.procedure = Excel(xlfConcatenate, args.moduleText, OPER(L"?"), args.procedure);
+		}
+		auto arg = &args;
 
 		for (int i = 0; i < 32; ++i) {
 			as[i] = (LPXLOPER12)(arg + i);

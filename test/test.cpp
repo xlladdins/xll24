@@ -3,11 +3,11 @@
 
 using namespace xll;
 
-//Auto<Open> xao_test(xll::test);
-
 int xll_test()
 {
+	Register(Macro(L"xll_test", L"TEST"));
 	try {
+		utf8::test();
 		{
 			OPER o;
 			ensure(o.xltype == xltypeNil);
@@ -17,29 +17,30 @@ int xll_test()
 			ensure(!(o != o2));
 		}
 		{
-			OPER o;
-			o = 1.23;
+			OPER o(1.23);
 			ensure(type(o) == xltypeNum);
 			ensure(o.val.num == 1.23);
 			ensure(o == 1.23);
+			o = 3.21;
+			ensure(type(o) == xltypeNum);
+			ensure(o.val.num == 3.21);
+			ensure(o == 3.21);
+			OPER o2{ o };
+			ensure(o == o2);
+			o = o2;
+			ensure(!(o != o2));
 		}
 		{
-			/*
-			static_assert(Str().xltype == xltypeStr); // zero length string
-			static_assert(Str().val.str[0] == 0);
-			static_assert(Str(L"").xltype == xltypeStr);
-			static_assert(Str(L"").val.str[0] == 0);
-			static_assert(Str(L"\03" L"abc").xltype == xltypeStr);
-			static_assert(Str(L"\03" L"abc").val.str[0] == 3);
-			static_assert(Str(L"\03" L"abc").val.str[3] == L'c');
+			ensure(OPER(L"").xltype == xltypeStr);
+			ensure(OPER(L"").val.str[0] == 0);
+			ensure(OPER(L"abc").xltype == xltypeStr);
+			ensure(OPER(L"abc").val.str[0] == 3);
+			ensure(OPER(L"abc").val.str[3] == L'c');
 
-			static_assert(Str() == Str());
-			static_assert(Str(L"") == Str(L""));
-			static_assert((Str(L"\001a") != Str(L"\001b")));
-			static_assert((Str(L"\001a") == Str(L"\001a")));
-			static_assert((Str(L"\001b") != Str(L"\001a")));
-			static_assert((Str(L"\002aa") != Str(L"\001a")));
-			*/
+			ensure((OPER(L"a") != OPER(L"b")));
+			ensure((OPER(L"a") == OPER(L"a")));
+			ensure((OPER(L"b") != OPER(L"a")));
+			ensure((OPER(L"aa") != OPER(L"a")));
 		}
 		{
 			OPER m({ OPER(1.23), OPER(L"abc") });

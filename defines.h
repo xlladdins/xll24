@@ -19,7 +19,7 @@ namespace xll {
     X(Int,  w,        int,     "32-bit signed integer")               \
 
 	constexpr int xltypeScalar = xltypeNum | xltypeBool | xltypeErr | xltypeSRef | xltypeInt;
-	
+
 	template<int X> struct type_traits {};
 #define XLL_TYPE(X, v, t, d) template<> struct type_traits<xltype##X> { using type = t; };
 	XLL_TYPE_SCALAR(XLL_TYPE)
@@ -75,7 +75,7 @@ namespace xll {
 		return std::span(x.val.bigdata.h.lpbData, x.val.bigdata.cbData);
 	}
 
-// xllbitX, description
+	// xllbitX, description
 #define XLL_BIT(X) \
 	X(XLFree,  "Excel owns memory")    \
 	X(DLLFree, "AutoFree owns memory") \
@@ -105,7 +105,7 @@ namespace xll {
 #define XLL_ERR(e, s, d) constexpr XLOPER12 Err##e = XLOPER12{ .val = {.err = xlerr##e}, .xltype = xltypeErr };
 	XLL_TYPE_ERR(XLL_ERR)
 #undef XLL_ERR
-	static_assert(ErrNull.xltype == xltypeErr);
+		static_assert(ErrNull.xltype == xltypeErr);
 	static_assert(ErrNull.val.err == xlerrNull);
 
 	enum class xlerr {
@@ -128,14 +128,14 @@ namespace xll {
 	{
 #define XLL_ERR_DESC(e, s, d) if (err == xlerr::##e) return d;
 		XLL_TYPE_ERR(XLL_ERR_DESC)
-			return "unknown xlerr type";
 #undef XLL_ERR_DESC
+			return "unknown xlerr type";
 	}
 	static_assert(std::string_view(xlerr_desription(xlerr::Null)) == "intersection of two ranges that do not intersect");
 
 	// Argument types for Excel Functions
 	// XLL_XXX, Excel4, Excel12, description
-	#define XLL_ARG_TYPE(X)                                                      \
+#define XLL_ARG_TYPE(X)                                                      \
 	X(BOOL,     "A", "A",  "short int used as logical")                          \
 	X(DOUBLE,   "B", "B",  "double")                                             \
 	X(CSTRING,  "C", "C%", "XCHAR* to C style NULL terminated unicode string")   \
@@ -153,11 +153,39 @@ namespace xll {
 	X(LONG_,    "N", "N",  "reference to signed 4 byte int")                     \
 	X(LPOPER,   "P", "Q",  "pointer to OPER struct (never a reference type)")    \
 	X(LPXLOPER, "R", "U",  "pointer to XLOPER struct")                           \
-	X(VOLATILE, "!", "!",  "called every time sheet is recalced")                \
-	X(UNCALCED, "#", "#",  "dereferencing uncalced cells returns old value")     \
+	X(VOLATILE, "!", "!",  "called every time sheet is recalculated")            \
+	X(UNCALCED, "#", "#",  "dereferencing uncalculated cells returns old value") \
 	X(VOID,     "",  ">",  "return type to use for asynchronous functions")      \
 	X(THREAD_SAFE,  "", "$", "declares function to be thread safe")              \
 	X(CLUSTER_SAFE, "", "&", "declares function to be cluster safe")             \
 	X(ASYNCHRONOUS, "", "X", "declares function to be asynchronous")             \
 
+#define XLL_ARG(a,b,c,d) constexpr const wchar_t* XLL_##a##4 = L#b;
+	XLL_ARG_TYPE(XLL_ARG)
+#undef XLL_ARG
+
+#define XLL_ARG(a,b,c,d) constexpr const wchar_t* XLL_##a = L#c;
+		XLL_ARG_TYPE(XLL_ARG)
+#undef XLL_ARG
+
+#define XLL_RET_TYPE(X) \
+	X(xlretSuccess,                "success") \
+	X(xlretAbort,                  "macro halted") \
+	X(xlretInvXlfn,                "invalid function number") \
+	X(xlretInvCount,               "invalid number of arguments") \
+	X(xlretInvXloper,              "invalid OPER structure") \
+	X(xlretStackOvfl,              "stack overflow") \
+	X(xlretFailed,                 "command failed") \
+	X(xlretUncalced,               "uncalculated cell") \
+	X(xlretNotThreadSafe,          "not allowed during multi-threaded calc") \
+	X(xlretInvAsynchronousContext, "invalid asynchronous function handle") \
+	X(xlretNotClusterSafe,         "not supported on cluster") \
+
+	inline const char* xlret_description(int ret)
+	{
+#define XLL_RET(a,b) if (ret == a) return b;
+		XLL_RET_TYPE(XLL_RET)
+#undef XLL_RET
+		return "xlret type unknown";
+	}
 } // namespace xll

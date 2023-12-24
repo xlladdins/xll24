@@ -22,12 +22,14 @@
 #define ENSURE_LINE "\nline: " ENSURE_STRZ_(__LINE__)
 #define ENSURE_SPOT ENSURE_FILE ENSURE_LINE ENSURE_FUNC
 
-#if defined(_DEBUG) && defined(DEBUG_BREAK)
+#ifdef _DEBUG
+#if defined(DEBUG_BREAK)
 #define ensure(e) if (!(e)) { DebugBreak(); }
 #else
 #define ensure(e) if (!(e)) { \
 		throw std::runtime_error(ENSURE_SPOT "\nensure: \"" #e "\" failed"); \
 		} else (void)0;
+#endif // DEBUG_BREAK
 #endif // _DEBUG
 
 #endif // ensure

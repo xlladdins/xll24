@@ -4,9 +4,9 @@
 #endif // _DEBUG
 #include <initializer_list>
 #include "xloper.h"
+#include "utf8.h"
 
 namespace xll {
-
 
 	struct OPER : public XLOPER12 {
 		// Nil
@@ -38,7 +38,7 @@ namespace xll {
 		}
 		// NULL terminated string
 		constexpr explicit OPER(const XCHAR* str)
-			: OPER(str, static_cast<XCHAR>(wcslen(str)))
+			: OPER(str, str ? static_cast<XCHAR>(wcslen(str)) : 0)
 		{ }
 		OPER& operator=(const XCHAR* str)
 		{
@@ -51,6 +51,9 @@ namespace xll {
 		{
 			return type(*this) == xltypeStr && view(*this) == str;
 		}
+		explicit OPER(const char* str)
+			: XLOPER12{ .val = {.str = utf8::mbstowcs(str)}, .xltype = xltypeStr }
+		{ }
 
 		// Bool
 		constexpr explicit OPER(bool xbool)
@@ -294,3 +297,14 @@ namespace xll {
 #endif // _DEBUG
 
 } // namespace xll
+
+// Concatenate strings
+inline xll::OPER operator&(const XLOPER12& x, const XLOPER12& y)
+{
+	ensure(xll::type(x) == xltypeStr && xll::type(y) == xltypeStr);
+	
+	std::wstring xy(xll::view(x));
+	xy.append(xll::view(y));
+
+	return xll::OPER(xy.c_str(), (XCHAR)xy.size());
+}
