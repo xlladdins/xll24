@@ -18,6 +18,8 @@ namespace xll {
 
 		int ret = ::Excel12v(fn, &res, sizeof...(ts), &as[0]);
 		if (ret != xlretSuccess) {
+			Excel12(xlFree, 0, 1, &res);
+
 			throw std::runtime_error(xlret_description(ret));
 		}
 		if (!(res.xltype & xltypeScalar)) {
@@ -33,6 +35,8 @@ namespace xll {
 
 		int ret = ::Excel12v(fn, &res, 0, nullptr);
 		if (ret != xlretSuccess) {
+			Excel12(xlFree, 0, 1, &res);
+
 			throw std::runtime_error(xlret_description(ret));
 		}
 		if (!(res.xltype & xltypeScalar)) {
