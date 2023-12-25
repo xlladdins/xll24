@@ -1,22 +1,17 @@
 # Excel add-in library
 
-There is a reason why many companies
-still use the ancient Microsoft
-Excel C SDK. It provides the
-highest possible performance
-for integrating C, C++, and Fortran
-into Excel. VBA, C# VSTO, 
-and JavaScript require data
-to be marshalled into their
-world and then copied back 
-to native Excel.
+There is a reason why many companies still use the ancient 
+[Microsoft Excel C SDK](https://learn.microsoft.com/en-us/office/client-developer/excel/welcome-to-the-excel-software-development-kit), 
+It provides the highest possible performance
+for integrating C, C++, and even Fortran into Excel. 
+VBA, C# VSTO, and JavaScript require data to be marshalled into their
+world and then copied back to native Excel.
 
 There is a reason why many companies
 don't use the ancient Microsoft
 Excel C SDK. It is notoriously
 difficult to use. This library
-makes it easy to call any
-language from Excel.
+makes it easy.
 
 ## Function
 
@@ -37,6 +32,16 @@ Functions and macros are added to Excel by _register_ing them.
 You must specify the name of the C function, its signature, and
 the name Excel will use to call it. It is a good idea to specify
 the Function Wizard category and a function help description as well.
+You can specify a URL to more extensive documentation.
 
 Macros take no arguments and return a non-zero `int` 
 if it succeeds and 0 if it fails.
+
+## Installation
+
+NuGet
+
+## Usage
+
+After installing the NuGet package you can find Code Snippets
+for a Function and Macro add-in.
