@@ -46,6 +46,34 @@ namespace xll {
 		return rows(x) * columns(x);
 	}
 
+	constexpr std::wstring_view view(const XLOPER12& x)
+	{
+		ensure(type(x) == xltypeStr);
+
+		return std::wstring_view(x.val.str + 1, x.val.str[0]);
+	}
+
+	constexpr auto span(const XLOPER12& x)
+	{
+		ensure(type(x) == xltypeMulti);
+
+		return std::span(x.val.array.lparray, x.val.array.rows * x.val.array.columns);
+	}
+
+	constexpr auto ref(const XLOPER12& x)
+	{
+		ensure(type(x) == xltypeRef);
+
+		return std::span(x.val.mref.lpmref->reftbl, x.val.mref.lpmref->count);
+	}
+
+	constexpr auto blob(const XLOPER12& x)
+	{
+		ensure(type(x) == xltypeBigData);
+
+		return std::span(x.val.bigdata.h.lpbData, x.val.bigdata.cbData);
+	}
+
 	constexpr bool equal(const XLOPER12& x, const XLOPER12& y)
 	{
 		int xtype = type(x);
@@ -82,9 +110,12 @@ namespace xll {
 	}
 } // namespace xll
 
-static_assert(xll::equal(xll::Num(1.23), xll::Num(1.23)));
 constexpr bool operator==(const XLOPER12& x, const XLOPER12& y)
 {
 	return xll::equal(x, y);
 }
+
+#ifdef _DEBUG
+static_assert(xll::equal(xll::Num(1.23), xll::Num(1.23)));
 static_assert(xll::Num(1.23) == xll::Num(1.23));
+#endif // _DEBUG

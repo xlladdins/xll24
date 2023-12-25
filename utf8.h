@@ -51,6 +51,7 @@ namespace utf8 {
 
 		return ws;
 	}
+
 #ifdef _DEBUG
 	inline int test()
 	{
@@ -90,4 +91,5 @@ namespace utf8 {
 		return 0;
 	}
 #endif // _DEBUG
+
 } // namespace utf8

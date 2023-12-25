@@ -1,4 +1,4 @@
-// xlregister.h - Excel registration functions
+// register.h - Excel function and macro registration.
 #pragma once
 #include "excel.h"
 

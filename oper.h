@@ -9,11 +9,12 @@
 namespace xll {
 
 	struct OPER : public XLOPER12 {
-		// Nil
+		// Nil is the default.
 		constexpr OPER() noexcept
 			: XLOPER12{ Nil() }
 		{ }
-		// Num
+
+		// Num - 64-bit IEEE floating point
 		constexpr explicit OPER(double num) noexcept
 			: XLOPER12{ Num(num) }
 		{ }
@@ -24,12 +25,12 @@ namespace xll {
 
 			return *this;
 		}
-		constexpr bool operator==(double num) const
+		constexpr bool operator==(double num) const noexcept
 		{
 			return type(*this) == xltypeNum && val.num == num;
 		}
 
-		// string and length
+		// Str - Counted wide character string.
 		constexpr OPER(const XCHAR* str, XCHAR len)
 		{
 			if (str) {

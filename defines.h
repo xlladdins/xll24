@@ -58,23 +58,6 @@ namespace xll {
     X(Ref,     mref.lpmref,    lpmref, LPOPER,  "Multiple reference")          \
     X(BigData, bigdata.h.lpbData, bigdata, LPOPER,  "Blob of binary data")     \
 
-	constexpr auto view(const XLOPER12& x) noexcept
-	{
-		return std::wstring_view(x.val.str + 1, x.val.str[0]);
-	}
-	constexpr auto span(const XLOPER12& x) noexcept
-	{
-		return std::span(x.val.array.lparray, x.val.array.rows * x.val.array.columns);
-	}
-	constexpr auto ref(const XLOPER12& x) noexcept
-	{
-		return std::span(x.val.mref.lpmref->reftbl, x.val.mref.lpmref->count);
-	}
-	constexpr auto blob(const XLOPER12& x) noexcept
-	{
-		return std::span(x.val.bigdata.h.lpbData, x.val.bigdata.cbData);
-	}
-
 	// xllbitX, description
 #define XLL_BIT(X) \
 	X(XLFree,  "Excel owns memory")    \

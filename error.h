@@ -9,12 +9,14 @@ enum xll_alert_type {
 	XLL_ALERT_INFORMATION = 4,
 };
 
+#define XLL_SUB_KEY "Software\\KALX\\xll"
+
 inline int get_alert_level()
 {
 	HKEY hkey;
-	DWORD disp;
-	DWORD data = 0x7;
-	LSTATUS status = RegCreateKeyExA(HKEY_CURRENT_USER, "Software\\KALX\\XLL", 0, 0, 0, KEY_READ, 0, &hkey, &disp);
+	DWORD disp, data = 0x7;
+
+	LSTATUS status = RegCreateKeyExA(HKEY_CURRENT_USER, XLL_SUB_KEY, 0, 0, 0, KEY_READ, 0, &hkey, &disp);
 	if (status == ERROR_SUCCESS) {
 		DWORD type, size = sizeof(data);
 		status = RegQueryValueExA(hkey, "AlertLevel", 0, &type, (LPBYTE)&data, &size);
@@ -29,15 +31,18 @@ inline void set_alert_level(int level)
 {
 	HKEY hkey;
 	DWORD disp;
-	LSTATUS status = RegCreateKeyExA(HKEY_CURRENT_USER, "Software\\KALX\\XLL", 0, 0, 0, KEY_WRITE, 0, &hkey, &disp);
+
+	LSTATUS status = RegCreateKeyExA(HKEY_CURRENT_USER, XLL_SUB_KEY, 0, 0, 0, KEY_WRITE, 0, &hkey, &disp);
 	if (status == ERROR_SUCCESS) {
 		status = RegSetValueExA(hkey, "AlertLevel", 0, REG_DWORD, (LPBYTE)&level, sizeof(DWORD));
 	}
 }
 
+// Handle to Excel window.
 inline HWND xllGetHwnd(void)
 {
 	XLOPER12 xHwnd = { .xltype = xltypeNil };
+
 	int ret = Excel12(xlGetHwnd, &xHwnd, 0);
 	if (ret != xlretSuccess || xHwnd.xltype != xltypeInt) {
 		return NULL;
@@ -49,6 +54,7 @@ inline HWND xllGetHwnd(void)
 inline int XLL_ALERT(int level, LPCSTR text, LPCSTR caption, UINT type = 0)
 {
 	int alert_level = get_alert_level();
+
 	if (alert_level & level) {
 		int ret = MessageBoxA(xllGetHwnd(), text, caption, MB_OKCANCEL | type);
 		if (ret == IDCANCEL) {
@@ -59,6 +65,7 @@ inline int XLL_ALERT(int level, LPCSTR text, LPCSTR caption, UINT type = 0)
 
 	return alert_level;
 }
+
 inline int XLL_ERROR(LPCSTR text)
 {
 	return XLL_ALERT(XLL_ALERT_ERROR, text, "Error", MB_ICONERROR);

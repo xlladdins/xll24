@@ -5,15 +5,6 @@
 
 using namespace xll;
 
-int xll_alert_level = XLL_ALERT_ERROR | XLL_ALERT_WARNING | XLL_ALERT_INFORMATION;
-
-int WINAPI macro()
-{
-	XLL_ERROR("macro");
-
-	return TRUE;
-}
-
 // Called by Excel when the xll is opened.
 extern "C" int __declspec(dllexport) WINAPI
 xlAutoOpen(void)

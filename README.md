@@ -30,3 +30,13 @@ on the function arguments.
 A macro can do anything a user
 can do. It takes no arguments
 and returns only a success code.
+
+## Register
+
+Functions and macros are added to Excel by _register_ing them.
+You must specify the name of the C function, its signature, and
+the name Excel will use to call it. It is a good idea to specify
+the Function Wizard category and a function help description as well.
+
+Macros take no arguments and return a non-zero `int` 
+if it succeeds and 0 if it fails.

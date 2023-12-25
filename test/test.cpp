@@ -3,9 +3,10 @@
 
 using namespace xll;
 
+#ifdef _DEBUG
 int xll_test()
 {
-	Register(Macro(L"xll_test", L"TEST"));
+	Register(Macro(L"xll_test", L"XLL.TEST"));
 	try {
 		utf8::test();
 		{
@@ -90,3 +91,4 @@ int xll_test()
 }
 
 Auto<Open> xao_test(xll_test);
+#endif
