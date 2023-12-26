@@ -5,9 +5,15 @@
 namespace xll {
 
 	struct Arg {
-		OPER type, name, text;
+		OPER type, name, text, init;
+		template<class Ttype, class Tname, class Ttext, class Tinit>
+		constexpr Arg(const Ttype& type, const Tname& name, const Ttext& text, const Tinit& init = Nil())
+			: type(OPER(type)), name(OPER(name)), text(OPER(text)), init(OPER(init))
+		{ }
 	};
-	
+	//static_assert(Arg(L"a", 1.23, 123).type == L"a");
+	//static_assert(Arg("a", 1.23, 123).name == OPER(1.23));
+
 	struct Args {
 		OPER moduleText;
 		OPER procedure;
@@ -107,7 +113,12 @@ namespace xll {
 			as[i] = (LPXLOPER12)(arg + i);
 		}
 
-		ensure(xlretSuccess == Excel12(xlfRegister, &res, 30, &as[0]));
+		int ret = Excel12(xlfRegister, &res, 30, &as[0]);
+		if (ret != xlretSuccess) {
+			Excel12(xlFree, 0, 1, &res);
+			
+			throw std::runtime_error(xlret_description(ret));
+		}
 
 		return res;
 	}
