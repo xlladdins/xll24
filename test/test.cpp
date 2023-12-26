@@ -32,6 +32,7 @@ int str_test()
 		ensure(o == L"abc");
 		o &= OPER(L"def");
 		ensure(o == L"abcdef");
+		ensure((OPER(L"abc") & OPER(L"xyz")) == L"abcxyz");
 	}
 	{
 		OPER o = Text(Nil());
