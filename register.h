@@ -11,8 +11,8 @@ namespace xll {
 			: type(OPER(type)), name(OPER(name)), text(OPER(text)), init(OPER(init))
 		{ }
 	};
-	//static_assert(Arg("a", 1.23, 123).type == OPER("a"));
-	static_assert(Arg("a", 1.23, 123).name == OPER(1.23));
+	//static_assert(Arg(L"a", 1.23, 123).type == L"a");
+	//static_assert(Arg("a", 1.23, 123).name == OPER(1.23));
 
 	struct Args {
 		OPER moduleText;
