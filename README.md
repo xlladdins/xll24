@@ -39,7 +39,7 @@ if it succeeds and 0 if it fails.
 
 ## Installation
 
-NuGet
+NuGet, standard Installer?
 
 ## Usage
 
