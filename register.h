@@ -6,13 +6,10 @@ namespace xll {
 
 	struct Arg {
 		OPER type, name, text, init;
-		template<class Ttype, class Tname, class Ttext, class Tinit>
-		constexpr Arg(const Ttype& type, const Tname& name, const Ttext& text, const Tinit& init = Nil())
-			: type(OPER(type)), name(OPER(name)), text(OPER(text)), init(OPER(init))
+		Arg(const XCHAR* type, const char* name, const char* text, const OPER& init = Nil())
+			: type(OPER(type)), name(OPER(name)), text(OPER(text)), init(init)
 		{ }
 	};
-	//static_assert(Arg(L"a", 1.23, 123).type == L"a");
-	//static_assert(Arg("a", 1.23, 123).name == OPER(1.23));
 
 	struct Args {
 		OPER moduleText;
@@ -49,12 +46,22 @@ namespace xll {
 		OPER argumentHelp22;
 		int nargs = 0;
 	};
+
 	struct Macro : public Args {
-		Macro(const XCHAR* procedure, const XCHAR* functionText, const XCHAR* shortcut = 0)
-			: Args{ .procedure = OPER(procedure), .functionText = OPER(functionText), .macroType = OPER(2), .shortcutText = OPER(shortcut) }
+		Macro(const XCHAR* procedure, const XCHAR* functionText, const XCHAR* shortcut = nullptr)
+			: Args{ .procedure = OPER(procedure), 
+			        .functionText = OPER(functionText), 
+			        .macroType = OPER(2.), 
+					.shortcutText = shortcut ? OPER(shortcut) : OPER{},
+			        .nargs = 8
+			}
 		{ }
 	};
+
 	struct Function : public Args {
+		Function(const XCHAR* procedure, const XCHAR* functionText)
+			: Args{ .procedure = OPER(procedure), .functionText = OPER(functionText), .macroType = OPER(1) }
+		{ }
 		Function& Arguments(const std::initializer_list<Arg>& args)
 		{
 			int i = 0;
@@ -97,7 +104,7 @@ namespace xll {
 		}
 	};
 
-	inline OPER Register(Args args)
+	inline OPER XlfRegister(Args args)
 	{
 		OPER res;
 		LPXLOPER12 as[32];
@@ -105,15 +112,20 @@ namespace xll {
 		args.moduleText = Excel(xlGetName);
 		ensure(type(args.procedure) == xltypeStr)
 		if (args.procedure.val.str[1] != L'?') {
-			args.procedure = Excel(xlfConcatenate, args.moduleText, OPER(L"?"), args.procedure);
+			args.procedure = OPER(L"?") & args.procedure;
 		}
-		auto arg = &args;
 
-		for (int i = 0; i < 32; ++i) {
+		auto arg = &args.moduleText;
+		int i = 0;
+		while (i < args.nargs && i < 32) {
 			as[i] = (LPXLOPER12)(arg + i);
+			++i;
 		}
-
-		int ret = Excel12(xlfRegister, &res, 30, &as[0]);
+		// https://docs.microsoft.com/en-us/office/client-developer/excel/known-issues-in-excel-xll-development#argument-description-string-truncation-in-the-function-wizard
+		OPER empty(L"");
+		as[i] = &empty;
+		
+		int ret = Excel12(xlfRegister, &res, args.nargs + 1, &as[0]);
 		if (ret != xlretSuccess) {
 			Excel12(xlFree, 0, 1, &res);
 			
@@ -122,5 +134,11 @@ namespace xll {
 
 		return res;
 	}
+
+	inline void AddIn(const Args& addin)
+	{
+		Auto<Register> reg([addin]() { return XlfRegister(addin).xltype == xltypeNum; });
+	}
+
 
 } // namespace xll

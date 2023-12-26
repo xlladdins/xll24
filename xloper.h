@@ -57,7 +57,7 @@ namespace xll {
 	{
 		ensure(type(x) == xltypeMulti);
 
-		return std::span(x.val.array.lparray, x.val.array.rows * x.val.array.columns);
+		return std::span(x.val.array.lparray, size(x));
 	}
 
 	constexpr auto ref(const XLOPER12& x)
@@ -93,7 +93,8 @@ namespace xll {
 		case xltypeErr:
 			return x.val.err == y.val.err;
 		case xltypeMulti:
-			return std::equal(span(x).begin(), span(x).end(), span(y).begin(), span(y).end(), xll::equal);
+			return rows(x) == rows(y) && columns(x) == columns(y) 
+				&& std::equal(span(x).begin(), span(x).end(), span(y).begin(), span(y).end(), xll::equal);
 		case xltypeInt:
 			return x.val.w == y.val.w;
 		case xltypeSRef:

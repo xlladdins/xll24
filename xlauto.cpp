@@ -10,7 +10,6 @@ extern "C" int __declspec(dllexport) WINAPI
 xlAutoOpen(void)
 {
 	try {
-		XLL_WARNING("warn");
 		ensure (Auto<Open>::Call());
 	}
 	catch (const std::exception& ex) {

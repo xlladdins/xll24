@@ -8,6 +8,13 @@
 
 namespace xll {
 
+	// Length of null teriminated string.
+	constexpr XCHAR len(const XCHAR* s)
+	{
+		return *s ? 1 + len(s + 1) : 0;
+	}
+	static_assert(len(L"abc") == 3);
+
 	struct OPER : public XLOPER12 {
 		// Nil is the default.
 		constexpr OPER() noexcept
@@ -37,9 +44,15 @@ namespace xll {
 				alloc(str, len);
 			}
 		}
+		/*
+		template<size_t len>
+		constexpr OPER(const XCHAR (&str)[len])
+			: OPER(str, static_cast<XCHAR>(len - 1))
+		{ }
+		*/
 		// NULL terminated string
 		constexpr explicit OPER(const XCHAR* str)
-			: OPER(str, str ? static_cast<XCHAR>(wcslen(str)) : 0)
+			: OPER(str, str ? len(str) : 0)
 		{ }
 		OPER& operator=(const XCHAR* str)
 		{
@@ -52,20 +65,41 @@ namespace xll {
 		{
 			return type(*this) == xltypeStr && view(*this) == str;
 		}
-		explicit OPER(const char* str)
+		// Distinguish from OPER(bool) constructor
+		template<typename T>
+		explicit OPER(T str, typename std::enable_if<std::is_same<T, const char*>::value>::type* = nullptr)
 			: XLOPER12{ .val = {.str = utf8::mbstowcs(str)}, .xltype = xltypeStr }
 		{ }
+		OPER& operator&=(const XLOPER12& o)
+		{
+			ensure(type(*this) == xltypeStr && type(o) == xltypeStr);
+
+			std::wstring s(view(*this));
+			s.append(view(o));
+			dealloc();
+			alloc(s.c_str(), (XCHAR)s.size());
+
+			return *this;
+		}
 
 		// Bool
 		constexpr explicit OPER(bool xbool)
 			: XLOPER12{ Bool(xbool) }
 		{ }
+		bool operator==(bool xbool) const
+		{
+			return type(*this) == xltypeBool && (bool)val.xbool == xbool;
+		}
 
 		// Int
 		constexpr explicit OPER(int w) noexcept
 			: XLOPER12{ Int(w) }
 		{ }
-		
+		bool operator==(int w) const
+		{
+			return type(*this) == xltypeInt && val.w == w;
+		}
+
 		// Err
 		constexpr explicit OPER(xll::xlerr err) noexcept
 			: XLOPER12{ Err(static_cast<int>(err)) }
@@ -290,22 +324,38 @@ namespace xll {
 		}
 
 	};
-#ifdef _DEBUG
-	//static_assert(Nil().xltype == xltypeNil);
-	//static_assert(Num(1.23).val.num == 1.23);
-#endif // _DEBUG
-#ifdef _DEBUG
-#endif // _DEBUG
+
+	inline OPER Evaluate(const XLOPER12& x)
+	{
+		XLOPER12 o;
+
+		Excel12(xlfEvaluate, &o, 1, &x);
+
+		return OPER(o);
+	}
+	// Convert to string using Excel TEXT().
+	inline OPER Text(const XLOPER12& x, const OPER& format = OPER(L"General", 7))
+	{
+		XLOPER12 text;
+		
+		Excel12(xlfText, &text, 2, &x, &format);
+
+		return OPER(text);
+	}
+	// Convert string to value type using VALUE().
+	inline OPER Value(const XLOPER12& x)
+	{
+		XLOPER12 value;
+
+		Excel12(xlfValue, &value, 1, &x);
+
+		return OPER(value);
+	}
 
 } // namespace xll
 
 // Concatenate strings
 inline xll::OPER operator&(const XLOPER12& x, const XLOPER12& y)
 {
-	ensure(xll::type(x) == xltypeStr && xll::type(y) == xltypeStr);
-	
-	std::wstring xy(xll::view(x));
-	xy.append(xll::view(y));
-
-	return xll::OPER(xy.c_str(), (XCHAR)xy.size());
+	return xll::OPER(x) &= y;
 }
