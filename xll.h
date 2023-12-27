@@ -5,7 +5,7 @@
 #include "XLCALL.h"
 #include "auto.h"
 #include "error.h"
-#include "register.h"
+#include "addin.h"
 
 namespace xll {
 

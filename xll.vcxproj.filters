@@ -51,6 +51,9 @@
     <ClInclude Include="utf8.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="addin.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="XLCALL.CPP">
@@ -59,7 +62,7 @@
     <ClCompile Include="xlauto.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="xldebug.cpp">
+    <ClCompile Include="debug.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="dllmain.cpp">

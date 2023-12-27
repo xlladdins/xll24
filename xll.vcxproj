@@ -101,6 +101,7 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="addin.h" />
     <ClInclude Include="auto.h" />
     <ClInclude Include="defines.h" />
     <ClInclude Include="ensure.h" />
@@ -118,7 +119,7 @@
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="xlauto.cpp" />
     <ClCompile Include="XLCALL.CPP" />
-    <ClCompile Include="xldebug.cpp" />
+    <ClCompile Include="debug.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="README.md" />

@@ -74,10 +74,16 @@ namespace xll {
 		{
 			ensure(type(*this) == xltypeStr && type(o) == xltypeStr);
 
-			std::wstring s(view(*this));
-			s.append(view(o));
+			XLOPER12 res;
+			int ret = Excel12(xlfConcatenate, &res, 2, this, &o);
+			ensure(ret == xlretSuccess);
+			ensure(type(res) == xltypeStr);
+			res.xltype |= xlbitXLFree;
 			dealloc();
-			alloc(s.c_str(), (XCHAR)s.size());
+			if (o.xltype & xlbitXLFree) {
+				Excel12(xlFree, 0, 1, &o);
+			}
+			alloc(res.val.str + 1, res.val.str[0]);
 
 			return *this;
 		}
@@ -357,5 +363,5 @@ namespace xll {
 // Concatenate strings
 inline xll::OPER operator&(const XLOPER12& x, const XLOPER12& y)
 {
-	return xll::OPER(x) &= y;
+	return std::move(xll::OPER(x) &= y);
 }

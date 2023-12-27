@@ -32,4 +32,5 @@ namespace xll {
 			return 1;
 		}
 	};
+
 } // namespace xll

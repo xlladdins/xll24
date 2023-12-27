@@ -4,13 +4,6 @@
 
 namespace xll {
 
-	struct Arg {
-		OPER type, name, text, init;
-		Arg(const XCHAR* type, const char* name, const char* text, const OPER& init = Nil())
-			: type(OPER(type)), name(OPER(name)), text(OPER(text)), init(init)
-		{ }
-	};
-
 	struct Args {
 		OPER moduleText;
 		OPER procedure;
@@ -47,75 +40,16 @@ namespace xll {
 		int nargs = 0;
 	};
 
-	//??? move to addin.h
-	struct Macro : public Args {
-		Macro(const XCHAR* procedure, const XCHAR* functionText, const XCHAR* shortcut = nullptr)
-			: Args{ .procedure = OPER(procedure),
-					.functionText = OPER(functionText),
-					.macroType = OPER(2.),
-					.shortcutText = shortcut ? OPER(shortcut) : OPER{},
-					.nargs = 8 }
-		{ }
-	};
-
-	struct Function : public Args {
-		Function(const XCHAR* procedure, const XCHAR* functionText)
-			: Args{ .procedure = OPER(procedure),
-					.functionText = OPER(functionText),
-					.macroType = OPER(1) }
-		{ }
-		Function& Arguments(const std::initializer_list<Arg>& args)
-		{
-			int i = 0;
-			OPER* fh = &functionHelp;
-			OPER comma = OPER(L"");
-			for (auto& arg : args) {
-				ensure(nargs < 22);
-				typeText = typeText & arg.type;
-				functionText = comma & functionText;
-				fh[i] = arg.text;
-				comma = OPER(L", ");
-				++nargs;
-			}
-
-			return *this;
-		}
-		Function& Uncalced()
-		{
-			typeText = OPER(XLL_UNCALCED) & typeText;
-
-			return *this;
-		}
-		Function& Volatile()
-		{
-			typeText = OPER(XLL_VOLATILE) & typeText;
-
-			return *this;
-		}
-		Function& ThreadSafe()
-		{
-			typeText = OPER(XLL_THREAD_SAFE) & typeText;
-
-			return *this;
-		}
-		Function& Asynchronous()
-		{
-			typeText = OPER(XLL_ASYNCHRONOUS) & typeText;
-
-			return *this;
-		}
-	};
-
 	inline OPER XlfRegister(Args args)
 	{
 		OPER res;
 		LPXLOPER12 as[32];
 
 		args.moduleText = Excel(xlGetName);
-		ensure(type(args.procedure) == xltypeStr)
-			if (args.procedure.val.str[1] != L'?') {
-				args.procedure = OPER(L"?") & args.procedure;
-			}
+		ensure(type(args.procedure) == xltypeStr);
+		if (args.procedure.val.str[1] != L'?') {
+			args.procedure = OPER(L"?") & args.procedure;
+		}
 
 		auto arg = &args.moduleText;
 		int i = 0;
@@ -127,23 +61,11 @@ namespace xll {
 		OPER empty(L"");
 		as[i] = &empty;
 
-		int ret = Excel12(xlfRegister, &res, args.nargs + 1, &as[0]);
-		if (ret != xlretSuccess) {
-			if (!(res.xltype & xltypeScalar)) {
-				Excel12(xlFree, 0, 1, &res);
-			}
-
-			throw std::runtime_error(xlret_description(ret));
-		}
+		int ret = Excel12v(xlfRegister, &res, args.nargs + 1, &as[0]);
+		ensure_message(ret == xlretSuccess, xlret_description(ret));
+		ensure_message(type(res) != xltypeErr, xlerr_desription((xlerr)res.val.err));
 
 		return res;
-	}
-
-	inline void AddIn(const Args& args)
-	{
-		Auto<Register> reg([args]() { return XlfRegister(args).xltype == xltypeNum; });
-		// Auto<Unregister>
-		// Auto<Close>
 	}
 
 } // namespace xll

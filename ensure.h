@@ -24,9 +24,13 @@
 
 #if defined(DEBUG_BREAK)
 #define ensure(e) if (!(e)) { DebugBreak(); }
+#define ensure_message(e, s) if (!(e)) { DebugBreak(); }
 #else
 #define ensure(e) if (!(e)) { \
-		throw std::runtime_error(ENSURE_SPOT "\nensure: \"" #e "\" failed"); \
+		throw std::runtime_error(ENSURE_SPOT "\nensure: \"" #e "\""); \
+		} else (void)0;
+#define ensure_message(e, s) if (!(e)) { \
+		throw std::runtime_error(std::string(ENSURE_SPOT "\nensure: \"" #e "\"\nmessage: ") + s); \
 		} else (void)0;
 #endif // DEBUG_BREAK
 
