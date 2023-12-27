@@ -47,20 +47,22 @@ namespace xll {
 		int nargs = 0;
 	};
 
+	//??? move to addin.h
 	struct Macro : public Args {
 		Macro(const XCHAR* procedure, const XCHAR* functionText, const XCHAR* shortcut = nullptr)
-			: Args{ .procedure = OPER(procedure), 
-			        .functionText = OPER(functionText), 
-			        .macroType = OPER(2.), 
+			: Args{ .procedure = OPER(procedure),
+					.functionText = OPER(functionText),
+					.macroType = OPER(2.),
 					.shortcutText = shortcut ? OPER(shortcut) : OPER{},
-			        .nargs = 8
-			}
+					.nargs = 8 }
 		{ }
 	};
 
 	struct Function : public Args {
 		Function(const XCHAR* procedure, const XCHAR* functionText)
-			: Args{ .procedure = OPER(procedure), .functionText = OPER(functionText), .macroType = OPER(1) }
+			: Args{ .procedure = OPER(procedure),
+					.functionText = OPER(functionText),
+					.macroType = OPER(1) }
 		{ }
 		Function& Arguments(const std::initializer_list<Arg>& args)
 		{
@@ -111,34 +113,37 @@ namespace xll {
 
 		args.moduleText = Excel(xlGetName);
 		ensure(type(args.procedure) == xltypeStr)
-		if (args.procedure.val.str[1] != L'?') {
-			args.procedure = OPER(L"?") & args.procedure;
-		}
+			if (args.procedure.val.str[1] != L'?') {
+				args.procedure = OPER(L"?") & args.procedure;
+			}
 
 		auto arg = &args.moduleText;
 		int i = 0;
-		while (i < args.nargs && i < 32) {
+		while (i < args.nargs && i < 31) {
 			as[i] = (LPXLOPER12)(arg + i);
 			++i;
 		}
 		// https://docs.microsoft.com/en-us/office/client-developer/excel/known-issues-in-excel-xll-development#argument-description-string-truncation-in-the-function-wizard
 		OPER empty(L"");
 		as[i] = &empty;
-		
+
 		int ret = Excel12(xlfRegister, &res, args.nargs + 1, &as[0]);
 		if (ret != xlretSuccess) {
-			Excel12(xlFree, 0, 1, &res);
-			
+			if (!(res.xltype & xltypeScalar)) {
+				Excel12(xlFree, 0, 1, &res);
+			}
+
 			throw std::runtime_error(xlret_description(ret));
 		}
 
 		return res;
 	}
 
-	inline void AddIn(const Args& addin)
+	inline void AddIn(const Args& args)
 	{
-		Auto<Register> reg([addin]() { return XlfRegister(addin).xltype == xltypeNum; });
+		Auto<Register> reg([args]() { return XlfRegister(args).xltype == xltypeNum; });
+		// Auto<Unregister>
+		// Auto<Close>
 	}
-
 
 } // namespace xll
