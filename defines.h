@@ -69,11 +69,11 @@ namespace xll {
 	X(Missing, "missing function argument") \
 	X(Nil,     "empty cell")                \
 
-#define XLL_NULL(t, d) constexpr XLOPER12 t() { return XLOPER12{ .xltype = xltype##t }; }
+#define XLL_NULL(t, d) constexpr XLOPER12 t = XLOPER12{ .xltype = xltype##t };
 	XLL_NULL_TYPE(XLL_NULL)
 #undef XLL_NULL
-	static_assert(Missing().xltype == xltypeMissing);
-	static_assert(Nil().xltype == xltypeNil);
+	static_assert(Missing.xltype == xltypeMissing);
+	static_assert(Nil.xltype == xltypeNil);
 
 	// xlerrX, Excel error string, error description
 #define XLL_TYPE_ERR(X)                                                          \
@@ -88,7 +88,7 @@ namespace xll {
 #define XLL_ERR(e, s, d) constexpr XLOPER12 Err##e = XLOPER12{ .val = {.err = xlerr##e}, .xltype = xltypeErr };
 	XLL_TYPE_ERR(XLL_ERR)
 #undef XLL_ERR
-		static_assert(ErrNull.xltype == xltypeErr);
+	static_assert(ErrNull.xltype == xltypeErr);
 	static_assert(ErrNull.val.err == xlerrNull);
 
 	enum class xlerr {

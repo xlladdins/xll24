@@ -18,7 +18,7 @@ namespace xll {
 	struct OPER : public XLOPER12 {
 		// Nil is the default.
 		constexpr OPER() noexcept
-			: XLOPER12{ Nil() }
+			: XLOPER12{ Nil }
 		{ }
 
 		// Num - 64-bit IEEE floating point
@@ -35,6 +35,10 @@ namespace xll {
 		constexpr bool operator==(double num) const noexcept
 		{
 			return type(*this) == xltypeNum && val.num == num;
+		}
+		double as_num() const noexcept
+		{
+			return xll::as_num(*this);
 		}
 
 		// Str - Counted wide character string.
@@ -67,7 +71,7 @@ namespace xll {
 		}
 		// Distinguish from OPER(bool) constructor
 		template<typename T>
-		explicit OPER(T str, typename std::enable_if<std::is_same<T, const char*>::value>::type* = nullptr)
+		explicit OPER(T str, typename std::enable_if<std::is_same_v<T, const char*>>::type* = nullptr)
 			: XLOPER12{ .val = {.str = utf8::mbstowcs(str)}, .xltype = xltypeStr }
 		{ }
 		OPER& operator&=(const XLOPER12& o)
@@ -110,7 +114,7 @@ namespace xll {
 		constexpr explicit OPER(xll::xlerr err) noexcept
 			: XLOPER12{ Err(static_cast<int>(err)) }
 		{ }
-		
+
 		// Multi
 		constexpr OPER(int r, int c, const XLOPER12* a)
 		{
@@ -167,9 +171,8 @@ namespace xll {
 		OPER& operator=(const XLOPER12& x)
 		{
 			if (this != &x) {
-				OPER o(x);
 				dealloc();
-				*this = std::move(o);
+				*this = std::move(OPER(x));
 			}
 
 			return *this;
@@ -343,7 +346,7 @@ namespace xll {
 	inline OPER Text(const XLOPER12& x, const OPER& format = OPER(L"General", 7))
 	{
 		XLOPER12 text;
-		
+
 		Excel12(xlfText, &text, 2, &x, &format);
 
 		return OPER(text);

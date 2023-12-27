@@ -11,12 +11,12 @@ namespace xll {
 					.macroType = OPER(2.),
 					.shortcutText = shortcut ? OPER(shortcut) : OPER{},
 					.nargs = 8 }
-		{ }
+			{ }
 	};
 
 	struct Arg {
 		OPER type, name, text, init;
-		Arg(const XCHAR* type, const char* name, const char* text, const OPER& init = Nil())
+		Arg(const XCHAR* type, const char* name, const char* text, const OPER& init = Missing)
 			: type(OPER(type)), name(OPER(name)), text(OPER(text)), init(init)
 		{ }
 	};
@@ -69,12 +69,20 @@ namespace xll {
 		}
 	};
 
-	inline void AddIn(const Args& args)
-	{
-		Auto<Register> reg([args]() { return XlfRegister(args).xltype == xltypeNum; });
+	struct AddIn {
+		AddIn(const Args& args)
+		{
+			Auto<Open> reg([args]() { return XlfRegister(args).xltype == xltypeNum; });
+		}
+		AddIn(const AddIn&) = delete;
+		AddIn& operator=(const AddIn&) = delete;
+		~AddIn()
+		{
+			//Auto<Unregister> unreg;
+		}
 		// Auto<Unregister>
 		// Auto<Close>
-	}
+	};
 
 
 } // namespace xll

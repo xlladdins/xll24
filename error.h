@@ -10,6 +10,7 @@ enum xll_alert_type {
 };
 
 #define XLL_SUB_KEY "Software\\KALX\\xll"
+#define XLL_VALUE_NAME "AlertLevel"
 
 inline int get_alert_level()
 {
@@ -19,9 +20,9 @@ inline int get_alert_level()
 	LSTATUS status = RegCreateKeyExA(HKEY_CURRENT_USER, XLL_SUB_KEY, 0, 0, 0, KEY_READ, 0, &hkey, &disp);
 	if (status == ERROR_SUCCESS) {
 		DWORD type, size = sizeof(data);
-		status = RegQueryValueExA(hkey, "AlertLevel", 0, &type, (LPBYTE)&data, &size);
+		status = RegQueryValueExA(hkey, XLL_VALUE_NAME, 0, &type, (LPBYTE)&data, &size);
 		if (status == ERROR_FILE_NOT_FOUND) {
-			RegSetValueExA(hkey, "AlertLevel", 0, REG_DWORD, (LPBYTE)&data, sizeof(DWORD));
+			RegSetValueExA(hkey, XLL_VALUE_NAME, 0, REG_DWORD, (LPBYTE)&data, sizeof(DWORD));
 		}
 	}
 
@@ -34,7 +35,7 @@ inline void set_alert_level(int level)
 
 	LSTATUS status = RegCreateKeyExA(HKEY_CURRENT_USER, XLL_SUB_KEY, 0, 0, 0, KEY_WRITE, 0, &hkey, &disp);
 	if (status == ERROR_SUCCESS) {
-		status = RegSetValueExA(hkey, "AlertLevel", 0, REG_DWORD, (LPBYTE)&level, sizeof(DWORD));
+		status = RegSetValueExA(hkey, XLL_VALUE_NAME, 0, REG_DWORD, (LPBYTE)&level, sizeof(DWORD));
 	}
 }
 

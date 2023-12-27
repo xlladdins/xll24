@@ -4,12 +4,40 @@
 using namespace xll;
 
 #ifdef _DEBUG
+int num_test()
+{
+	{
+		OPER o(1.23);
+		ensure(type(o) == xltypeNum);
+		ensure(o.val.num == 1.23);
+		ensure(o == 1.23);
+		o = 3.21;
+		ensure(type(o) == xltypeNum);
+		ensure(o.val.num == 3.21);
+		ensure(o == 3.21);
+		OPER o2{ o };
+		ensure(o == o2);
+		o = o2;
+		ensure(!(o != o2));
+	}
+	{
+		ensure(OPER(true).as_num() == 1);
+		ensure(OPER(123).as_num() == 123);
+		ensure(OPER(1.23).as_num() == 1.23);
+		ensure(as_num(Missing) == 0);
+		ensure(as_num(Nil) == 0);
+	}
+
+	return 0;
+}
+
 int str_test()
 {
 	{
 		OPER o(L"");
 		ensure(o.xltype == xltypeStr);
 		ensure(o.val.str && o.val.str[0] == 0);
+		ensure(o == L"");
 		OPER o2{ o };
 		ensure(o == o2);
 		o = o2;
@@ -35,11 +63,11 @@ int str_test()
 		ensure((OPER(L"abc") & OPER(L"xyz")) == L"abcxyz");
 	}
 	{
-		OPER o = Text(Nil());
+		OPER o = Text(Nil);
 		ensure (o == L"0")
 	}
 	{
-		OPER o = Text(Missing());
+		OPER o = Text(Missing);
 		ensure(o == L"0");
 	}
 	{
@@ -98,27 +126,14 @@ int str_test()
 int xll_test()
 {
 	set_alert_level(7);
-	XlfRegister(Macro(L"?xll_test", L"XLL.TEST"));
+	//XlfRegister(Macro(L"?xll_test", L"XLL.TEST"));
 	try {
 		utf8::test();
+		num_test();
 		str_test();
 		{
 			OPER o;
 			ensure(o.xltype == xltypeNil);
-			OPER o2{ o };
-			ensure(o == o2);
-			o = o2;
-			ensure(!(o != o2));
-		}
-		{
-			OPER o(1.23);
-			ensure(type(o) == xltypeNum);
-			ensure(o.val.num == 1.23);
-			ensure(o == 1.23);
-			o = 3.21;
-			ensure(type(o) == xltypeNum);
-			ensure(o.val.num == 3.21);
-			ensure(o == 3.21);
 			OPER o2{ o };
 			ensure(o == o2);
 			o = o2;
@@ -172,4 +187,5 @@ int xll_test()
 }
 
 Auto<Open> xao_test(xll_test);
+//AddIn xai_test(Macro(L"xll_test", L"XLL.TEST"));
 #endif
