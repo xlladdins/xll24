@@ -1,4 +1,4 @@
-// xlexcel.h - Call Excel entry point.
+// excel.h - Call Excel entry point.
 #pragma once
 #include <algorithm>
 #include <array>

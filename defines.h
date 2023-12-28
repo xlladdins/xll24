@@ -15,24 +15,31 @@ namespace xll {
     X(Num,  num,      double,  "IEEE 64-bit floating point")          \
     X(Bool, xbool,    BOOL,    "Boolean value")                       \
     X(Err,  err,      int,     "Error type")                          \
-    X(SRef, sref.ref, XLREF12, "Single reference")                     \
+    X(SRef, sref.ref, XLREF12, "Single reference")                    \
     X(Int,  w,        int,     "32-bit signed integer")               \
 
-	constexpr int xltypeScalar = xltypeNum | xltypeBool | xltypeErr | xltypeSRef | xltypeInt;
+#define XLL_SCALAR(a, b, c, d)  | xltype##a
+	constexpr int xltypeScalar = 0 
+		XLL_TYPE_SCALAR(XLL_SCALAR)
+		;
+#undef XLL_SCALAR
 
 	template<int X> struct type_traits {};
-#define XLL_TYPE(X, v, t, d) template<> struct type_traits<xltype##X> { using type = t; };
+#define XLL_TYPE(a, b, c, d) template<> struct type_traits<xltype##a> { using type = c; };
 	XLL_TYPE_SCALAR(XLL_TYPE)
 #undef XLL_TYPE
+#ifdef _DEBUG
 	static_assert(std::is_same_v<type_traits<xltypeNum>::type, double>);
 	static_assert(std::is_same_v<type_traits<xltypeBool>::type, BOOL>);
 	static_assert(std::is_same_v<type_traits<xltypeErr>::type, int>);
 	static_assert(std::is_same_v<type_traits<xltypeSRef>::type, XLREF12>);
 	static_assert(std::is_same_v<type_traits<xltypeInt>::type, int>);
+#endif // _DEBUG
 
-#define XLL_SCALAR(n, v, t, d) constexpr XLOPER12 n(t x) { XLOPER12 o; o.xltype = xltype##n; o.val.v = x; return o; }
+#define XLL_SCALAR(a, b, c, d) constexpr XLOPER12 a(c x) { XLOPER12 o; o.xltype = xltype##a; o.val.b = x; return o; }
 	XLL_TYPE_SCALAR(XLL_SCALAR)
 #undef XLL_SCALAR
+#ifdef _DEBUG
 	static_assert(Num(1.23).xltype == xltypeNum);
 	static_assert(Num(1.23).val.num == 1.23);
 	static_assert(Bool(true).xltype == xltypeBool);
@@ -42,23 +49,46 @@ namespace xll {
 	static_assert(Err(xlerrNA).val.err == xlerrNA);
 	static_assert(Int(123).xltype == xltypeInt);
 	static_assert(Int(123).val.w == 123);
+#endif // _DEBUG
 
 #define XLL_SCALAR(n, v, t, d) constexpr t n(const XLOPER12& x) { return x.val.v; }
 	XLL_TYPE_SCALAR(XLL_SCALAR)
 #undef XLL_SCALAR
+#ifdef _DEBUG
 	static_assert(Num(Num(1.23)) == 1.23);
 	static_assert(Bool(Bool(true)) == TRUE);
+	static_assert(Err(Err(xlerrNA)) == xlerrNA);
 	static_assert(Int(Int(123)) == 123);
+#endif // _DEBUG
 
 	// types requiring allocation where xX is pointer to data
 	// xltypeX, XLOPERX::val.X, xX, XLL_X, description
 #define XLL_TYPE_ALLOC(X) \
-    X(Str,     str,     str, PSTRING, "Pointer to a counted Pascal string")    \
-    X(Multi,   array,   multi, LPOPER,  "Two dimensional array of OPER types") \
-    X(Ref,     mref.lpmref,    lpmref, LPOPER,  "Multiple reference")          \
-    X(BigData, bigdata.h.lpbData, bigdata, LPOPER,  "Blob of binary data")     \
+    X(Str,     str,                 XCHAR*,     "Pointer to a counted Pascal string")    \
+    X(Multi,   array.lparray,       LPXLOPER12, "Two dimensional array of XLOPER12 types") \
+    X(Ref,     mref.lpmref->reftbl, LPXLREF12,  "Multiple reference")          \
+    X(BigData, bigdata.h.lpbData,   BYTE*,      "Blob of binary data")     \
 
-	// xllbitX, description
+	// Return pointer to underlying data.
+#define XLL_ALLOC(a,b,c,d)  constexpr c a(const XLOPER12& x) { return x.xltype & xltype##a ? x.val.##b : nullptr; }
+	XLL_TYPE_ALLOC(XLL_ALLOC)
+#undef XLL_ALLOC
+
+	constexpr int count(const XLOPER12& x)
+	{
+		if (x.xltype & xltypeStr)
+			return x.val.str[0];
+		if (x.xltype & xltypeMulti)
+			return x.val.array.rows * x.val.array.columns;
+		if (x.xltype & xltypeRef)
+			return x.val.mref.lpmref->count;
+		if (x.xltype & xltypeBigData)
+			return x.val.bigdata.cbData;
+
+		return -1;
+	}
+
+	// xlbitX, description
 #define XLL_BIT(X) \
 	X(XLFree,  "Excel owns memory")    \
 	X(DLLFree, "AutoFree owns memory") \
@@ -72,9 +102,8 @@ namespace xll {
 #define XLL_NULL(t, d) constexpr XLOPER12 t = XLOPER12{ .xltype = xltype##t };
 	XLL_NULL_TYPE(XLL_NULL)
 #undef XLL_NULL
-	static_assert(Missing.xltype == xltypeMissing);
-	static_assert(Nil.xltype == xltypeNil);
 
+	// https://learn.microsoft.com/en-us/office/client-developer/excel/excel-worksheet-and-expression-evaluation#returning-errors
 	// xlerrX, Excel error string, error description
 #define XLL_TYPE_ERR(X)                                                          \
 	X(Null,  "#NULL!",  "intersection of two ranges that do not intersect") \
@@ -116,6 +145,7 @@ namespace xll {
 	}
 	static_assert(std::string_view(xlerr_desription(xlerr::Null)) == "intersection of two ranges that do not intersect");
 
+	// https://learn.microsoft.com/en-us/office/client-developer/excel/xlfregister-form-1#data-types
 	// Argument types for Excel Functions
 	// XLL_XXX, Excel4, Excel12, description
 #define XLL_ARG_TYPE(X)                                                      \

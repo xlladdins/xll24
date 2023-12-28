@@ -370,6 +370,8 @@ namespace xll {
 
 } // namespace xll
 
+using LPOPER = xll::OPER*;
+
 // Concatenate strings
 inline xll::OPER operator&(const XLOPER12& x, const XLOPER12& y)
 {

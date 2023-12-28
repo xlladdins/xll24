@@ -12,6 +12,14 @@ namespace xll {
 	{
 		return x.xltype & ~(xlbitFree);
 	}
+
+	// return XLFree(x) in thread-safe functions
+	constexpr LPXLOPER12 XLFree(XLOPER12& x) noexcept
+	{
+		x.xltype |= xlbitXLFree;
+
+		return &x;
+	}
 	
 	constexpr double as_num(const XLOPER12& x) noexcept
 	{
@@ -65,30 +73,22 @@ namespace xll {
 
 	constexpr std::wstring_view view(const XLOPER12& x)
 	{
-		ensure(type(x) == xltypeStr);
-
-		return std::wstring_view(x.val.str + 1, x.val.str[0]);
+		return std::wstring_view(Str(x), count(x));
 	}
 
 	constexpr auto span(const XLOPER12& x)
 	{
-		ensure(type(x) == xltypeMulti);
-
-		return std::span(x.val.array.lparray, size(x));
+		return std::span(Multi(x), count(x));
 	}
 
 	constexpr auto ref(const XLOPER12& x)
 	{
-		ensure(type(x) == xltypeRef);
-
-		return std::span(x.val.mref.lpmref->reftbl, x.val.mref.lpmref->count);
+		return std::span(Ref(x), count(x));
 	}
 
 	constexpr auto blob(const XLOPER12& x)
 	{
-		ensure(type(x) == xltypeBigData);
-
-		return std::span(x.val.bigdata.h.lpbData, x.val.bigdata.cbData);
+		return std::span(BigData(x), count(x));
 	}
 
 	constexpr bool equal(const XLOPER12& x, const XLOPER12& y)

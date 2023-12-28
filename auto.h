@@ -15,7 +15,6 @@ namespace xll {
 	class Close {};
 	class Add {};
 	class Remove {};
-	class Register {};
 
 	// Register macros to be called in xlAuto functions.
 	template<class T>

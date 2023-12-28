@@ -196,10 +196,30 @@ int multi_test()
 	return 0;
 }
 
+int evaluate_test()
+{
+	{
+		OPER o = Evaluate(OPER(L"COUNT(!A1:B2)"));
+		o = o;
+	}
+	return 0;
+}
+
+int excel_test()
+{
+	{
+		OPER o = Excel(xlSheetId);
+		ensure(o.xltype == xltypeNum);
+		ensure(o.val.num == 1);
+	}
+
+	return 0;
+}
+
 int xll_test()
 {
 	set_alert_level(7);
-	XlfRegister(Macro(L"?xll_test", L"XLL.TEST"));
+	//XlfRegister(Macro(L"?xll_test", L"XLL.TEST"));
 	try {
 		utf8::test();
 		num_test();
@@ -207,6 +227,8 @@ int xll_test()
 		err_test();
 		bool_test();
 		multi_test();
+		evaluate_test();
+		excel_test();
 	}
 	catch (const std::exception& ex) {
 		XLL_ERROR(ex.what());
