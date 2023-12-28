@@ -8,6 +8,10 @@
 namespace xll {
 
 	class Open {};
+	class Register {};
+	class OpenAfter {};
+	class CloseBefore {};
+	class Unregister {};
 	class Close {};
 	class Add {};
 	class Remove {};

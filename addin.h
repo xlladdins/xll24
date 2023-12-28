@@ -10,7 +10,7 @@ namespace xll {
 					.functionText = OPER(functionText),
 					.macroType = OPER(2.),
 					.shortcutText = shortcut ? OPER(shortcut) : OPER{},
-					.nargs = 8 }
+					.nargs = 10 }
 			{ }
 	};
 
@@ -22,21 +22,23 @@ namespace xll {
 	};
 
 	struct Function : public Args {
-		Function(const XCHAR* procedure, const XCHAR* functionText)
+		Function(const XCHAR* type, const XCHAR* procedure, const XCHAR* functionText)
 			: Args{ .procedure = OPER(procedure),
+			        .typeText = OPER(type),
 					.functionText = OPER(functionText),
-					.macroType = OPER(1) }
+					.macroType = OPER(1),
+			        .nargs = 10}
 		{ }
 		Function& Arguments(const std::initializer_list<Arg>& args)
 		{
-			int i = 0;
 			OPER* fh = &functionHelp;
 			OPER comma = OPER(L"");
+
 			for (auto& arg : args) {
 				ensure(nargs < 22);
-				typeText = typeText & arg.type;
+				typeText &= arg.type;
 				functionText = comma & functionText;
-				fh[i] = arg.text;
+				*fh++ = arg.text;
 				comma = OPER(L", ");
 				++nargs;
 			}
@@ -78,11 +80,10 @@ namespace xll {
 		AddIn& operator=(const AddIn&) = delete;
 		~AddIn()
 		{
-			//Auto<Unregister> unreg;
+			//Auto<Unregister> unregister;
 		}
 		// Auto<Unregister>
 		// Auto<Close>
 	};
-
 
 } // namespace xll

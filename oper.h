@@ -100,6 +100,13 @@ namespace xll {
 		{
 			return type(*this) == xltypeBool && (bool)val.xbool == xbool;
 		}
+		OPER& operator=(bool xbool) noexcept
+		{
+			dealloc();
+			*this = Bool(xbool);
+
+			return *this;
+		}
 
 		// Int
 		constexpr explicit OPER(int w) noexcept

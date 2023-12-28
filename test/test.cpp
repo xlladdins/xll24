@@ -26,6 +26,7 @@ int num_test()
 		ensure(OPER(1.23).as_num() == 1.23);
 		ensure(as_num(Missing) == 0);
 		ensure(as_num(Nil) == 0);
+		ensure(_isnan(OPER(L"abc").as_num()));
 	}
 
 	return 0;
@@ -89,14 +90,6 @@ int str_test()
 		ensure(o == L"123");
 		ensure(Value(o) == 123.0); // Int gets converted to Num
 	}
-	{ // Errors are impervious to Text and Evaluate
-#define ERR_TEST(a,b,c) ensure(Text(OPER(xlerr::##a)) == Err##a);
-		XLL_TYPE_ERR(ERR_TEST);
-#undef ERR_TEST
-#define ERR_TEST(a,b,c) ensure(Evaluate(OPER(b)) == Err##a);
-		XLL_TYPE_ERR(ERR_TEST)
-#undef ERR_TEST
-	}
 	{
 		OPER o = Evaluate(OPER(L"{1,2,3}"));
 		ensure(o.xltype == xltypeMulti);
@@ -123,59 +116,97 @@ int str_test()
 	return 0;
 }
 
+int err_test()
+{
+	{ // Errors are impervious to Text and Evaluate
+#define ERR_TEST(a,b,c) ensure(Text(OPER(xlerr::##a)) == Err##a);
+		XLL_TYPE_ERR(ERR_TEST);
+#undef ERR_TEST
+#define ERR_TEST(a,b,c) ensure(Evaluate(OPER(b)) == Err##a);
+		XLL_TYPE_ERR(ERR_TEST)
+#undef ERR_TEST
+	}
+	return 0;
+}
+
+int bool_test()
+{
+	{
+		OPER b(true);
+		ensure(b.xltype == xltypeBool);
+		ensure(b.val.xbool == TRUE);
+		ensure(b == true);
+		b = false;
+		ensure(b.xltype == xltypeBool);
+		ensure(b.val.xbool == FALSE);
+		ensure(b == false);
+	}
+	{
+		OPER b(L"abc");
+		ensure(b != true);
+		ensure(b != false);
+		b = true;
+		ensure(b == true);
+	}
+
+	return 0;
+}
+
+int multi_test()
+{
+	{
+		OPER m({ OPER(1.23), OPER(L"abc") });
+		ensure(type(m) == xltypeMulti);
+		ensure(m == m);
+		ensure(!(m != m))
+		ensure(rows(m) == 1);
+		ensure(columns(m) == 2);
+		ensure(size(m) == 2);
+		ensure(m[0] == 1.23);
+		ensure(m[1] == L"abc");
+		m[0] = m;
+		m[1] = m;
+		m[1][1] = m;
+		OPER m2{ m };
+		ensure(m == m2);
+		m = m2;
+		ensure(!(m != m2));
+	}
+	{
+		OPER o(L"abc");
+		ensure(type(o) == xltypeStr);
+		ensure(view(o) == L"abc");
+		o = L"de";
+		ensure(type(o) == xltypeStr);
+		ensure(o == L"de");
+		o.enlist();
+		ensure(type(o) == xltypeMulti);
+		ensure(rows(o) == 1);
+		ensure(columns(o) == 1);
+		ensure(o[0] == L"de");
+	}
+	{
+		OPER o({
+			{ L"a", OPER(1) } ,
+			{ L"b", OPER(2) } ,
+			{ L"c", OPER(3) } ,
+			});
+		ensure(size(o) == 6);
+	}
+	return 0;
+}
+
 int xll_test()
 {
 	set_alert_level(7);
-	//XlfRegister(Macro(L"?xll_test", L"XLL.TEST"));
+	XlfRegister(Macro(L"?xll_test", L"XLL.TEST"));
 	try {
 		utf8::test();
 		num_test();
 		str_test();
-		{
-			OPER o;
-			ensure(o.xltype == xltypeNil);
-			OPER o2{ o };
-			ensure(o == o2);
-			o = o2;
-			ensure(!(o != o2));
-		}
-		{
-			OPER m({ OPER(1.23), OPER(L"abc") });
-			ensure(type(m) == xltypeMulti);
-			ensure(rows(m) == 1);
-			ensure(columns(m) == 2);
-			ensure(size(m) == 2);
-			ensure(m[0] == 1.23);
-			ensure(m[1] == L"abc");
-			m[0] = m;
-			m[1] = m;
-			m[1][1] = m;
-			OPER m2{ m };
-			ensure(m == m2);
-			m = m2;
-			ensure(!(m != m2));
-		}
-		{
-			OPER o(L"abc");
-			ensure(type(o) == xltypeStr);
-			ensure(view(o) == L"abc");
-			o = L"de";
-			ensure(type(o) == xltypeStr);
-			ensure(o == L"de");
-			o.enlist();
-			ensure(type(o) == xltypeMulti);
-			ensure(rows(o) == 1);
-			ensure(columns(o) == 1);
-			ensure(o[0] == L"de");
-		}
-		{
-			OPER o({ 
-				{ L"a", OPER(1) } ,
-				{ L"b", OPER(2) } ,
-				{ L"c", OPER(3) } ,
-			});
-			ensure(size(o) == 6);
-		}
+		err_test();
+		bool_test();
+		multi_test();
 	}
 	catch (const std::exception& ex) {
 		XLL_ERROR(ex.what());

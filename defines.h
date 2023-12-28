@@ -151,6 +151,7 @@ namespace xll {
 		XLL_ARG_TYPE(XLL_ARG)
 #undef XLL_ARG
 
+	// https://learn.microsoft.com/en-us/office/client-developer/excel/calling-into-excel-from-the-dll-or-xll#return-values 
 	// xlretX, description
 #define XLL_RET_TYPE(X) \
 	X(xlretSuccess,                "success") \
