@@ -118,14 +118,18 @@ int str_test()
 
 int err_test()
 {
-	{ // Errors are impervious to Text and Evaluate
+	{
+		// Errors are impervious to Text and Evaluate
 #define ERR_TEST(a,b,c) ensure(Text(OPER(xlerr::##a)) == Err##a);
 		XLL_TYPE_ERR(ERR_TEST);
 #undef ERR_TEST
+
+		// Evaluate converts string error to XLOPER.
 #define ERR_TEST(a,b,c) ensure(Evaluate(OPER(b)) == Err##a);
 		XLL_TYPE_ERR(ERR_TEST)
 #undef ERR_TEST
 	}
+
 	return 0;
 }
 
@@ -213,9 +217,9 @@ int evaluate_test()
 int excel_test()
 {
 	{
-		OPER o = Excel(xlSheetId);
+		OPER o = Excel(xlfToday);
 		ensure(o.xltype == xltypeNum);
-		ensure(o.val.num == 1);
+		ensure(o.val.num != 0);
 	}
 
 	return 0;

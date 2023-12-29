@@ -314,7 +314,7 @@ namespace xll {
 				for (auto& o : span()) {
 					o.dealloc();
 				}
-				delete[] val.array.lparray;
+				delete[] static_cast<OPER*>(val.array.lparray);
 			}
 
 			xltype = xltypeNil;
@@ -324,7 +324,7 @@ namespace xll {
 		constexpr void alloc(const XCHAR* str, XCHAR len)
 		{
 			xltype = xltypeStr;
-			val.str = new wchar_t[1 + static_cast<size_t>(len)];
+			val.str = new XCHAR[1 + static_cast<size_t>(len)];
 			val.str[0] = len;
 			std::copy_n(str, len, val.str + 1);
 		}
@@ -334,10 +334,13 @@ namespace xll {
 			xltype = xltypeMulti;
 			val.array.rows = r;
 			val.array.columns = c;
+			val.array.lparray = nullptr;
 			if (r && c) {
-				val.array.lparray = new XLOPER12[(size_t)r * c];
-				for (int i = 0; i < r * c; ++i) {
-					new (val.array.lparray + i) OPER(a ? a[i] : OPER{});
+				val.array.lparray = new OPER[static_cast<size_t>(r) * c];
+				if (a) {
+					for (int i = 0; i < r * c; ++i) {
+						new (val.array.lparray + i) OPER(a[i]);
+					}
 				}
 			}
 		}
