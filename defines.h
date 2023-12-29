@@ -64,7 +64,7 @@ namespace xll {
 	// types requiring allocation where xX is pointer to data
 	// xltypeX, XLOPERX::val.X, xX, XLL_X, description
 #define XLL_TYPE_ALLOC(X) \
-    X(Str,     str,                 XCHAR*,     "Pointer to a counted Pascal string")    \
+    X(Str,     str + 1,                 XCHAR*,     "Pointer to a counted Pascal string")    \
     X(Multi,   array.lparray,       LPXLOPER12, "Two dimensional array of XLOPER12 types") \
     X(Ref,     mref.lpmref->reftbl, LPXLREF12,  "Multiple reference")          \
     X(BigData, bigdata.h.lpbData,   BYTE*,      "Blob of binary data")     \

@@ -1,5 +1,6 @@
 // xloper.h - XLOPER12 helpers
 #pragma once
+#include <compare>
 #include "ref.h"
 
 namespace xll {
@@ -14,13 +15,22 @@ namespace xll {
 	}
 
 	// return XLFree(x) in thread-safe functions
+	// Freed by Excel using xlFree when no longer needed.
 	constexpr LPXLOPER12 XLFree(XLOPER12& x) noexcept
 	{
 		x.xltype |= xlbitXLFree;
 
 		return &x;
 	}
-	
+	// return DLLFree(x) in thread-safe functions
+	// Excel calls xlAutoFree12 when no longer needed.
+	constexpr LPXLOPER12 DLLFree(XLOPER12& x) noexcept
+	{
+		x.xltype |= xlbitDLLFree;
+
+		return &x;
+	}
+
 	constexpr double as_num(const XLOPER12& x) noexcept
 	{
 		switch (type(x)) {
@@ -132,6 +142,12 @@ constexpr bool operator==(const XLOPER12& x, const XLOPER12& y)
 {
 	return xll::equal(x, y);
 }
+/*
+constexpr bool operator!=(const XLOPER12& x, const XLOPER12& y)
+{
+	return !operator==(x, y);
+}
+*/
 
 #ifdef _DEBUG
 static_assert(xll::equal(xll::Num(1.23), xll::Num(1.23)));

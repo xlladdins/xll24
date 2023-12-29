@@ -72,4 +72,7 @@
   <ItemGroup>
     <None Include="README.md" />
   </ItemGroup>
+  <ItemGroup>
+    <Natvis Include="Visualizers\oper.natvis" />
+  </ItemGroup>
 </Project>

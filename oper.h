@@ -168,7 +168,7 @@ namespace xll {
 				alloc(val.str + 1, val.str[0]);
 			}
 			else if (xll::type(o) == xltypeMulti) {
-				alloc(rows(o), columns(o), o.val.array.lparray);
+				alloc(rows(o), columns(o), Multi(o));
 			}
 		}
 		constexpr OPER(const OPER& o)
@@ -178,8 +178,9 @@ namespace xll {
 		OPER& operator=(const XLOPER12& x)
 		{
 			if (this != &x) {
+				OPER o(x);
 				dealloc();
-				*this = std::move(OPER(x));
+				*this = std::move(o);
 			}
 
 			return *this;
@@ -217,7 +218,7 @@ namespace xll {
 		OPER& operator[](int i)
 		{
 			if (type(*this) == xltypeMulti) {
-				return (OPER&)val.array.lparray[i];
+				return static_cast<OPER&>(Multi(*this)[i]);
 			}
 			else {
 				ensure(i == 0);
@@ -227,7 +228,7 @@ namespace xll {
 		const OPER& operator[](int i) const
 		{
 			if (type(*this) == xltypeMulti) {
-				return (const OPER&)val.array.lparray[i];
+				return static_cast<OPER&>(Multi(*this)[i]);
 			}
 			else {
 				ensure(i == 0);
@@ -238,7 +239,7 @@ namespace xll {
 		OPER& operator()(int i, int j)
 		{
 			if (type(*this) == xltypeMulti) {
-				return (OPER&)val.array.lparray[i * columns(*this) + j];
+				return static_cast<OPER&>(Multi(*this)[i * columns(*this) + j]);
 			}
 			else {
 				ensure(i == 0 && j == 0);
@@ -248,7 +249,7 @@ namespace xll {
 		const OPER& operator()(int i, int j) const
 		{
 			if (type(*this) == xltypeMulti) {
-				return (const OPER&)val.array.lparray[i * columns(*this) + j];
+				return static_cast<OPER&>(Multi(*this)[i * columns(*this) + j]);
 			}
 			else {
 				ensure(i == 0 && j == 0);
@@ -284,22 +285,41 @@ namespace xll {
 		}
 		OPER& operator[](const XCHAR* str)
 		{
-			ensure(is_object());
+			//ensure(is_object());
 			int i = index(str);
-			ensure(i < columns(*this));
+			//ensure(i < columns(*this));
 
 			return operator()(1, i);
 		}
 		const OPER& operator[](const XCHAR* str) const
 		{
-			ensure(is_object());
+			//ensure(is_object());
 			int i = index(str);
-			ensure(i < columns(*this));
+			//ensure(i < columns(*this));
 
 			return operator()(1, i);
 		}
 
 	private:
+		void dealloc()
+		{
+			// xltype & xlbitDLLFree is freed when xlAutoFree12 is called.
+			if (xltype & xlbitXLFree) {
+				::Excel12v(xlFree, 0, 1, (LPXLOPER12*)this);
+			}
+			else if (xltype == xltypeStr) {
+				delete[] val.str;
+			}
+			else if (xltype == xltypeMulti) {
+				for (auto& o : span()) {
+					o.dealloc();
+				}
+				delete[] val.array.lparray;
+			}
+
+			xltype = xltypeNil;
+		}
+
 		// Str
 		constexpr void alloc(const XCHAR* str, XCHAR len)
 		{
@@ -321,24 +341,6 @@ namespace xll {
 				}
 			}
 		}
-		void dealloc()
-		{
-			if (xltype & xlbitXLFree) {
-				::Excel12v(xlFree, 0, 1, (LPXLOPER12*)this);
-			}
-			else if (xltype == xltypeStr) {
-				delete[] val.str;
-			}
-			else if (xltype == xltypeMulti) {
-				for (auto& o : span()) {
-					o.dealloc();
-				}
-				delete[] val.array.lparray;
-			}
-
-			xltype = xltypeNil;
-		}
-
 	};
 
 	inline OPER Evaluate(const XLOPER12& x)

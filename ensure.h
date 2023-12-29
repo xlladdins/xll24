@@ -3,13 +3,14 @@
 // #define NENSURE before including to turn ensure checking off
 #pragma once
 #include <stdexcept>
+#include <string>
 
 // Define NENSURE to turn off ensure.
 #ifdef NENSURE
-#define ensure(x)
-#endif
 
-#ifndef ensure
+#define ensure(x)
+
+#else
 
 #define ENSURE_HASH_(x) #x
 #define ENSURE_STRZ_(x) ENSURE_HASH_(x)
@@ -18,7 +19,7 @@
 #define ENSURE_FUNC "\nfunction: " __FUNCTION__
 #else
 #define ENSURE_FUNC ""
-#endif
+#endif // __FUNCTION__
 #define ENSURE_LINE "\nline: " ENSURE_STRZ_(__LINE__)
 #define ENSURE_SPOT ENSURE_FILE ENSURE_LINE ENSURE_FUNC
 
@@ -34,5 +35,5 @@
 		} else (void)0;
 #endif // DEBUG_BREAK
 
-#endif // ensure
+#endif // NENSURE
 

@@ -158,15 +158,20 @@ int multi_test()
 		OPER m({ OPER(1.23), OPER(L"abc") });
 		ensure(type(m) == xltypeMulti);
 		ensure(m == m);
-		ensure(!(m != m))
+		ensure(!(m != m));
 		ensure(rows(m) == 1);
 		ensure(columns(m) == 2);
 		ensure(size(m) == 2);
 		ensure(m[0] == 1.23);
 		ensure(m[1] == L"abc");
+		OPER m0 = m;
 		m[0] = m;
+		ensure(m[0] == m0);
+		ensure(m[1] == L"abc");
 		m[1] = m;
-		m[1][1] = m;
+		ensure(m[0] == m0);
+		ensure(m[1][0] == m0);
+		ensure(m[1][1] == L"abc");
 		OPER m2{ m };
 		ensure(m == m2);
 		m = m2;
