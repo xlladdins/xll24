@@ -1,62 +1,62 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- save into %USERPROFILE%\My Documents\Visual Studio 2019\Visualizers\ -->
 <AutoVisualizer xmlns="http://schemas.microsoft.com/vstudio/debugger/natvis/2010">
-  <Type Name="fms::view&lt;*&gt;">
-    <DisplayString>{{view[{len}] = {buf,[len]na}}} </DisplayString> 
-  </Type>
-  <Type Name="xlref">
-    <AlternativeType Name="xlref12"/>
-    <DisplayString>{{rwFirst = {rwFirst} colFirst = {colFirst}}}</DisplayString>
-    <Expand>
-      <Item Name="height">rwLast - rwFirst + 1</Item>
-      <Item Name="width">colLast - colFirst + 1</Item>
-    </Expand>
-  </Type>
-  <Type Name="xlmref">
-    <AlternativeType Name="xlmref12"/>
-    <DisplayString>{{count = {count} xlref = {*reftbl}}}</DisplayString>
-  </Type>
-  <Type Name="xloper">
-    <AlternativeType Name="xloper12"/>
-    <DisplayString Condition="xltype == 0x0001">{this,[0]} xltypeNum {val.num,na}</DisplayString>
-    <DisplayString Condition="xltype == 0x0002">{this,[0]} xltypeStr {val.str,[val.str[0]+1]na} </DisplayString>
-    <DisplayString Condition="xltype == 0x1002">{this,[0]} xltypeStr {val.str,[val.str[0]+1]na} </DisplayString>
-    <DisplayString Condition="xltype == 0x4002">{this,[0]} xltypeStr {val.str,[val.str[0]+1]na} </DisplayString>
-    <DisplayString Condition="xltype == 0x0004">{this,[0]} xltypeBool {val.xbool,na}</DisplayString>
-    <DisplayString Condition="xltype == 0x0008">{this,[0]} xltypeRef[{val.mref.lpmref->count}] = {{ {val.mref.lpmref->reftbl[0]}, ... }}</DisplayString>
-    <DisplayString Condition="xltype == 0x0010">{this,[0]} xltypeErr {val.err,na}</DisplayString>
-    <DisplayString Condition="xltype == 0x0040">{this,[0]} xltypeMulti[{val.array.rows}][{val.array.columns}] = {{ {val.array.lparray[0]}, ... }}</DisplayString>
-    <DisplayString Condition="xltype == 0x1040">{this,[0]} xltypeMulti[{val.array.rows}][{val.array.columns}] = {{ {val.array.lparray[0]}, ... }}</DisplayString>
-    <DisplayString Condition="xltype == 0x4040">{this,[0]} xltypeMulti[{val.array.rows}][{val.array.columns}] = {{ {val.array.lparray[0]}, ... }}</DisplayString>
-    <DisplayString Condition="xltype == 0x0080">{this,[0]} xltypeMissing</DisplayString>
-    <DisplayString Condition="xltype == 0x0100">{this,[0]} xltypeNil</DisplayString>
-    <DisplayString Condition="xltype == 0x0400">{this,[0]} xltypeSRef {val.sref.ref}</DisplayString>
-    <DisplayString Condition="xltype == 0x0800">{this,[0]} xltypeInt {val.w,na}</DisplayString>
-    <Expand>
-      <ArrayItems Condition="xltype == 0x0002">
-        <Size>val.str[0] + 1</Size>
-        <ValuePointer>val.str</ValuePointer>
-      </ArrayItems>
-      <ArrayItems Condition="xltype == 0x1002">
-        <Size>val.str[0] + 1</Size>
-        <ValuePointer>val.str</ValuePointer>
-      </ArrayItems>
-      <ArrayItems Condition="xltype == 0x4002">
-        <Size>val.str[0] + 1</Size>
-        <ValuePointer>val.str</ValuePointer>
-      </ArrayItems>
-      <ArrayItems Condition="xltype == 0x0040">
-        <Size>val.array.rows * val.array.columns</Size>
-        <ValuePointer>val.array.lparray</ValuePointer>
-      </ArrayItems>
-      <ArrayItems Condition="xltype == 0x1040">
-        <Size>val.array.rows * val.array.columns</Size>
-        <ValuePointer>val.array.lparray</ValuePointer>
-      </ArrayItems>
-      <ArrayItems Condition="xltype == 0x4040">
-        <Size>val.array.rows * val.array.columns</Size>
-        <ValuePointer>val.array.lparray</ValuePointer>
-      </ArrayItems>
-    </Expand>
-  </Type>
- </AutoVisualizer>
+	<Type Name="fms::view&lt;*&gt;">
+		<DisplayString>{{view[{len}] = {buf,[len]na}}} </DisplayString>
+	</Type>
+	<Type Name="xlref">
+		<AlternativeType Name="xlref12"/>
+		<DisplayString>{{rwFirst = {rwFirst} colFirst = {colFirst}}}</DisplayString>
+		<Expand>
+			<Item Name="height">rwLast - rwFirst + 1</Item>
+			<Item Name="width">colLast - colFirst + 1</Item>
+		</Expand>
+	</Type>
+	<Type Name="xlmref">
+		<AlternativeType Name="xlmref12"/>
+		<DisplayString>{{count = {count} xlref = {*reftbl}}}</DisplayString>
+	</Type>
+	<Type Name="xloper">
+		<AlternativeType Name="xloper12"/>
+		<DisplayString Condition="xltype == 0x0001">{this,[0]} xltypeNum {val.num,na}</DisplayString>
+		<DisplayString Condition="xltype == 0x0002">{this,[0]} xltypeStr {val.str,[val.str[0]+1]na} </DisplayString>
+		<DisplayString Condition="xltype == 0x1002">{this,[0]} xltypeStr {val.str,[val.str[0]+1]na} </DisplayString>
+		<DisplayString Condition="xltype == 0x4002">{this,[0]} xltypeStr {val.str,[val.str[0]+1]na} </DisplayString>
+		<DisplayString Condition="xltype == 0x0004">{this,[0]} xltypeBool {val.xbool,na}</DisplayString>
+		<DisplayString Condition="xltype == 0x0008">{this,[0]} xltypeRef[{val.mref.lpmref->count}] = {{ {val.mref.lpmref->reftbl[0]}, ... }}</DisplayString>
+		<DisplayString Condition="xltype == 0x0010">{this,[0]} xltypeErr {val.err,na}</DisplayString>
+		<DisplayString Condition="xltype == 0x0040">{this,[0]} xltypeMulti[{val.array.rows}][{val.array.columns}] = {{ {val.array.lparray[0]}, ... }}</DisplayString>
+		<DisplayString Condition="xltype == 0x1040">{this,[0]} xltypeMulti[{val.array.rows}][{val.array.columns}] = {{ {val.array.lparray[0]}, ... }}</DisplayString>
+		<DisplayString Condition="xltype == 0x4040">{this,[0]} xltypeMulti[{val.array.rows}][{val.array.columns}] = {{ {val.array.lparray[0]}, ... }}</DisplayString>
+		<DisplayString Condition="xltype == 0x0080">{this,[0]} xltypeMissing</DisplayString>
+		<DisplayString Condition="xltype == 0x0100">{this,[0]} xltypeNil</DisplayString>
+		<DisplayString Condition="xltype == 0x0400">{this,[0]} xltypeSRef {val.sref.ref}</DisplayString>
+		<DisplayString Condition="xltype == 0x0800">{this,[0]} xltypeInt {val.w,na}</DisplayString>
+		<Expand>
+			<ArrayItems Condition="xltype == 0x0002">
+				<Size>val.str[0] + 1</Size>
+				<ValuePointer>val.str</ValuePointer>
+			</ArrayItems>
+			<ArrayItems Condition="xltype == 0x1002">
+				<Size>val.str[0] + 1</Size>
+				<ValuePointer>val.str</ValuePointer>
+			</ArrayItems>
+			<ArrayItems Condition="xltype == 0x4002">
+				<Size>val.str[0] + 1</Size>
+				<ValuePointer>val.str</ValuePointer>
+			</ArrayItems>
+			<ArrayItems Condition="xltype == 0x0040">
+				<Size>val.array.rows * val.array.columns</Size>
+				<ValuePointer>val.array.lparray</ValuePointer>
+			</ArrayItems>
+			<ArrayItems Condition="xltype == 0x1040">
+				<Size>val.array.rows * val.array.columns</Size>
+				<ValuePointer>val.array.lparray</ValuePointer>
+			</ArrayItems>
+			<ArrayItems Condition="xltype == 0x4040">
+				<Size>val.array.rows * val.array.columns</Size>
+				<ValuePointer>val.array.lparray</ValuePointer>
+			</ArrayItems>
+		</Expand>
+	</Type>
+</AutoVisualizer>

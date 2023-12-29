@@ -76,7 +76,7 @@ namespace xll {
 		int ret = Excel12v(xlfRegister, &res, args.nargs + 1, &as[0]);
 
 		ensure_message(ret == xlretSuccess, xlret_description(ret));
-		ensure_message(type(res) != xltypeErr, xlerr_desription((xlerr)res.val.err));
+		ensure_message(type(res) != xltypeErr, xlerr_description((xlerr)res.val.err));
 		ensure_message(type(res) == xltypeNum, "return type of xlfRegister must be the numeric RegisterId");
 
 		return res;

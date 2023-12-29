@@ -154,14 +154,14 @@ namespace xll {
 	}
 	static_assert(std::string_view(xlerr_string(xlerr::Null)) == "#NULL!");
 
-	constexpr const char* xlerr_desription(xlerr err)
+	constexpr const char* xlerr_description(xlerr err)
 	{
-#define XLL_ERR_DESC(e, s, d) if (err == xlerr::##e) return d;
+#define XLL_ERR_DESC(e, s, d) if (err == xlerr::##e) return s ": " d;
 		XLL_TYPE_ERR(XLL_ERR_DESC)
 #undef XLL_ERR_DESC
 			return "unknown xlerr type";
 	}
-	static_assert(std::string_view(xlerr_desription(xlerr::Null)) == "intersection of two ranges that do not intersect");
+	static_assert(std::string_view(xlerr_description(xlerr::Null)) == "#NULL!: intersection of two ranges that do not intersect");
 
 	// https://learn.microsoft.com/en-us/office/client-developer/excel/xlfregister-form-1#data-types
 	// Argument types for Excel Functions
