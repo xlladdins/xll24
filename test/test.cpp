@@ -218,8 +218,8 @@ int excel_test()
 {
 	{
 		OPER o = Excel(xlfToday);
-		ensure(o.xltype == xltypeNum);
-		ensure(o.val.num != 0);
+		OPER p = Excel(xlfDate, Excel(xlfYear, o), Excel(xlfMonth, o), Excel(xlfDay, o));
+		ensure(o == p);
 	}
 
 	return 0;

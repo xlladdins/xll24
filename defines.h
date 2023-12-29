@@ -23,6 +23,10 @@ namespace xll {
 		XLL_TYPE_SCALAR(XLL_SCALAR)
 		;
 #undef XLL_SCALAR
+	constexpr bool is_scalar(const XLOPER12& x)
+	{
+		return x.xltype & xltypeScalar;
+	}
 
 	template<int X> struct type_traits {};
 #define XLL_TYPE(a, b, c, d) template<> struct type_traits<xltype##a> { using type = c; };
@@ -71,6 +75,20 @@ namespace xll {
 
 	// Return pointer to underlying data.
 #define XLL_ALLOC(a,b,c,d)  constexpr c a(const XLOPER12& x) { return x.xltype & xltype##a ? x.val.##b : nullptr; }
+	XLL_TYPE_ALLOC(XLL_ALLOC)
+#undef XLL_ALLOC
+
+#define XLL_ALLOC(a, b, c, d)  | xltype##a
+		constexpr int xltypeAlloc = 0
+		XLL_TYPE_ALLOC(XLL_ALLOC)
+		;
+#undef XLL_ALLOC
+	constexpr bool is_alloc(const XLOPER12& x)
+	{
+		return x.xltype & xltypeAlloc;
+	}
+
+#define XLL_ALLOC(a, b, c, d) template<> struct type_traits<xltype##a> { using type = c; };
 	XLL_TYPE_ALLOC(XLL_ALLOC)
 #undef XLL_ALLOC
 

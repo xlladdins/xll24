@@ -357,11 +357,14 @@ namespace xll {
 	// Convert to string using Excel TEXT().
 	inline OPER Text(const XLOPER12& x, const OPER& format = OPER(L"General", 7))
 	{
-		XLOPER12 text;
+		OPER text;
 
 		Excel12(xlfText, &text, 2, &x, &format);
+		if (is_alloc(text)) {
+			text.xltype |= xlbitXLFree;
+		}
 
-		return OPER(text);
+		return text;
 	}
 	// Convert string to value type using VALUE().
 	inline OPER Value(const XLOPER12& x)
