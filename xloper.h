@@ -141,8 +141,8 @@ constexpr bool operator==(const XLOPER12& x, const XLOPER12& y)
 {
 	return xll::equal(x, y);
 }
-
 #ifdef _DEBUG
 static_assert(xll::equal(xll::Num(1.23), xll::Num(1.23)));
 static_assert(xll::Num(1.23) == xll::Num(1.23));
 #endif // _DEBUG
+

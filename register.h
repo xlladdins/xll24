@@ -9,12 +9,23 @@ namespace xll {
 	{
 		static OPER x;
 
-		if (info.xltype == 2) { // xltypeStr
+		if (info.xltype == xltypeStr) {
 			x = info;
 		}
 
 		return &x;
 	}
+
+	struct Arg {
+		enum Type {
+			typeText, argumentText, functionHelp
+		};
+		OPER type, name, text;
+		template<class T> requires xll::is_char<T>::value
+			Arg(const T* type, const T* name, const T* text)
+			: type(OPER(type)), name(OPER(name)), text(OPER(text))
+		{ }
+	};
 
 	struct Args {
 		OPER moduleText;
@@ -26,57 +37,46 @@ namespace xll {
 		OPER category;
 		OPER shortcutText;
 		OPER helpTopic;
-		OPER functionHelp;
-		OPER argumentHelp1;
-		OPER argumentHelp2;
-		OPER argumentHelp3;
-		OPER argumentHelp4;
-		OPER argumentHelp5;
-		OPER argumentHelp6;
-		OPER argumentHelp7;
-		OPER argumentHelp8;
-		OPER argumentHelp9;
-		OPER argumentHelp10;
-		OPER argumentHelp11;
-		OPER argumentHelp12;
-		OPER argumentHelp13;
-		OPER argumentHelp14;
-		OPER argumentHelp15;
-		OPER argumentHelp16;
-		OPER argumentHelp17;
-		OPER argumentHelp18;
-		OPER argumentHelp19;
-		OPER argumentHelp20;
-		OPER argumentHelp21;
-		OPER argumentHelp22;
-		int nargs = 0;
+		OPER functionHelp[23];
 	};
 
+	// https://learn.microsoft.com/en-us/office/client-developer/excel/xlfregister-form-1
 	inline OPER XlfRegister(Args args)
 	{
 		OPER res;
-		LPXLOPER12 as[32];
 
+		// moduleText
 		args.moduleText = Excel(xlGetName);
+
+		// procedure
 		ensure(type(args.procedure) == xltypeStr);
 		if (args.procedure.val.str[1] != L'?') {
 			args.procedure = OPER(L"?") & args.procedure;
 		}
 
-		auto arg = &args.moduleText;
+		// typeText, argumentText, functionHelp
 		int i = 0;
-		while (i < args.nargs && i < 31) {
-			as[i] = (LPXLOPER12)(arg + i);
+		OPER comma = OPER(L"");
+		while (args.functionHelp[i].xltype != xltypeNil) {
+			args.typeText = args.typeText & args.functionHelp[i][Arg::Type::typeText];
+			args.argumentText &= comma & args.functionHelp[i][Arg::Type::argumentText];
+			args.functionHelp[i] = args.functionHelp[i][Arg::Type::functionHelp];
+			comma = OPER(L", ");
 			++i;
 		}
+
+		LPXLOPER12 as[32];
+		XLOPER12* arg = &args.moduleText;
+		std::transform(arg, arg + 9 + i, as, [](XLOPER12& o) { return &o; });
+
 		// https://docs.microsoft.com/en-us/office/client-developer/excel/known-issues-in-excel-xll-development#argument-description-string-truncation-in-the-function-wizard
 		OPER empty(L"");
-		as[i] = &empty;
+		as[9 + i + 1] = &empty;
 
-		int ret = Excel12v(xlfRegister, &res, args.nargs + 1, &as[0]);
+		int ret = ::Excel12v(xlfRegister, &res, 9 + i + 1, &as[0]);
 
-		ensure_message(ret == xlretSuccess, xlret_description(ret));
-		ensure_message(type(res) != xltypeErr, xlerr_description((xlerr)res.val.err));
+		ensure_ret(ret);
+		ensure_err(res);
 		ensure_message(type(res) == xltypeNum, "return type of xlfRegister must be the numeric RegisterId");
 
 		return res;
@@ -85,7 +85,7 @@ namespace xll {
 	// Really unregister a function.
 	// https://docs.microsoft.com/en-us/office/client-developer/excel/known-issues-in-excel-xll-development#unregistering-xll-commands-and-functions
 	// https://stackoverflow.com/questions/15343282/how-to-remove-an-excel-udf-programmatically
-	inline OPER Unregister(const OPER& key)
+	inline OPER XlfUnregister(const OPER& key)
 	{
 		OPER regid = Excel(xlfEvaluate, key);
 		if (type(regid) != xltypeNum) {

@@ -10,16 +10,8 @@ namespace xll {
 			: Args{ .procedure = OPER(procedure),
 					.functionText = OPER(functionText),
 					.macroType = OPER(2.),
-					.shortcutText = shortcut ? OPER(shortcut) : OPER{},
-					.nargs = 10 }
-			{ }
-	};
-
-	struct Arg {
-		OPER type, name, text, init;
-		template<class T> requires xll::is_char<T>::value
-		Arg(const T* type, const T* name, const T* text, const OPER& init = Missing)
-			: type(OPER(type)), name(OPER(name)), text(OPER(text)), init(init)
+					.shortcutText = shortcut ? OPER(shortcut) : OPER{}
+		}
 		{ }
 	};
 
@@ -27,24 +19,17 @@ namespace xll {
 		template<class T> requires xll::is_char<T>::value
 		Function(const T* type, const T* procedure, const T* functionText)
 			: Args{ .procedure = OPER(procedure),
-			        .typeText = OPER(type),
+					.typeText = OPER(type),
 					.functionText = OPER(functionText),
-					.macroType = OPER(1),
-			        .nargs = 10}
+					.macroType = OPER(1) }
 		{ }
 		Function& Arguments(const std::initializer_list<Arg>& args)
 		{
-			OPER* fh = &functionHelp;
-			OPER comma = OPER(L"");
-
-			for (auto& arg : args) {
-				ensure(nargs < 22);
-				typeText &= arg.type;
-				functionText = comma & functionText;
-				*fh++ = arg.text;
-				comma = OPER(L", ");
-				++nargs;
+			OPER* fh = &functionHelp[0];
+			for (const auto& arg : args) {
+				*fh++ = OPER({ arg.type, arg.name, arg.text });
 			}
+			*fh = Nil;
 
 			return *this;
 		}

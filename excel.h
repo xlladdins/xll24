@@ -17,8 +17,8 @@ namespace xll {
 		std::transform(os.begin(), os.end(), as, [](OPER& o) { return &o; });
 
 		int ret = ::Excel12v(fn, &res, sizeof...(ts), &as[0]);
-		ensure_message(ret == xlretSuccess, xlret_description(ret));
-		if (!(res.xltype & xltypeScalar)) {
+		ensure_ret(ret);
+		if (res.xltype & xltypeAlloc) {
 			res.xltype |= xlbitXLFree;
 		}
 
@@ -30,8 +30,8 @@ namespace xll {
 		OPER res;
 
 		int ret = ::Excel12v(fn, &res, 0, nullptr);
-		ensure_message(ret == xlretSuccess, xlret_description(ret));
-		if (!(res.xltype & xltypeScalar)) {
+		ensure_ret(ret);
+		if (res.xltype & xltypeAlloc) {
 			res.xltype |= xlbitXLFree;
 		}
 

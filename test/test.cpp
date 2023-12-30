@@ -61,7 +61,7 @@ int str_test()
 		ensure(o == L"abc");
 		o &= OPER(L"def");
 		ensure(o == L"abcdef");
-		ensure((OPER(L"abc") & OPER(L"xyz")) == L"abcxyz");
+		ensure((OPER(L"abc") & OPER(L"xyz")) == OPER(L"abcxyz"));
 	}
 	{
 		OPER o = Text(Nil);
@@ -257,7 +257,16 @@ int excel_test()
 int xll_test()
 {
 	set_alert_level(7);
-	XlfRegister(Macro(L"?xll_test", L"XLL.TEST"));
+	//XlfRegister(Macro(L"?xll_test", L"XLL.TEST"));
+	/*
+	const auto& fargs = Function(XLL_DOUBLE, L"?xll_func", L"XLL.FUNC")
+		.Arguments({
+			Arg(XLL_DOUBLE, L"x", L"is a number.")
+			})
+		;
+	XlfRegister(fargs);
+	*/
+
 	try {
 		utf8::test();
 		num_test();
@@ -279,4 +288,21 @@ int xll_test()
 
 Auto<Open> xao_test(xll_test);
 //AddIn xai_test(Macro(L"xll_test", L"XLL.TEST"));
+
+AddIn xai_func(Function(XLL_DOUBLE, L"?xll_func", L"XLL.FUNC")
+	.Arguments({
+		Arg(XLL_DOUBLE, L"x", L"is a number."),
+		Arg(XLL_DOUBLE, L"y", L"is a number.")
+		})
+//	.Category(L"XLL")
+//	.FunctionHelp(L"Return x + y.")
+//	.Documentation(L"Optional documentation.")
+);
+double WINAPI xll_func(double x, double y)
+{
+#pragma XLLEXPORT
+	return x + y;
+}
+
+
 #endif

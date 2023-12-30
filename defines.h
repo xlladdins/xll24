@@ -175,6 +175,8 @@ namespace xll {
 	}
 	static_assert(std::string_view(xlerr_description(xlerr::Null)) == "#NULL!: intersection of two ranges that do not intersect");
 
+#define ensure_err(res) ensure_message(xll::type(res) != xltypeErr, xll::xlerr_description((xll::xlerr)res.val.err));
+
 	// https://learn.microsoft.com/en-us/office/client-developer/excel/xlfregister-form-1#data-types
 	// Argument types for Excel Functions
 	// XLL_XXX, Excel4, Excel12, description
@@ -203,11 +205,11 @@ namespace xll {
 	X(CLUSTER_SAFE, "", "&", "declares function to be cluster safe")             \
 	X(ASYNCHRONOUS, "", "X", "declares function to be asynchronous")             \
 
-#define XLL_ARG(a,b,c,d) constexpr const wchar_t* XLL_##a##4 = L#b;
+#define XLL_ARG(a,b,c,d) constexpr const wchar_t* XLL_##a##4 = TEXT(b);
 	XLL_ARG_TYPE(XLL_ARG)
 #undef XLL_ARG
 
-#define XLL_ARG(a,b,c,d) constexpr const wchar_t* XLL_##a = L#c;
+#define XLL_ARG(a,b,c,d) constexpr const wchar_t* XLL_##a = TEXT(c);
 		XLL_ARG_TYPE(XLL_ARG)
 #undef XLL_ARG
 
@@ -233,5 +235,6 @@ namespace xll {
 #undef XLL_RET
 		return "xlret type unknown";
 	}
+	#define	ensure_ret(ret) ensure_message(ret == xlretSuccess, xll::xlret_description(ret));
 
 } // namespace xll

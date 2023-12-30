@@ -84,14 +84,14 @@ namespace xll {
 		{ }
 		OPER& operator&=(const XLOPER12& o)
 		{
-			ensure(type(*this) == xltypeStr && type(o) == xltypeStr);
-
 			XLOPER12 res;
-			int ret = Excel12(xlfConcatenate, &res, 2, this, &o);
-			ensure(ret == xlretSuccess);
-			ensure(type(res) == xltypeStr);
-			alloc(res.val.str + 1, res.val.str[0]);
-			Excel12(xlFree, 0, 1, &res);
+
+			int ret = ::Excel12(xlfConcatenate, &res, 2, this, &o);
+			ensure_ret(ret);
+			ensure_err(res);
+			ensure(xll::type(res) == xltypeStr);
+			operator=(res);
+			::Excel12(xlFree, 0, 1, &res);
 
 			return *this;
 		}
@@ -393,8 +393,10 @@ namespace xll {
 
 using LPOPER = xll::OPER*;
 
-// Concatenate strings
-inline xll::OPER operator&(const XLOPER12& x, const XLOPER12& y)
+inline xll::OPER operator&(const xll::OPER& x, const xll::OPER& y)
 {
-	return xll::OPER(x) &= y;
+	xll::OPER z(x);
+	z &= y;
+
+	return z;
 }
