@@ -12,11 +12,11 @@ namespace xll {
 
 	// xltypeX, XLOPER12::val.X, X, description
 #define XLL_TYPE_SCALAR(X) \
-    X(Num,  num,      double,  "IEEE 64-bit floating point")          \
-    X(Bool, xbool,    BOOL,    "Boolean value")                       \
-    X(Err,  err,      int,     "Error type")                          \
-    X(SRef, sref.ref, XLREF12, "Single reference")                    \
-    X(Int,  w,        int,     "32-bit signed integer")               \
+    X(Num,  num,      double,  "IEEE 64-bit floating point") \
+    X(Bool, xbool,    BOOL,    "Boolean value")              \
+    X(Err,  err,      int,     "Error type")                 \
+    X(SRef, sref.ref, XLREF12, "Single reference")           \
+    X(Int,  w,        int,     "32-bit signed integer")      \
 
 #define XLL_SCALAR(a, b, c, d)  | xltype##a
 	constexpr int xltypeScalar = 0 
@@ -40,6 +40,7 @@ namespace xll {
 	static_assert(std::is_same_v<type_traits<xltypeInt>::type, int>);
 #endif // _DEBUG
 
+	// Create XLOPER12 from scalar.
 #define XLL_SCALAR(a, b, c, d) constexpr XLOPER12 a(c x) { XLOPER12 o; o.xltype = xltype##a; o.val.b = x; return o; }
 	XLL_TYPE_SCALAR(XLL_SCALAR)
 #undef XLL_SCALAR
@@ -51,10 +52,12 @@ namespace xll {
 	static_assert(Bool(false).val.xbool == FALSE);
 	static_assert(Err(xlerrNA).xltype == xltypeErr);
 	static_assert(Err(xlerrNA).val.err == xlerrNA);
+	//static_assert(SRef(XLREF12{ 1,2,3,4 }).xltype == xltypeSRef);
 	static_assert(Int(123).xltype == xltypeInt);
 	static_assert(Int(123).val.w == 123);
 #endif // _DEBUG
 
+	// Return scalar from XLOPER12.
 #define XLL_SCALAR(n, v, t, d) constexpr t n(const XLOPER12& x) { return x.val.v; }
 	XLL_TYPE_SCALAR(XLL_SCALAR)
 #undef XLL_SCALAR
@@ -68,10 +71,10 @@ namespace xll {
 	// types requiring allocation where xX is pointer to data
 	// xltypeX, XLOPERX::val.X, xX, XLL_X, description
 #define XLL_TYPE_ALLOC(X) \
-    X(Str,     str + 1,                 XCHAR*,     "Pointer to a counted Pascal string")    \
+    X(Str,     str + 1,             XCHAR*,     "Pointer to a counted Pascal string")      \
     X(Multi,   array.lparray,       LPXLOPER12, "Two dimensional array of XLOPER12 types") \
-    X(Ref,     mref.lpmref->reftbl, LPXLREF12,  "Multiple reference")          \
-    X(BigData, bigdata.h.lpbData,   BYTE*,      "Blob of binary data")     \
+    X(Ref,     mref.lpmref->reftbl, LPXLREF12,  "Multiple reference")                      \
+    X(BigData, bigdata.h.lpbData,   BYTE*,      "Blob of binary data")                     \
 
 	// Return pointer to underlying data.
 #define XLL_ALLOC(a,b,c,d)  constexpr c a(const XLOPER12& x) { return x.xltype & xltype##a ? x.val.##b : nullptr; }
@@ -91,7 +94,14 @@ namespace xll {
 #define XLL_ALLOC(a, b, c, d) template<> struct type_traits<xltype##a> { using type = c; };
 	XLL_TYPE_ALLOC(XLL_ALLOC)
 #undef XLL_ALLOC
+#ifdef _DEBUG
+	static_assert(std::is_same_v<type_traits<xltypeStr>::type, XCHAR*>);	
+	static_assert(std::is_same_v<type_traits<xltypeMulti>::type, LPXLOPER12>);
+	static_assert(std::is_same_v<type_traits<xltypeRef>::type, LPXLREF12>);
+	static_assert(std::is_same_v<type_traits<xltypeBigData>::type, BYTE*>);
+#endif // _DEBUG
 
+	// Argument for std::span(ptr, count).
 	constexpr int count(const XLOPER12& x)
 	{
 		if (x.xltype & xltypeStr)
@@ -123,7 +133,7 @@ namespace xll {
 
 	// https://learn.microsoft.com/en-us/office/client-developer/excel/excel-worksheet-and-expression-evaluation#returning-errors
 	// xlerrX, Excel error string, error description
-#define XLL_TYPE_ERR(X)                                                          \
+#define XLL_TYPE_ERR(X)                                                     \
 	X(Null,  "#NULL!",  "intersection of two ranges that do not intersect") \
 	X(Div0,  "#DIV/0!", "formula divides by zero")                          \
 	X(Value, "#VALUE!", "variable in formula has wrong type")               \
@@ -135,8 +145,10 @@ namespace xll {
 #define XLL_ERR(e, s, d) constexpr XLOPER12 Err##e = XLOPER12{ .val = {.err = xlerr##e}, .xltype = xltypeErr };
 	XLL_TYPE_ERR(XLL_ERR)
 #undef XLL_ERR
+#ifdef _DEBUG
 	static_assert(ErrNull.xltype == xltypeErr);
 	static_assert(ErrNull.val.err == xlerrNull);
+#endif // _DEBUG
 
 	enum class xlerr {
 #define XLL_ERR_ENUM(e, s, d) e = xlerr##e, 
@@ -166,7 +178,7 @@ namespace xll {
 	// https://learn.microsoft.com/en-us/office/client-developer/excel/xlfregister-form-1#data-types
 	// Argument types for Excel Functions
 	// XLL_XXX, Excel4, Excel12, description
-#define XLL_ARG_TYPE(X)                                                      \
+#define XLL_ARG_TYPE(X)                                                          \
 	X(BOOL,     "A", "A",  "short int used as logical")                          \
 	X(DOUBLE,   "B", "B",  "double")                                             \
 	X(CSTRING,  "C", "C%", "XCHAR* to C style NULL terminated unicode string")   \
@@ -201,18 +213,18 @@ namespace xll {
 
 	// https://learn.microsoft.com/en-us/office/client-developer/excel/calling-into-excel-from-the-dll-or-xll#return-values 
 	// xlretX, description
-#define XLL_RET_TYPE(X) \
-	X(xlretSuccess,                "success") \
-	X(xlretAbort,                  "macro halted") \
-	X(xlretInvXlfn,                "invalid function number") \
-	X(xlretInvCount,               "invalid number of arguments") \
-	X(xlretInvXloper,              "invalid OPER structure") \
-	X(xlretStackOvfl,              "stack overflow") \
-	X(xlretFailed,                 "command failed") \
-	X(xlretUncalced,               "uncalculated cell") \
+#define XLL_RET_TYPE(X)                                                      \
+	X(xlretSuccess,                "success")                                \
+	X(xlretAbort,                  "macro halted")                           \
+	X(xlretInvXlfn,                "invalid function number")                \
+	X(xlretInvCount,               "invalid number of arguments")            \
+	X(xlretInvXloper,              "invalid OPER structure")                 \
+	X(xlretStackOvfl,              "stack overflow")                         \
+	X(xlretFailed,                 "command failed")                         \
+	X(xlretUncalced,               "uncalculated cell")                      \
 	X(xlretNotThreadSafe,          "not allowed during multi-threaded calc") \
-	X(xlretInvAsynchronousContext, "invalid asynchronous function handle") \
-	X(xlretNotClusterSafe,         "not supported on cluster") \
+	X(xlretInvAsynchronousContext, "invalid asynchronous function handle")   \
+	X(xlretNotClusterSafe,         "not supported on cluster")               \
 
 	inline const char* xlret_description(int ret)
 	{
@@ -221,4 +233,5 @@ namespace xll {
 #undef XLL_RET
 		return "xlret type unknown";
 	}
+
 } // namespace xll

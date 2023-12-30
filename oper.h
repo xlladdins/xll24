@@ -8,7 +8,7 @@
 
 namespace xll {
 
-	// Length of null teriminated string.
+	// Length of null terminated string.
 	constexpr XCHAR len(const XCHAR* s)
 	{
 		return *s ? 1 + len(s + 1) : 0;
@@ -82,12 +82,8 @@ namespace xll {
 			int ret = Excel12(xlfConcatenate, &res, 2, this, &o);
 			ensure(ret == xlretSuccess);
 			ensure(type(res) == xltypeStr);
-			res.xltype |= xlbitXLFree;
-			dealloc();
-			if (o.xltype & xlbitXLFree) {
-				Excel12(xlFree, 0, 1, &o);
-			}
 			alloc(res.val.str + 1, res.val.str[0]);
+			Excel12(xlFree, 0, 1, &res);
 
 			return *this;
 		}
@@ -114,7 +110,14 @@ namespace xll {
 		{ }
 		bool operator==(int w) const
 		{
-			return type(*this) == xltypeInt && val.w == w;
+			switch (type(*this)) {
+				case xltypeInt:
+					return val.w == w;
+				case xltypeNum:
+					return val.num == w;
+			}
+
+			return false;
 		}
 
 		// Err
@@ -326,7 +329,9 @@ namespace xll {
 			xltype = xltypeStr;
 			val.str = new XCHAR[1 + static_cast<size_t>(len)];
 			val.str[0] = len;
-			std::copy_n(str, len, val.str + 1);
+			if (str) {
+				std::copy_n(str, len, val.str + 1);
+			}
 		}
 		// Multi
 		constexpr void alloc(int r, int c, const XLOPER12* a)
@@ -342,6 +347,9 @@ namespace xll {
 						new (val.array.lparray + i) OPER(a[i]);
 					}
 				}
+			}
+			else {
+				xltype = xltypeNil;
 			}
 		}
 	};
@@ -380,5 +388,5 @@ using LPOPER = xll::OPER*;
 // Concatenate strings
 inline xll::OPER operator&(const XLOPER12& x, const XLOPER12& y)
 {
-	return std::move(xll::OPER(x) &= y);
+	return xll::OPER(x) &= y;
 }

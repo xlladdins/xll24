@@ -74,7 +74,7 @@ namespace xll {
 	struct AddIn {
 		AddIn(const Args& args)
 		{
-			Auto<Open> reg([args]() { return XlfRegister(args).xltype == xltypeNum; });
+			Auto<Register> reg([args]() { return XlfRegister(args).xltype == xltypeNum; });
 		}
 		AddIn(const AddIn&) = delete;
 		AddIn& operator=(const AddIn&) = delete;

@@ -22,6 +22,7 @@ namespace xll {
 		constexpr REF(const XLREF12& r) noexcept
 			: XLREF12(r)
 		{ }
+		// Upper left corner and optional width and height.
 		constexpr REF(int r, int c, int w = 1, int h = 1) noexcept
 			: XLREF12{ .rwFirst = r, .rwLast = r + w - 1, .colFirst = c, .colLast = c + h - 1 }
 		{ }

@@ -208,15 +208,29 @@ int multi_test()
 			});
 		ensure(size(o) == 6);
 	}
+	{
+		OPER o({ OPER(L"a"),OPER(L"b") });
+		o[0] = o;
+		o[0][0] = o;
+		o[0][0][0] = o;
+	}
+
 	return 0;
 }
 
 int evaluate_test()
 {
 	{
-		OPER o = Evaluate(OPER(L"COUNT(!A1:B2)"));
-		o = o;
+		OPER o = Evaluate(OPER(L"=1+2"));
+		ensure(o == 3.)
+		ensure(o == 3);
+		ensure(o != true);
 	}
+	{
+		OPER o = Evaluate(OPER(L"SUM(1,2)"));
+		ensure(o == 3);
+	}
+
 	return 0;
 }
 
@@ -226,6 +240,11 @@ int excel_test()
 		OPER o = Excel(xlfToday);
 		OPER p = Excel(xlfDate, Excel(xlfYear, o), Excel(xlfMonth, o), Excel(xlfDay, o));
 		ensure(o == p);
+	}
+	{
+		OPER o = Excel(xlfDate, 2024, 1, 2);
+		OPER p = Text(o, OPER(L"yyyy-mm-dd"));
+		ensure(p == L"2024-01-02");
 	}
 
 	return 0;

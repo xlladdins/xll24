@@ -58,9 +58,9 @@ namespace xll {
 		case xltypeMissing:
 		case xltypeNil:
 			return 0;
-		default:
-			return 1;
 		}
+
+		return 1;
 	}
 	constexpr int columns(const XLOPER12& x) noexcept
 	{
@@ -72,9 +72,9 @@ namespace xll {
 		case xltypeMissing:
 		case xltypeNil:
 			return 0;
-		default:
-			return 1;
 		}
+
+		return 1;
 	}
 	constexpr int size(const XLOPER12& x) noexcept
 	{
@@ -120,7 +120,7 @@ namespace xll {
 		case xltypeErr:
 			return x.val.err == y.val.err;
 		case xltypeMulti:
-			return rows(x) == rows(y) && columns(x) == columns(y) 
+			return rows(x) == rows(y) && columns(x) == columns(y)
 				&& std::equal(span(x).begin(), span(x).end(), span(y).begin(), span(y).end(), xll::equal);
 		case xltypeInt:
 			return x.val.w == y.val.w;
@@ -130,11 +130,10 @@ namespace xll {
 			return x.val.mref.idSheet == y.val.mref.idSheet
 				&& std::equal(ref(x).begin(), ref(x).end(), ref(y).begin(), ref(y).end());
 		case xltypeBigData:
-			return blob(x).size() == blob(y).size()
-				&& std::equal(blob(x).begin(), blob(x).end(), blob(y).begin(), blob(y).end());
-		default:
-			return true;
+			return std::equal(blob(x).begin(), blob(x).end(), blob(y).begin(), blob(y).end());
 		}
+
+		return true;
 	}
 } // namespace xll
 
