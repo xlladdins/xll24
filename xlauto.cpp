@@ -138,8 +138,8 @@ xlAutoRegister12(LPXLOPER12 pxName)
 // This function is used to provide the Add-In Manager with information about your add-in.
 extern "C" LPXLOPER12 WINAPI xlAddInManagerInfo12(LPXLOPER12 pxAction)
 {
-	static XLOPER12 err = {.val = {.err = xlerrValue}, .xltype = xltypeErr};
-
+	static XLOPER12 err = Err(xlerrValue);
+	
 	// coerce to int and check if action is 1
 	return Excel(xlCoerce, *pxAction, OPER(xltypeInt)) == 1 ? AddInManagerInfo() : &err;
 }

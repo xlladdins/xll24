@@ -257,7 +257,7 @@ int excel_test()
 int xll_test()
 {
 	set_alert_level(7);
-	//XlfRegister(Macro(L"xll_test", L"XLL.TEST"));
+	XlfRegister(Macro(L"?xll_test", L"XLL.TEST"));
 	try {
 		utf8::test();
 		num_test();

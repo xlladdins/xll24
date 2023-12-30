@@ -17,13 +17,15 @@ namespace xll {
 
 	struct Arg {
 		OPER type, name, text, init;
-		Arg(const XCHAR* type, const char* name, const char* text, const OPER& init = Missing)
+		template<class T> requires xll::is_char<T>::value
+		Arg(const T* type, const T* name, const T* text, const OPER& init = Missing)
 			: type(OPER(type)), name(OPER(name)), text(OPER(text)), init(init)
 		{ }
 	};
 
 	struct Function : public Args {
-		Function(const XCHAR* type, const XCHAR* procedure, const XCHAR* functionText)
+		template<class T> requires xll::is_char<T>::value
+		Function(const T* type, const T* procedure, const T* functionText)
 			: Args{ .procedure = OPER(procedure),
 			        .typeText = OPER(type),
 					.functionText = OPER(functionText),
@@ -54,19 +56,19 @@ namespace xll {
 		}
 		Function& Volatile()
 		{
-			typeText = OPER(XLL_VOLATILE) & typeText;
+			typeText &= OPER(XLL_VOLATILE);
 
 			return *this;
 		}
 		Function& ThreadSafe()
 		{
-			typeText = OPER(XLL_THREAD_SAFE) & typeText;
+			typeText &= OPER(XLL_THREAD_SAFE);
 
 			return *this;
 		}
 		Function& Asynchronous()
 		{
-			typeText = OPER(XLL_ASYNCHRONOUS) & typeText;
+			typeText &= OPER(XLL_ASYNCHRONOUS);
 
 			return *this;
 		}

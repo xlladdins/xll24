@@ -3,8 +3,7 @@
 #define WIN32_LEAN_AND_MEAN
 #include <Windows.h>
 
-extern "C"
-BOOL WINAPI
+extern "C" BOOL WINAPI
 DllMain(HINSTANCE hDLL, ULONG reason, [[maybe_unused]] LPVOID lpReserved)
 {
 	switch (reason) {

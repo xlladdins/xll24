@@ -105,6 +105,7 @@
     <ClInclude Include="auto.h" />
     <ClInclude Include="defines.h" />
     <ClInclude Include="ensure.h" />
+    <ClInclude Include="export.h" />
     <ClInclude Include="utf8.h" />
     <ClInclude Include="XLCALL.H" />
     <ClInclude Include="error.h" />
