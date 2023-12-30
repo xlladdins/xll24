@@ -6,7 +6,15 @@
 #include "xloper.h"
 #include "utf8.h"
 
+
 namespace xll {
+
+#define XLL_IS_CHAR(S,T) std::is_same<S, typename std::remove_cv<T>::type>::value
+	template<class T>
+	struct is_char
+		: std::integral_constant<bool, XLL_IS_CHAR(CHAR,T) || XLL_IS_CHAR(XCHAR, T)>
+	{ };
+#undef XLL_IS_CHAR
 
 	// Length of null terminated string.
 	constexpr XCHAR len(const XCHAR* s)

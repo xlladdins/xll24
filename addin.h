@@ -5,7 +5,8 @@
 namespace xll {
 
 	struct Macro : public Args {
-		Macro(const XCHAR* procedure, const XCHAR* functionText, const XCHAR* shortcut = nullptr)
+		template<class T> requires xll::is_char<T>::value
+		Macro(const T* procedure, const T* functionText, const T* shortcut = nullptr)
 			: Args{ .procedure = OPER(procedure),
 					.functionText = OPER(functionText),
 					.macroType = OPER(2.),

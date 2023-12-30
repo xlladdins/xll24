@@ -230,6 +230,10 @@ int evaluate_test()
 		OPER o = Evaluate(OPER(L"SUM(1,2)"));
 		ensure(o == 3);
 	}
+	{
+		OPER o = Evaluate(OPER("SUM(1,2)"));
+		ensure(o == 3);
+	}
 
 	return 0;
 }
