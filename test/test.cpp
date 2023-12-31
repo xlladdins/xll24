@@ -258,6 +258,17 @@ int xll_test()
 {
 	set_alert_level(7);
 	//XlfRegister(Macro(L"?xll_test", L"XLL.TEST"));
+	Excel(xlfRegister, L"C:\\Users\\keith\\source\\repos\\xlladdins\\xll24\\x64\\Debug\\test.xll"
+		, L"?xll_test"
+		, Nil
+		, L"XLL.TEST"
+		, Nil
+		, 2.0000000000000000
+		, Nil
+		, Nil
+		, Nil
+		, Nil
+		, L"");
 	/*
 	const auto& fargs = Function(XLL_DOUBLE, L"?xll_func", L"XLL.FUNC")
 		.Arguments({
@@ -288,7 +299,7 @@ int xll_test()
 
 Auto<Open> xao_test(xll_test);
 //AddIn xai_test(Macro(L"xll_test", L"XLL.TEST"));
-
+/*
 AddIn xai_func(Function(XLL_DOUBLE, L"?xll_func", L"XLL.FUNC")
 	.Arguments({
 		Arg(XLL_DOUBLE, L"x", L"is a number."),
@@ -303,6 +314,6 @@ double WINAPI xll_func(double x, double y)
 #pragma XLLEXPORT
 	return x + y;
 }
-
+*/
 
 #endif
