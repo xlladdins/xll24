@@ -57,15 +57,15 @@ constexpr bool operator==(const XLREF12& r, const XLREF12& s)
 }
 
 #ifdef _DEBUG
-static_assert(REF(1, 2) == REF(1, 2));
-static_assert(REF(1, 2, 3, 4) == REF(1, 2, 3, 4));
-static_assert(REF(1, 2, 3, 4) != REF(1, 2, 3, 5));
-static_assert(rows(REF(1, 2, 2, 3)) == 2);
-static_assert(columns(REF(1, 2, 2, 3)) == 3);
-static_assert(size(REF(1, 2, 2, 3)) == 6);
-static_assert(REF(XLL_XLOPER1234).colFirst == 3);
-static_assert(REF(XLL_XLOPER1234).colLast == 4);
-//static_assert(REF(XLL_XLOPER1234) == REF(1, 2, 2, 3));
+static_assert(xll::REF(1, 2) == xll::REF(1, 2));
+static_assert(xll::REF(1, 2, 3, 4) == xll::REF(1, 2, 3, 4));
+static_assert(xll::REF(1, 2, 3, 4) != xll::REF(1, 2, 3, 5));
+static_assert(rows(xll::REF(1, 2, 2, 3)) == 2);
+static_assert(columns(xll::REF(1, 2, 2, 3)) == 3);
+static_assert(size(xll::REF(1, 2, 2, 3)) == 6);
+static_assert(xll::REF(XLL_XLOPER1234).colFirst == 3);
+static_assert(xll::REF(XLL_XLOPER1234).colLast == 4);
+//static_assert(xll::REF(XLL_XLOPER1234) == xll::REF(1, 2, 2, 3));
 #undef XLL_SREF1234
 #undef XLL_XLOPER1234
 #endif // _DEBUG

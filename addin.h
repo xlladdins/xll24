@@ -22,7 +22,7 @@ namespace xll {
 			: Args{ .procedure = OPER(procedure),
 					.typeText = OPER(type),
 					.functionText = OPER(functionText),
-					.macroType = OPER(1) }
+					.macroType = OPER(1.) }
 		{ }
 		Function& Arguments(const std::initializer_list<Arg>& args)
 		{

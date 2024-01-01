@@ -8,6 +8,7 @@
 #include "error.h"
 #include "export.h"
 #include "addin.h"
+#include "fp.h"
 
 namespace xll {
 

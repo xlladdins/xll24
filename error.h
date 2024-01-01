@@ -16,7 +16,7 @@ enum xll_alert_type {
 inline int get_alert_level()
 {
 	HKEY hkey;
-	DWORD disp, data = 0x7;
+	DWORD disp, data = XLL_ALERT_ERROR| XLL_ALERT_WARNING| XLL_ALERT_INFORMATION;
 
 	LSTATUS status = RegCreateKeyExA(HKEY_CURRENT_USER, XLL_SUB_KEY, 0, 0, 0, KEY_READ, 0, &hkey, &disp);
 	if (status == ERROR_SUCCESS) {

@@ -254,10 +254,41 @@ int excel_test()
 	return 0;
 }
 
+int fp_test()
+{
+	{
+		FPX a(2, 3);
+		ensure(a.size() == 6);
+		ensure(a.rows() == 2);
+		ensure(a.columns() == 3);
+		ensure(a == a);
+		ensure(!(a != a));
+	}
+	{
+		FPX a({ 1,2,3 });
+		ensure(a.size() == 3);
+		ensure(a.rows() == 1);
+		ensure(a.columns() == 3);
+		ensure(a[0] == 1);
+		ensure(a[1] == 2);
+		ensure(a[2] == 3);
+		a.resize(2, 2);
+		ensure(a.size() == 4);
+		ensure(a.rows() == 2);
+		ensure(a.columns() == 2);
+		ensure(a[0] == 1);
+		ensure(a[1] == 2);
+		ensure(a[2] == 3);
+		ensure(a(1, 0) == 3);
+	}
+
+	return 0;
+}
+
 int xll_test()
 {
 	set_alert_level(7);
-	XlfRegister(Macro(L"?xll_test", L"XLL.TEST"));
+	//XlfRegister(Macro(L"?xll_test", L"XLL.TEST"));
 	/*
 	Excel(xlfRegister
 		, Excel(xlGetName)
@@ -290,6 +321,7 @@ int xll_test()
 		multi_test();
 		evaluate_test();
 		excel_test();
+		fp_test();
 	}
 	catch (const std::exception& ex) {
 		XLL_ERROR(ex.what());
@@ -301,8 +333,8 @@ int xll_test()
 }
 
 Auto<Open> xao_test(xll_test);
-//AddIn xai_test(Macro(L"xll_test", L"XLL.TEST"));
-/*
+AddIn xai_test(Macro(L"xll_test", L"XLL.TEST"));
+///*
 AddIn xai_func(Function(XLL_DOUBLE, L"?xll_func", L"XLL.FUNC")
 	.Arguments({
 		Arg(XLL_DOUBLE, L"x", L"is a number."),
@@ -317,6 +349,6 @@ double WINAPI xll_func(double x, double y)
 #pragma XLLEXPORT
 	return x + y;
 }
-*/
+//*/
 
 #endif

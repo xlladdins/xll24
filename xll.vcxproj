@@ -106,6 +106,8 @@
     <ClInclude Include="defines.h" />
     <ClInclude Include="ensure.h" />
     <ClInclude Include="export.h" />
+    <ClInclude Include="fp.h" />
+    <ClInclude Include="fpx.h" />
     <ClInclude Include="utf8.h" />
     <ClInclude Include="XLCALL.H" />
     <ClInclude Include="error.h" />
@@ -118,6 +120,18 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />
+    <ClCompile Include="fpx.c">
+      <ExceptionHandling Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">SyncCThrow</ExceptionHandling>
+      <AssemblerOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">AssemblyAndSourceCode</AssemblerOutput>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">CompileAsC</CompileAs>
+      <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+      </AdditionalOptions>
+      <ExceptionHandling Condition="'$(Configuration)|$(Platform)'=='Release|x64'">SyncCThrow</ExceptionHandling>
+      <AssemblerOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">AssemblyAndSourceCode</AssemblerOutput>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">CompileAsC</CompileAs>
+      <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+      </AdditionalOptions>
+    </ClCompile>
     <ClCompile Include="xlauto.cpp" />
     <ClCompile Include="XLCALL.CPP" />
     <ClCompile Include="debug.cpp" />

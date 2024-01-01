@@ -4,6 +4,8 @@
 #include "auto.h"
 #include "xll.h"
 
+#define XLL_TRACE // XLL_INFORMATION(__FUNCTION__)
+
 using namespace xll;
 
 // https://learn.microsoft.com/en-us/office/client-developer/excel/xlautoopen
@@ -11,6 +13,7 @@ using namespace xll;
 extern "C" int __declspec(dllexport) WINAPI
 xlAutoOpen(void)
 {
+	XLL_TRACE;
 	try {
 		if (!Auto<xll::Open>::Call()) 
 			return FALSE;
@@ -38,6 +41,7 @@ xlAutoOpen(void)
 extern "C" int __declspec(dllexport) WINAPI
 xlAutoClose(void)
 {
+	XLL_TRACE;
 	try {
 		// UnRegister all functions and commands.
 		if (!Auto<Close>::Call())
@@ -63,6 +67,7 @@ xlAutoClose(void)
 extern "C" int __declspec(dllexport) WINAPI
 xlAutoAdd(void)
 {
+	XLL_TRACE;
 	try {
 		Auto<Add>::Call();
 	}
@@ -82,6 +87,7 @@ xlAutoAdd(void)
 extern "C" int __declspec(dllexport) WINAPI
 xlAutoRemove(void)
 {
+	XLL_TRACE;
 	try {
 		if (!Auto<Remove>::Call()) {
 			return FALSE;
@@ -106,6 +112,7 @@ xlAutoRemove(void)
 extern "C" void __declspec(dllexport) WINAPI
 xlAutoFree12(LPXLOPER12 px)
 {
+	XLL_TRACE;
 	Excel12(xlFree, 0, 1, px);
 }
 
@@ -114,6 +121,7 @@ xlAutoFree12(LPXLOPER12 px)
 extern "C" LPXLOPER12 __declspec(dllexport) WINAPI
 xlAutoRegister12(LPXLOPER12 pxName)
 {
+	XLL_TRACE;
 	static XLOPER12 o;
 
 	try {
@@ -139,6 +147,7 @@ xlAutoRegister12(LPXLOPER12 pxName)
 // This function is used to provide the Add-In Manager with information about your add-in.
 extern "C" LPXLOPER12 WINAPI xlAddInManagerInfo12(LPXLOPER12 pxAction)
 {
+	XLL_TRACE;
 	static XLOPER12 err = Err(xlerrValue);
 	
 	// coerce to int and check if action is 1

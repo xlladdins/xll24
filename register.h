@@ -50,18 +50,23 @@ namespace xll {
 				procedure = OPER(L"?") & procedure;
 			}
 
-			// typeText, argumentText, functionHelp
 			int i = 0;
-			OPER comma = OPER(L"");
-			while (functionHelp[i].xltype != xltypeNil) {
-				typeText = typeText & functionHelp[i][Arg::Type::typeText];
-				argumentText &= comma & functionHelp[i][Arg::Type::argumentText];
-				functionHelp[i] = functionHelp[i][Arg::Type::functionHelp];
-				comma = OPER(L", ");
-				++i;
+			if (functionHelp[0] == Nil) { // macro
+				functionHelp[/*++*/i] = OPER(L"");
 			}
-			// https://docs.microsoft.com/en-us/office/client-developer/excel/known-issues-in-excel-xll-development#argument-description-string-truncation-in-the-function-wizard
-			functionHelp[i] = OPER(L"");
+			else { // function
+				// typeText, argumentText, functionHelp
+				OPER comma = OPER(L"");
+				while (functionHelp[i].xltype != xltypeNil) {
+					typeText = typeText & functionHelp[i][Arg::Type::typeText];
+					argumentText &= comma & functionHelp[i][Arg::Type::argumentText];
+					functionHelp[i] = functionHelp[i][Arg::Type::functionHelp];
+					comma = OPER(L", ");
+					++i;
+				}
+				// https://docs.microsoft.com/en-us/office/client-developer/excel/known-issues-in-excel-xll-development#argument-description-string-truncation-in-the-function-wizard
+				functionHelp[i] = OPER(L"");
+			}
 
 			return static_cast<int>(offsetof(Args, functionHelp)/sizeof(OPER) + i + 1);
 		}
