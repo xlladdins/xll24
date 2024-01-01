@@ -137,25 +137,27 @@ namespace xll {
 
 			return *this;
 		}
-		/*
 		OPER& operator=(const std::wstring_view& str)
 		{
 			dealloc();
-			*this = OPER(str);
+			*this = OPER(str.data(), static_cast<XCHAR>(str.size()));
 
 			return *this;
 		}
 		OPER& operator=(const std::string_view& str)
 		{
 			dealloc();
-			*this = OPER(str);
+			*this = OPER(str.data());
 
 			return *this;
 		}
-		*/
 		constexpr bool operator==(const XCHAR* str) const
 		{
 			return type(*this) == xltypeStr && view(*this) == str;
+		}
+		constexpr bool operator==(const char* str) const
+		{
+			return type(*this) == xltypeStr && *this == OPER(str);
 		}
 
 		OPER& operator&=(const XLOPER12& o)
