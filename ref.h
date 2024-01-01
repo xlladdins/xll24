@@ -19,6 +19,7 @@ namespace xll {
 		return rows(r) * columns(r);
 	}
 
+	// Upper left and lower right corners of reference. 
 	struct REF : public XLREF12 {
 		constexpr REF(const XLREF12& r) noexcept
 			: XLREF12(r)
@@ -27,37 +28,44 @@ namespace xll {
 		constexpr REF(int r, int c, int w = 1, int h = 1) noexcept
 			: XLREF12{ .rwFirst = r, .rwLast = r + w - 1, .colFirst = c, .colLast = c + h - 1 }
 		{ }
+		// Construct from XLPOPER12.
 		constexpr REF(const XLOPER12& x)
 			: REF(x.val.sref.ref)
 		{
 			ensure(x.xltype == xltypeSRef);
 		}
-		
-		constexpr bool operator==(const REF& r) const
-		{
-			return rwFirst == r.rwFirst
-				&& rwLast == r.rwLast
-				&& colFirst == r.colFirst
-				&& colLast == r.colLast;
-		}
-		
-	};
-
 #ifdef _DEBUG
-	static_assert(rows(REF(1,2,3,4)) == 3);
-	static_assert(columns(REF(1, 2, 3, 4)) == 4);
-	static_assert(size(REF(1, 2, 3, 4)) == 12);
+#define XLL_SREF1234 {.rwFirst = 1, .rwLast = 2, .colFirst = 3, .colLast = 4 }
+#define XLL_XLOPER1234 XLOPER12{ .val = {.sref = {.ref = XLL_SREF1234 }} , .xltype = xltypeSRef }
+		static_assert(XLL_XLOPER1234.xltype == xltypeSRef);
+		static_assert(SRef(XLL_XLOPER1234).rwFirst == 1);
+		static_assert(SRef(XLL_XLOPER1234).rwLast == 2);
+		static_assert(SRef(XLL_XLOPER1234).colFirst == 3);
+		static_assert(SRef(XLL_XLOPER1234).colLast == 4);
 #endif // _DEBUG
+
+	};
 
 } // namespace xll
 
 constexpr bool operator==(const XLREF12& r, const XLREF12& s)
 {
-	return xll::REF(r) == xll::REF(s);
+	return r.rwFirst == s.rwFirst
+		&& r.rwLast == s.rwLast
+		&& r.colFirst == s.colFirst
+		&& r.colLast == s.colLast;
 }
 
 #ifdef _DEBUG
-static_assert(xll::REF(1, 2).operator==(xll::REF(1, 2)));
-static_assert(xll::REF(1, 2, 3, 4) == xll::REF(1, 2, 3, 4));
-static_assert(xll::REF(1, 2, 3, 4) != xll::REF(1, 2, 3, 5));
+static_assert(REF(1, 2) == REF(1, 2));
+static_assert(REF(1, 2, 3, 4) == REF(1, 2, 3, 4));
+static_assert(REF(1, 2, 3, 4) != REF(1, 2, 3, 5));
+static_assert(rows(REF(1, 2, 2, 3)) == 2);
+static_assert(columns(REF(1, 2, 2, 3)) == 3);
+static_assert(size(REF(1, 2, 2, 3)) == 6);
+static_assert(REF(XLL_XLOPER1234).colFirst == 3);
+static_assert(REF(XLL_XLOPER1234).colLast == 4);
+//static_assert(REF(XLL_XLOPER1234) == REF(1, 2, 2, 3));
+#undef XLL_SREF1234
+#undef XLL_XLOPER1234
 #endif // _DEBUG

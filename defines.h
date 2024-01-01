@@ -42,7 +42,8 @@ namespace xll {
 #endif // _DEBUG
 
 	// Create XLOPER12 from scalar.
-#define XLL_SCALAR(a, b, c, d) constexpr XLOPER12 a(c x) { XLOPER12 o; o.xltype = xltype##a; o.val.b = x; return o; }
+#define XLL_SCALAR(a, b, c, d) constexpr XLOPER12 a(c x) \
+		{ XLOPER12 o; o.xltype = xltype##a; o.val.b = x; return o; }
 	XLL_TYPE_SCALAR(XLL_SCALAR)
 #undef XLL_SCALAR
 #ifdef _DEBUG
@@ -78,12 +79,13 @@ namespace xll {
     X(BigData, bigdata.h.lpbData,   BYTE*,      "Blob of binary data")                     \
 
 	// Return pointer to underlying data.
-#define XLL_ALLOC(a,b,c,d)  constexpr c a(const XLOPER12& x) { return x.xltype & xltype##a ? x.val.##b : nullptr; }
+#define XLL_ALLOC(a,b,c,d)  constexpr c a(const XLOPER12& x) \
+		{ return x.xltype & xltype##a ? x.val.##b : nullptr; }
 	XLL_TYPE_ALLOC(XLL_ALLOC)
 #undef XLL_ALLOC
 
 #define XLL_ALLOC(a, b, c, d)  | xltype##a
-		constexpr int xltypeAlloc = 0
+	constexpr int xltypeAlloc = 0
 		XLL_TYPE_ALLOC(XLL_ALLOC)
 		;
 #undef XLL_ALLOC
@@ -114,7 +116,7 @@ namespace xll {
 		if (x.xltype & xltypeBigData)
 			return x.val.bigdata.cbData;
 
-		return -1;
+		return 0;
 	}
 
 	// xlbitX, description

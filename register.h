@@ -39,6 +39,32 @@ namespace xll {
 		OPER shortcutText;
 		OPER helpTopic;
 		OPER functionHelp[23];
+		
+		int prepare() // for call to xlfRegister
+		{
+			moduleText = Excel(xlGetName);
+
+			// C++ name mangling.
+			ensure(type(procedure) == xltypeStr);
+			if (procedure.val.str[1] != L'?') {
+				procedure = OPER(L"?") & procedure;
+			}
+
+			// typeText, argumentText, functionHelp
+			int i = 0;
+			OPER comma = OPER(L"");
+			while (functionHelp[i].xltype != xltypeNil) {
+				typeText = typeText & functionHelp[i][Arg::Type::typeText];
+				argumentText &= comma & functionHelp[i][Arg::Type::argumentText];
+				functionHelp[i] = functionHelp[i][Arg::Type::functionHelp];
+				comma = OPER(L", ");
+				++i;
+			}
+			// https://docs.microsoft.com/en-us/office/client-developer/excel/known-issues-in-excel-xll-development#argument-description-string-truncation-in-the-function-wizard
+			functionHelp[i] = OPER(L"");
+
+			return static_cast<int>(offsetof(Args, functionHelp)/sizeof(OPER) + i + 1);
+		}
 	};
 
 	// https://learn.microsoft.com/en-us/office/client-developer/excel/xlfregister-form-1
@@ -46,35 +72,13 @@ namespace xll {
 	{
 		OPER res;
 
-		// moduleText
-		args.moduleText = Excel(xlGetName);
-
-		// procedure
-		ensure(type(args.procedure) == xltypeStr);
-		if (args.procedure.val.str[1] != L'?') {
-			args.procedure = OPER(L"?") & args.procedure;
-		}
-
-		// typeText, argumentText, functionHelp
-		int i = 0;
-		OPER comma = OPER(L"");
-		while (args.functionHelp[i].xltype != xltypeNil) {
-			args.typeText = args.typeText & args.functionHelp[i][Arg::Type::typeText];
-			args.argumentText &= comma & args.functionHelp[i][Arg::Type::argumentText];
-			args.functionHelp[i] = args.functionHelp[i][Arg::Type::functionHelp];
-			comma = OPER(L", ");
-			++i;
-		}
-
 		LPXLOPER12 as[32];
-		XLOPER12* arg = &args.moduleText;
-		std::transform(arg, arg + 9 + i, as, [](XLOPER12& o) { return &o; });
+		int count = args.prepare();
+		for (int i = 0; i < count; ++i) {
+			as[i] = (LPXLOPER12) &args + i;
+		}
 
-		// https://docs.microsoft.com/en-us/office/client-developer/excel/known-issues-in-excel-xll-development#argument-description-string-truncation-in-the-function-wizard
-		OPER empty(L"");
-		as[9 + i + 1] = &empty;
-
-		int ret = ::Excel12v(xlfRegister, &res, 9 + i + 1, &as[0]);
+		int ret = ::Excel12v(xlfRegister, &res, count, &as[0]);
 
 		ensure_ret(ret);
 		ensure_err(res);
