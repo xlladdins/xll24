@@ -16,7 +16,13 @@ Just register your functions and macros by telling excel how to call them.
 
 An Excel function is purely functional.
 Every Excel function returns a result that depends only on the function arguments.
-
+```C++
+AddIn xai_function(Function(XLL_DOUBLE XLL_DOUBLE, L"?xll_function", L"XLL.FUNCTION")
+	.Arg(XLL_DOUBLE, L"arg", L"is the argument")
+	.Category(L"XLL")
+	.FunctionHelp(L"Return the argument")
+);
+```
 ## Macro
 
 An Excel macro only has side effects. It can do anything a user can do. 
