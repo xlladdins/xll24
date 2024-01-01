@@ -2,6 +2,7 @@
 #pragma once
 #include <algorithm>
 #include <initializer_list>
+#include <span>
 extern "C" {
 #include "fpx.h"
 }
@@ -85,6 +86,11 @@ namespace xll {
 		double& operator()(int i, int j)
 		{
 			return _fpx->array[fpx_index(_fpx, i, j)];
+		}
+
+		const std::span<double> span() const
+		{
+			return std::span<double>(_fpx->array, size());
 		}
 	};
 }

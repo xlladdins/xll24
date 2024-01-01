@@ -42,6 +42,7 @@ namespace xll {
 		
 		int prepare() // for call to xlfRegister
 		{
+
 			moduleText = Excel(xlGetName);
 
 			// C++ name mangling.
@@ -50,9 +51,18 @@ namespace xll {
 				procedure = OPER(L"?") & procedure;
 			}
 
-			int i = 0;
+			//!!! search github ???
+			if (helpTopic == Nil) {
+				helpTopic = OPER(L"https://google.com/search?q=");
+				helpTopic &= procedure;
+			}
+			if (view(helpTopic).starts_with(L"http")) {
+				helpTopic &= OPER(L"!0");
+			}
+
+			int i = 1;
 			if (functionHelp[0] == Nil) { // macro
-				functionHelp[/*++*/i] = OPER(L"");
+				//functionHelp[/*++*/0] = OPER(L"");
 			}
 			else { // function
 				// typeText, argumentText, functionHelp

@@ -18,20 +18,20 @@
 	</Type>
 	<Type Name="xloper">
 		<AlternativeType Name="xloper12"/>
-		<DisplayString Condition="xltype == 0x0001">{this,[0]} xltypeNum {val.num,na}</DisplayString>
-		<DisplayString Condition="xltype == 0x0002">{this,[0]} xltypeStr {val.str,[val.str[0]+1]na} </DisplayString>
-		<DisplayString Condition="xltype == 0x1002">{this,[0]} xltypeStr {val.str,[val.str[0]+1]na} </DisplayString>
-		<DisplayString Condition="xltype == 0x4002">{this,[0]} xltypeStr {val.str,[val.str[0]+1]na} </DisplayString>
-		<DisplayString Condition="xltype == 0x0004">{this,[0]} xltypeBool {val.xbool,na}</DisplayString>
-		<DisplayString Condition="xltype == 0x0008">{this,[0]} xltypeRef[{val.mref.lpmref->count}] = {{ {val.mref.lpmref->reftbl[0]}, ... }}</DisplayString>
-		<DisplayString Condition="xltype == 0x0010">{this,[0]} xltypeErr {val.err,na}</DisplayString>
-		<DisplayString Condition="xltype == 0x0040">{this,[0]} xltypeMulti[{val.array.rows}][{val.array.columns}] = {{ {val.array.lparray[0]}, ... }}</DisplayString>
-		<DisplayString Condition="xltype == 0x1040">{this,[0]} xltypeMulti[{val.array.rows}][{val.array.columns}] = {{ {val.array.lparray[0]}, ... }}</DisplayString>
-		<DisplayString Condition="xltype == 0x4040">{this,[0]} xltypeMulti[{val.array.rows}][{val.array.columns}] = {{ {val.array.lparray[0]}, ... }}</DisplayString>
-		<DisplayString Condition="xltype == 0x0080">{this,[0]} xltypeMissing</DisplayString>
-		<DisplayString Condition="xltype == 0x0100">{this,[0]} xltypeNil</DisplayString>
-		<DisplayString Condition="xltype == 0x0400">{this,[0]} xltypeSRef {val.sref.ref}</DisplayString>
-		<DisplayString Condition="xltype == 0x0800">{this,[0]} xltypeInt {val.w,na}</DisplayString>
+		<DisplayString Condition="xltype == 0x0001">xltypeNum {val.num,na}</DisplayString>
+		<DisplayString Condition="xltype == 0x0002">xltypeStr {val.str,[val.str[0]+1]na} </DisplayString>
+		<DisplayString Condition="xltype == 0x1002">xltypeStr {val.str,[val.str[0]+1]na} </DisplayString>
+		<DisplayString Condition="xltype == 0x4002">xltypeStr {val.str,[val.str[0]+1]na} </DisplayString>
+		<DisplayString Condition="xltype == 0x0004">xltypeBool {val.xbool,na}</DisplayString>
+		<DisplayString Condition="xltype == 0x0008">xltypeRef[{val.mref.lpmref->count}] = {{ {val.mref.lpmref->reftbl[0]}, ... }}</DisplayString>
+		<DisplayString Condition="xltype == 0x0010">xltypeErr {val.err,na}</DisplayString>
+		<DisplayString Condition="xltype == 0x0040">xltypeMulti[{val.array.rows}][{val.array.columns}] = {{ {val.array.lparray[0]}, ... }}</DisplayString>
+		<DisplayString Condition="xltype == 0x1040">xltypeMulti[{val.array.rows}][{val.array.columns}] = {{ {val.array.lparray[0]}, ... }}</DisplayString>
+		<DisplayString Condition="xltype == 0x4040">xltypeMulti[{val.array.rows}][{val.array.columns}] = {{ {val.array.lparray[0]}, ... }}</DisplayString>
+		<DisplayString Condition="xltype == 0x0080">xltypeMissing</DisplayString>
+		<DisplayString Condition="xltype == 0x0100">xltypeNil</DisplayString>
+		<DisplayString Condition="xltype == 0x0400">xltypeSRef {val.sref.ref}</DisplayString>
+		<DisplayString Condition="xltype == 0x0800">xltypeInt {val.w,na}</DisplayString>
 		<Expand>
 			<ArrayItems Condition="xltype == 0x0002">
 				<Size>val.str[0] + 1</Size>

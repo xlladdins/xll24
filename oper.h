@@ -31,6 +31,50 @@ namespace xll {
 			: XLOPER12{ Nil }
 		{ }
 
+		constexpr OPER(const XLOPER12& o)
+			: XLOPER12{ o }
+		{
+			if (xll::type(o) == xltypeStr) {
+				alloc(val.str + 1, val.str[0]);
+			}
+			else if (xll::type(o) == xltypeMulti) {
+				alloc(rows(o), columns(o), Multi(o));
+			}
+		}
+		constexpr OPER(const OPER& o)
+			: OPER(static_cast<const XLOPER12&>(o))
+		{ }
+
+		OPER& operator=(const XLOPER12& x)
+		{
+			if (this != &x) {
+				*this = OPER(x); // call OPER(OPER&&)
+			}
+
+			return *this;
+		}
+		OPER& operator=(const OPER& o)
+		{
+			return operator=(static_cast<const XLOPER12&>(o));
+		}
+		OPER(OPER&& o) noexcept
+			: XLOPER12{ .val = o.val , .xltype = std::exchange(o.xltype, xltypeNil) }
+		{ }
+		OPER& operator=(OPER&& o) noexcept
+		{
+			if (this != &o) {
+				dealloc();
+				val = o.val;
+				xltype = std::exchange(o.xltype, xltypeNil);
+			}
+
+			return *this;
+		}
+		~OPER()
+		{
+			dealloc();
+		}
+
 		// Num - 64-bit IEEE floating point
 		constexpr explicit OPER(double num) noexcept
 			: XLOPER12{ Num(num) }
@@ -68,6 +112,17 @@ namespace xll {
 		constexpr explicit OPER(const XCHAR* str)
 			: OPER(str, str ? len(str) : 0)
 		{ }
+		// utf8::mbstowcs calls new wchar_t[].
+		explicit OPER(const char* str)
+			: XLOPER12{ .val = {.str = utf8::mbstowcs(str)}, .xltype = xltypeStr }
+		{ }
+		constexpr OPER(const std::wstring_view& str)
+			: OPER(str.data(), static_cast<XCHAR>(str.size()))
+		{ }
+		OPER(const std::string_view& str)
+			: OPER(str.data())
+		{ }
+		
 		OPER& operator=(const XCHAR* str)
 		{
 			dealloc();
@@ -75,15 +130,34 @@ namespace xll {
 
 			return *this;
 		}
+		OPER& operator=(const char* str)
+		{
+			dealloc();
+			*this = OPER(str);
+
+			return *this;
+		}
+		/*
+		OPER& operator=(const std::wstring_view& str)
+		{
+			dealloc();
+			*this = OPER(str);
+
+			return *this;
+		}
+		OPER& operator=(const std::string_view& str)
+		{
+			dealloc();
+			*this = OPER(str);
+
+			return *this;
+		}
+		*/
 		constexpr bool operator==(const XCHAR* str) const
 		{
 			return type(*this) == xltypeStr && view(*this) == str;
 		}
-		// Distinguish from OPER(bool) constructor
-		template<typename T>
-		explicit OPER(T str, typename std::enable_if<std::is_same_v<T, const char*>>::type* = nullptr)
-			: XLOPER12{ .val = {.str = utf8::mbstowcs(str)}, .xltype = xltypeStr }
-		{ }
+
 		OPER& operator&=(const XLOPER12& o)
 		{
 			XLOPER12 res;
@@ -97,7 +171,24 @@ namespace xll {
 
 			return *this;
 		}
-
+		/*
+		OPER& operator&=(const XCHAR* str)
+		{
+			return operator&=(OPER(str));
+		}
+		OPER& operator&=(const char* str)
+		{
+			return operator&=(OPER(str));
+		}
+		OPER& operator&=(const std::wstring_view& str)
+		{
+			return operator&=(OPER(str));
+		}
+		OPER& operator&=(const char* str)
+		{
+			return operator&=(OPER(str));
+		}
+		*/
 		// Bool
 		constexpr explicit OPER(bool xbool)
 			: XLOPER12{ Bool(xbool) }
@@ -172,51 +263,6 @@ namespace xll {
 				operator()(1, i) = v;
 				++i;
 			}
-		}
-
-		constexpr OPER(const XLOPER12& o)
-			: XLOPER12{ o }
-		{
-			if (xll::type(o) == xltypeStr) {
-				alloc(val.str + 1, val.str[0]);
-			}
-			else if (xll::type(o) == xltypeMulti) {
-				alloc(rows(o), columns(o), Multi(o));
-			}
-		}
-		constexpr OPER(const OPER& o)
-			: OPER(static_cast<const XLOPER12&>(o))
-		{ }
-
-		OPER& operator=(const XLOPER12& x)
-		{
-			if (this != &x) {
-				OPER o(x);
-				dealloc();
-				*this = std::move(o);
-			}
-
-			return *this;
-		}
-		OPER& operator=(const OPER& o)
-		{
-			return operator=(static_cast<const XLOPER12&>(o));
-		}
-		OPER(OPER&& o) noexcept
-			: XLOPER12{ .val = o.val , .xltype = std::exchange(o.xltype, xltypeNil) }
-		{ }
-		OPER& operator=(OPER&& o) noexcept
-		{
-			if (this != &o) {
-				val = o.val;
-				xltype = std::exchange(o.xltype, xltypeNil);
-			}
-
-			return *this;
-		}
-		~OPER()
-		{
-			dealloc();
 		}
 
 		constexpr std::span<OPER> span() noexcept

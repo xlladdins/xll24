@@ -333,21 +333,22 @@ int xll_test()
 }
 
 Auto<Open> xao_test(xll_test);
-AddIn xai_test(Macro(L"xll_test", L"XLL.TEST"));
+//AddIn xai_test(Macro(L"xll_test", L"XLL.TEST"));
 ///*
-AddIn xai_func(Function(XLL_DOUBLE, L"?xll_func", L"XLL.FUNC")
+AddIn xai_func(Function(XLL_DOUBLE, L"xll_hypot", L"XLL.HYPOT")
 	.Arguments({
 		Arg(XLL_DOUBLE, L"x", L"is a number."),
 		Arg(XLL_DOUBLE, L"y", L"is a number.")
 		})
-//	.Category(L"XLL")
-//	.FunctionHelp(L"Return x + y.")
+	.Category(L"XLL")
+	.FunctionHelp(L"Calculates the hypotenuse.")
+	.HelpTopic("https://learn.microsoft.com/en-us/cpp/c-runtime-library/reference/hypot-hypotf-hypotl-hypot-hypotf-hypotl?view=msvc-170")
 //	.Documentation(L"Optional documentation.")
 );
-double WINAPI xll_func(double x, double y)
+double WINAPI xll_hypot(double x, double y)
 {
 #pragma XLLEXPORT
-	return x + y;
+	return std::hypot(x, y);
 }
 //*/
 

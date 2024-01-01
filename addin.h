@@ -26,11 +26,32 @@ namespace xll {
 		{ }
 		Function& Arguments(const std::initializer_list<Arg>& args)
 		{
-			OPER* fh = &functionHelp[0];
+			OPER* fh = &functionHelp[1];
 			for (const auto& arg : args) {
 				*fh++ = OPER({ arg.type, arg.name, arg.text });
 			}
 			*fh = Nil;
+
+			return *this;
+		}
+		template<class T> requires xll::is_char<T>::value
+		Function& Category(const T* category_)
+		{
+			category = OPER(category_);
+
+			return *this;
+		}
+		template<class T> requires xll::is_char<T>::value
+		Function& FunctionHelp(const T* functionHelp_)
+		{
+			functionHelp[0] = OPER(functionHelp_);
+
+			return *this;
+		}
+		template<class T> requires xll::is_char<T>::value
+		Function& HelpTopic(const T* helpTopic_)
+		{
+			helpTopic = OPER(helpTopic_);
 
 			return *this;
 		}
