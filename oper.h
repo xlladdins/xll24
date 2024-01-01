@@ -14,16 +14,22 @@ namespace xll {
 #define XLL_IS_CHAR(S,T) std::is_same<S, typename std::remove_cv<T>::type>::value
 	template<class T>
 	struct is_char
-		: std::integral_constant<bool, XLL_IS_CHAR(CHAR,T) || XLL_IS_CHAR(XCHAR, T)>
+		: std::integral_constant<bool, XLL_IS_CHAR(char,T) || XLL_IS_CHAR(XCHAR, T)>
 	{ };
 #undef XLL_IS_CHAR
 
 	// Length of null terminated string.
-	constexpr XCHAR len(const XCHAR* s)
+	constexpr XCHAR len(const XCHAR* s, XCHAR n = 0)
 	{
-		return *s ? 1 + len(s + 1) : 0;
+		return *s && n < 0x4FFF ? len(s + 1, n + 1) : n;
 	}
 	static_assert(len(L"abc") == 3);
+	// Length of null terminated string.
+	constexpr char len(const char* s, char n = 0)
+	{
+		return *s && n < 0xFF ? len(s + 1, n + 1) : n;
+	}
+	static_assert(len("abc") == 3);
 
 	struct OPER : public XLOPER12 {
 		// Nil is the default.
@@ -34,10 +40,12 @@ namespace xll {
 		constexpr OPER(const XLOPER12& o)
 			: XLOPER12{ o }
 		{
-			if (xll::type(o) == xltypeStr) {
+			int xtype = type(o);// o.xltype; // type(o);
+			// Do not allocate if xlbitFree set.
+			if (xtype == xltypeStr) {
 				alloc(val.str + 1, val.str[0]);
 			}
-			else if (xll::type(o) == xltypeMulti) {
+			else if (xtype == xltypeMulti) {
 				alloc(rows(o), columns(o), Multi(o));
 			}
 		}
@@ -48,7 +56,9 @@ namespace xll {
 		OPER& operator=(const XLOPER12& x)
 		{
 			if (this != &x) {
-				*this = OPER(x); // call OPER(OPER&&)
+				XLOPER12 x_(x);
+				x_.xltype &= ~(xlbitFree); // force copy
+				*this = OPER(x_); // call OPER(OPER&&)
 			}
 
 			return *this;
@@ -162,7 +172,7 @@ namespace xll {
 
 		OPER& operator&=(const XLOPER12& o)
 		{
-			XLOPER12 res;
+			XLOPER12 res = Nil;
 
 			int ret = ::Excel12(xlfConcatenate, &res, 2, this, &o);
 			ensure_ret(ret);
@@ -267,15 +277,6 @@ namespace xll {
 			}
 		}
 
-		constexpr std::span<OPER> span() noexcept
-		{
-			return std::span((OPER*)val.array.lparray, size(*this));
-		}
-		constexpr std::span<OPER> row(int r) noexcept
-		{
-			return std::span((OPER*)val.array.lparray + r * columns(*this), columns(*this));
-		}
-
 		OPER& operator[](int i)
 		{
 			if (type(*this) == xltypeMulti) {
@@ -372,8 +373,8 @@ namespace xll {
 				delete[] val.str;
 			}
 			else if (xltype == xltypeMulti) {
-				for (auto& o : span()) {
-					o.dealloc();
+				for (auto& o : span(*this)) {
+					static_cast<OPER&>(o).dealloc();
 				}
 				delete[] static_cast<OPER*>(val.array.lparray);
 			}
@@ -414,29 +415,38 @@ namespace xll {
 
 	inline OPER Evaluate(const XLOPER12& x)
 	{
-		XLOPER12 o;
+		XLOPER12 o = Nil;
 
 		Excel12(xlfEvaluate, &o, 1, &x);
+		if (is_alloc(o)) {
+			o.xltype |= xlbitXLFree;	
+		}
 
 		return OPER(o);
 	}
 	// Convert to string using Excel TEXT().
 	inline OPER Text(const XLOPER12& x, const OPER& format = OPER(L"General", 7))
 	{
-		XLOPER12 text;
+		XLOPER12 o = Nil;
 
-		Excel12(xlfText, &text, 2, &x, &format);
+		Excel12(xlfText, &o, 2, &x, &format);
+		if (is_alloc(o)) {
+			o.xltype |= xlbitXLFree;
+		}
 
-		return OPER(text);
+		return OPER(o);
 	}
 	// Convert string to value type using VALUE().
 	inline OPER Value(const XLOPER12& x)
 	{
-		XLOPER12 value;
+		XLOPER12 o = Nil;
 
-		Excel12(xlfValue, &value, 1, &x);
+		Excel12(xlfValue, &o, 1, &x);
+		if (is_alloc(o)) {
+			o.xltype |= xlbitXLFree;
+		}
 
-		return OPER(value);
+		return OPER(o);
 	}
 
 } // namespace xll
@@ -445,8 +455,8 @@ using LPOPER = xll::OPER*;
 
 inline xll::OPER operator&(const xll::OPER& x, const xll::OPER& y)
 {
-	xll::OPER z(x);
-	z &= y;
+	//xll::OPER z(x);
+	return xll::OPER(x) &= y;
 
-	return z;
+	//return z;
 }

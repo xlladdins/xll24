@@ -39,10 +39,18 @@ int str_test()
 		ensure(o.xltype == xltypeStr);
 		ensure(o.val.str && o.val.str[0] == 0);
 		ensure(o == L"");
+		ensure(o == "");
 		OPER o2{ o };
 		ensure(o == o2);
 		o = o2;
 		ensure(!(o != o2));
+	}
+	{
+		OPER o("");
+		ensure(o.xltype == xltypeStr);
+		ensure(o.val.str && o.val.str[0] == 0);
+		ensure(o == "");
+		ensure(o == L"");
 	}
 	{
 		ensure(OPER(L"").xltype == xltypeStr);
@@ -92,14 +100,16 @@ int str_test()
 	}
 	{
 		OPER o = Evaluate(OPER(L"{1,2,3}"));
-		ensure(o.xltype == xltypeMulti);
+		ensure(type(o) == xltypeMulti);
+		//ensure(o.xltype & xlbitXLFree);
 		ensure(rows(o) == 1);
 		ensure(columns(o) == 3);
 		ensure(o == OPER({ OPER(1.),OPER(2.),OPER(3.) }));
 	}
 	{
 		OPER o = Evaluate(OPER(L"{1, \"a\"; TRUE, #N/A}"));
-		ensure(o.xltype == xltypeMulti);
+		ensure(type(o) == xltypeMulti);
+		//ensure(o.xltype & xlbitXLFree);
 		ensure(rows(o) == 2);
 		ensure(columns(o) == 2);
 		ensure(o == OPER({ OPER(1.),OPER(L"a"),OPER(true),OPER(xlerr::NA) }).reshape(2, 2));
