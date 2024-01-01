@@ -257,8 +257,10 @@ int excel_test()
 int xll_test()
 {
 	set_alert_level(7);
-	//XlfRegister(Macro(L"?xll_test", L"XLL.TEST"));
-	Excel(xlfRegister, Excel(xlGetName)
+	XlfRegister(Macro(L"?xll_test", L"XLL.TEST"));
+	/*
+	Excel(xlfRegister
+		, Excel(xlGetName)
 		, L"?xll_test"
 		, Nil
 		, L"XLL.TEST"
@@ -269,6 +271,7 @@ int xll_test()
 		, Nil
 		, Nil
 		, L"");
+	*/
 	/*
 	const auto& fargs = Function(XLL_DOUBLE, L"?xll_func", L"XLL.FUNC")
 		.Arguments({
