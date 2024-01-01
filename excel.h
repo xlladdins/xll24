@@ -1,4 +1,5 @@
 // excel.h - Call Excel entry point.
+// Copyright (c) KALX, LLC. All rights reserved. No warranty made.
 #pragma once
 #include <algorithm>
 #include <array>

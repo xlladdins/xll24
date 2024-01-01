@@ -1,4 +1,5 @@
 // addin.h - create Excel add-ins to register
+// Copyright (c) KALX, LLC. All rights reserved. No warranty made.
 #pragma once
 #include "register.h"
 

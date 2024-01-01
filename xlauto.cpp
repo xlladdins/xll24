@@ -1,4 +1,5 @@
 // xlauto.cpp - xlAutoXXX functions
+// Copyright (c) KALX, LLC. All rights reserved. No warranty made.
 #include <stdexcept>
 #include "auto.h"
 #include "xll.h"

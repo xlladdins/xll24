@@ -1,4 +1,5 @@
 // defines.h - Base definitions for the xll add-in library.
+// Copyright (c) KALX, LLC. All rights reserved. No warranty made.
 #pragma once
 #include <span>
 #include <string_view>

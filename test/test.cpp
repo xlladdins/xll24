@@ -258,7 +258,7 @@ int xll_test()
 {
 	set_alert_level(7);
 	//XlfRegister(Macro(L"?xll_test", L"XLL.TEST"));
-	Excel(xlfRegister, L"C:\\Users\\keith\\source\\repos\\xlladdins\\xll24\\x64\\Debug\\test.xll"
+	Excel(xlfRegister, Excel(xlGetName)
 		, L"?xll_test"
 		, Nil
 		, L"XLL.TEST"

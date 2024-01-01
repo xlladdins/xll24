@@ -1,4 +1,6 @@
-﻿#pragma once
+﻿// utf8.h - utf8 to wide character string conversion
+// Copyright (c) KALX, LLC. All rights reserved. No warranty made.
+#pragma once
 #include <stringapiset.h>
 #include <string_view>
 #include <memory>

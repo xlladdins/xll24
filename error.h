@@ -1,4 +1,5 @@
-// xlerror.h - Error handling
+// xlerror.h - Error message box.
+// Copyright (c) KALX, LLC. All rights reserved. No warranty made.
 #pragma once
 #include <Windows.h>
 #include "XLCALL.H"

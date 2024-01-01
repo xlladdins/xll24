@@ -1,4 +1,5 @@
 // ref.h - REF class to construct XLREF12 type
+// Copyright (c) KALX, LLC. All rights reserved. No warranty made.
 #pragma once
 #include "defines.h"
 #include "ensure.h"
