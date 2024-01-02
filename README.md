@@ -16,14 +16,32 @@ Just register your functions and macros by telling excel how to call them.
 
 An Excel function is purely functional.
 Every Excel function returns a result that depends only on the function arguments.
+
+Register `xll_hypot` as `STD.HYPOT` in Excel.
+If `x` and `y` are doubles then `std::hypot(x, y)` is the length of 
+the hypotenuse of a right triangle with sides `x` and `y`.
 ```C++
-AddIn xai_function(
-    Function(XLL_DOUBLE, L"?xll_function", L"XLL.FUNCTION")
-    .Arguments({
-		Arg(XLL_DOUBLE, L"arg", L"is the argument to the function.")
+AddIn xai_hypot(
+    Function(XLL_DOUBLE, "xll_hypot", "STD.HYPOT")
+	.Arguments({
+		Arg(XLL_DOUBLE, "x", "is a number."),
+		Arg(XLL_DOUBLE, "y", "is a number."),
 	})
+	.Category("STD")
+	.FunctionHelp("Return the length of the hypotenuse of a right triangle with sides x and y.")
+	.HelpTopic("https://learn.microsoft.com/en-us/cpp/c-runtime-library/reference/hypot-hypotf-hypotl-hypot-hypotf-hypotl?view=msvc-170")
 );
 ```
+Implement `xll_hypot` by calling `std::hypot` from the C++ standard library.
+```C++
+double WINAPI xll_hypot(double x, double y)
+{
+#pragma XLLEXPORT
+	return std::hypot(x,y);
+}
+```
+Note every function registered with Excel must be declared `WINAPI`
+and exported with `#pragma XLLEXPORT` in its body.
 
 ## Macro
 

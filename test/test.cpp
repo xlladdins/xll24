@@ -351,7 +351,7 @@ AddIn xai_func(Function(XLL_DOUBLE, L"xll_hypot", L"XLL.HYPOT")
 		Arg(XLL_DOUBLE, L"y", L"is a number.")
 		})
 	.Category(L"XLL")
-	.FunctionHelp(L"Calculates the hypotenuse.")
+	.FunctionHelp("Return the length of the hypotenuse of a right triangle with sides x and y.")
 	.HelpTopic("https://learn.microsoft.com/en-us/cpp/c-runtime-library/reference/hypot-hypotf-hypotl-hypot-hypotf-hypotl?view=msvc-170")
 //	.Documentation(L"Optional documentation.")
 );
