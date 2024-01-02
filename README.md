@@ -9,19 +9,16 @@ world and then copied back to native Excel.
 
 There is a reason why many companies don't use the ancient Microsoft Excel C SDK. 
 It is notoriously difficult to use. 
-The xll library makes it easy.
-Just register your functions and macros by telling excel how to call them.
+The xll library makes it easy to
+register your functions and macros. 
 
 ## Function
 
-An Excel function is purely functional.
-Every Excel function returns a result that depends only on the function arguments.
-Specify the return type, what C++ function to be called by Excel,
-and the argument types. Put it in a category and provide a short help description
-to make it easy for users to find and use your function.
-More extensive documentation can be provided by a URL.
+An Excel function is purely functional. 
+It returns a result that depends only on the function arguments.
+To call a C or C++ function from Excel you must register it with Excel.
 
-Here is what you need to write in order to register `xll_hypot` as `STD.HYPOT` in Excel.
+Here is how to register `xll_hypot` as `STD.HYPOT` in Excel.
 If `x` and `y` are doubles then `xll_hypot(x, y)` returns the length of 
 the hypotenuse of a right triangle with sides `x` and `y` as a double.
 ```C++
@@ -36,11 +33,11 @@ AddIn xai_hypot(
 	.HelpTopic("https://learn.microsoft.com/en-us/cpp/c-runtime-library/reference/hypot-hypotf-hypotl-hypot-hypotf-hypotl?view=msvc-170")
 );
 ```
-`.Category`, `.FunctionHelp`, and `.HelpTopic` are optional but people using your
-handiwork will appreciate it if you supply them. 
-
 C++ does not have named arguments so the `Function` class uses the 
 [named parameter idiom](https://isocpp.org/wiki/faq/ctors#named-parameter-idiom).
+
+`.Category`, `.FunctionHelp`, and `.HelpTopic` are optional but people using your
+handiwork will appreciate it if you supply them. 
 
 You can specify a URL in `.HelpTopic` that will be opened when 
 [Help on this function](https://support.microsoft.com/en-us/office/excel-functions-by-category-5f91f4e9-7b42-46d2-9bd1-63f26a86c0eb)
