@@ -22,8 +22,8 @@ to make it easy for users to find and use your function.
 More extensive documentation can be provided by a URL.
 
 Here is what you need to write in order to register `xll_hypot` as `STD.HYPOT` in Excel.
-If `x` and `y` are doubles then `std::hypot(x, y)` is the length of 
-the hypotenuse of a right triangle with sides `x` and `y`.
+If `x` and `y` are doubles then `xll_hypot(x, y)` returns the length of 
+the hypotenuse of a right triangle with sides `x` and `y` as a double.
 ```C++
 AddIn xai_hypot(
     Function(XLL_DOUBLE, "xll_hypot", "STD.HYPOT")
@@ -36,6 +36,15 @@ AddIn xai_hypot(
 	.HelpTopic("https://learn.microsoft.com/en-us/cpp/c-runtime-library/reference/hypot-hypotf-hypotl-hypot-hypotf-hypotl?view=msvc-170")
 );
 ```
+`.Category`, `.FunctionHelp`, and `.HelpTopic` are optional but people using your
+handiwork will appreciate it if you supply them. C++ does not have named
+arguments so the `Function` class uses the 
+[named parameter idiom](https://isocpp.org/wiki/faq/ctors#named-parameter-idiom).
+You can specify a URL in `.HelpTopic` that will be opened when 
+<font color=blue><u>Help on this function</u></font> is clicked in the
+in the [Insert Function](https://support.microsoft.com/en-us/office/insert-function-74474114-7c7f-43f5-bec3-096c56e2fb13)
+dialog.
+
 You must also implement `xll_hypot` by calling `std::hypot` from the C++ standard library.
 ```C++
 double WINAPI xll_hypot(double x, double y)
