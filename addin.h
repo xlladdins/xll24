@@ -29,7 +29,7 @@ namespace xll {
 			for (const auto& arg : args) {
 				*ah++ = OPER({ arg.type, arg.name, arg.text });
 			}
-			*ah = Nil;
+			*fh = Nil;
 
 			return *this;
 		}

@@ -343,12 +343,12 @@ int xll_test()
 }
 
 Auto<Open> xao_test(xll_test);
-//AddIn xai_test(Macro(L"xll_test", L"XLL.TEST"));
+AddIn xai_test(Macro(L"xll_test", L"XLL.TEST"));
 ///*
-AddIn xai_func(Function(XLL_DOUBLE, L"xll_hypot", L"XLL.HYPOT")
+AddIn xai_hypot(Function(XLL_DOUBLE, L"xll_hypot", L"XLL.HYPOT")
 	.Arguments({
 		Arg(XLL_DOUBLE, L"x", L"is a number."),
-		Arg(XLL_DOUBLE, L"y", L"is a number.")
+		Arg(XLL_DOUBLE, L"y", L"is a number."),
 		})
 	.Category(L"XLL")
 	.FunctionHelp("Return the length of the hypotenuse of a right triangle with sides x and y.")

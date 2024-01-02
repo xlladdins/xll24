@@ -453,6 +453,8 @@ namespace xll {
 
 using LPOPER = xll::OPER*;
 
+static_assert(sizeof(xll::OPER) == sizeof(XLOPER12));
+
 inline xll::OPER operator&(const xll::OPER& x, const xll::OPER& y)
 {
 	//xll::OPER z(x);

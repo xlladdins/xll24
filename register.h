@@ -5,14 +5,26 @@
 
 namespace xll {
 
+	// Set or return value of xlAddInManagerInfo.
+	inline LPXLOPER12 AddInManagerInfo(const XLOPER12& info = Nil)
+	{
+		static OPER x;
+
+		if (info.xltype == xltypeStr) {
+			x = info;
+		}
+
+		return &x;
+	}
+
 	struct Arg {
 		enum Type {
-			typeText, argumentText, functionHelp
+			typeText, argumentText, argumentHelp
 		};
-		OPER type, name, text;
+		OPER type, name, help;
 		template<class T> requires xll::is_char<T>::value
-			Arg(const T* type, const T* name, const T* text)
-			: type(OPER(type)), name(OPER(name)), text(OPER(text))
+			Arg(const T* type, const T* name, const T* help)
+			: type(OPER(type)), name(OPER(name)), help(OPER(help))
 		{ }
 	};
 
@@ -26,7 +38,21 @@ namespace xll {
 		OPER category;
 		OPER shortcutText;
 		OPER helpTopic;
-		OPER functionHelp[23];
+		OPER functionHelp;
+		OPER argumentHelp[22];
+
+		bool is_hidden() const
+		{
+			return macroType == 0;
+		}
+		bool is_function() const
+		{
+			return macroType == 0 || macroType == 1;
+		}
+		bool is_macro() const
+		{
+			return macroType == 2;
+		}
 		
 		int prepare() // for call to xlfRegister
 		{
@@ -39,34 +65,31 @@ namespace xll {
 				procedure = OPER(L"?") & procedure;
 			}
 
+			int i = 0;
 			//!!! search github ???
-			if (helpTopic == Nil) {
-				helpTopic = OPER(L"https://google.com/search?q=");
-				helpTopic &= procedure;
-			}
-			if (view(helpTopic).starts_with(L"http")) {
-				helpTopic &= OPER(L"!0");
-			}
+			if (is_function()) {
+				if (helpTopic == Nil) {
+					helpTopic = OPER(L"https://google.com/search?q=");
+					helpTopic &= procedure;
+				}
+				if (view(helpTopic).starts_with(L"http")) {
+					helpTopic &= OPER(L"!0");
+				}
 
-			int i = 1;
-			if (functionHelp[0] == Nil) { // macro
-				//functionHelp[/*++*/0] = OPER(L"");
-			}
-			else { // function
 				// typeText, argumentText, functionHelp
 				OPER comma = OPER(L"");
-				while (functionHelp[i].xltype != xltypeNil) {
-					typeText = typeText & functionHelp[i][Arg::Type::typeText];
-					argumentText &= comma & functionHelp[i][Arg::Type::argumentText];
-					functionHelp[i] = functionHelp[i][Arg::Type::functionHelp];
+				while (i < 22 && argumentHelp[i] != Nil) {
+					typeText = typeText & argumentHelp[i][Arg::Type::typeText];
+					argumentText &= comma & argumentHelp[i][Arg::Type::argumentText];
+					argumentHelp[i] = argumentHelp[i][Arg::Type::argumentHelp];
 					comma = OPER(L", ");
 					++i;
 				}
-				// https://docs.microsoft.com/en-us/office/client-developer/excel/known-issues-in-excel-xll-development#argument-description-string-truncation-in-the-function-wizard
-				functionHelp[i] = OPER(L"");
 			}
+			// https://docs.microsoft.com/en-us/office/client-developer/excel/known-issues-in-excel-xll-development#argument-description-string-truncation-in-the-function-wizard
+			argumentHelp[i] = OPER(L"");
 
-			return static_cast<int>(offsetof(Args, functionHelp)/sizeof(OPER) + i + 1);
+			return static_cast<int>(offsetof(Args, argumentHelp)/sizeof(OPER) + i + 1);
 		}
 	};
 
