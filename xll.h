@@ -10,6 +10,6 @@
 #include "addin.h"
 #include "fp.h"
 
-namespace xll {
 
-} // namespace xll
+// Set and get return value of xlAddInManagerInfo.
+LPXLOPER12 AddInManagerInfo(const XLOPER12& info);

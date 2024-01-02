@@ -11,8 +11,7 @@ namespace xll {
 			: Args{ .procedure = OPER(procedure),
 					.functionText = OPER(functionText),
 					.macroType = OPER(2.),
-					.shortcutText = shortcut ? OPER(shortcut) : OPER{}
-		}
+					.shortcutText = shortcut ? OPER(shortcut) : OPER{} }
 		{ }
 	};
 
@@ -26,11 +25,11 @@ namespace xll {
 		{ }
 		Function& Arguments(const std::initializer_list<Arg>& args)
 		{
-			OPER* fh = &functionHelp[1];
+			OPER* ah = &argumentHelp[0];
 			for (const auto& arg : args) {
-				*fh++ = OPER({ arg.type, arg.name, arg.text });
+				*ah++ = OPER({ arg.type, arg.name, arg.text });
 			}
-			*fh = Nil;
+			*ah = Nil;
 
 			return *this;
 		}

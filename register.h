@@ -5,18 +5,6 @@
 
 namespace xll {
 
-	// Return value of xlAddInManagerInfo.
-	inline LPXLOPER12 AddInManagerInfo(const XLOPER12& info = Nil)
-	{
-		static OPER x;
-
-		if (info.xltype == xltypeStr) {
-			x = info;
-		}
-
-		return &x;
-	}
-
 	struct Arg {
 		enum Type {
 			typeText, argumentText, functionHelp

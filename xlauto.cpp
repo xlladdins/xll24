@@ -6,6 +6,19 @@
 
 #define XLL_TRACE // XLL_INFORMATION(__FUNCTION__)
 
+// Return value of xlAddInManagerInfo.
+LPXLOPER12 AddInManagerInfo(const XLOPER12& info = xll::Nil)
+{
+	static xll::OPER x;
+
+	if (info.xltype == xltypeStr) {
+		x = info;
+	}
+
+	return &x;
+}
+
+
 using namespace xll;
 
 // https://learn.microsoft.com/en-us/office/client-developer/excel/xlautoopen
