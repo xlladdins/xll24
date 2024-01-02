@@ -43,11 +43,12 @@ C++ does not have named arguments so the `Function` class uses the
 [named parameter idiom](https://isocpp.org/wiki/faq/ctors#named-parameter-idiom).
 
 You can specify a URL in `.HelpTopic` that will be opened when 
-[Help on this function](https://support.microsoft.com/en-us/office/excel-functions-by-category-5f91f4e9-7b42-46d2-9bd1-63f26a86c0eb is clicked in the in the 
+[Help on this function](https://support.microsoft.com/en-us/office/excel-functions-by-category-5f91f4e9-7b42-46d2-9bd1-63f26a86c0eb)
+is clicked in the in the 
 [Insert Function](https://support.microsoft.com/en-us/office/insert-function-74474114-7c7f-43f5-bec3-096c56e2fb13)
 dialog.
 
-You must also implement `xll_hypot` by calling `std::hypot` from the C++ standard library.
+The next step is to implement `xll_hypot` by calling `std::hypot` from the C++ standard library.
 ```C++
 double WINAPI xll_hypot(double x, double y)
 {
