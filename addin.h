@@ -26,11 +26,11 @@ namespace xll {
 		{ }
 		Function& Arguments(const std::initializer_list<Arg>& args)
 		{
-			OPER* fh = &functionHelp[1];
+			int i = 0;
 			for (const auto& arg : args) {
-				*fh++ = OPER({ arg.type, arg.name, arg.text });
+				argumentHelp[i] = OPER({arg.type, arg.name, arg.help});
+				++i;
 			}
-			*fh = Nil;
 
 			return *this;
 		}
