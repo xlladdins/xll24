@@ -4,7 +4,7 @@ There is a reason why many companies still use the ancient
 [Microsoft Excel C SDK](https://learn.microsoft.com/en-us/office/client-developer/excel/welcome-to-the-excel-software-development-kit), 
 It provides the highest possible performance
 for integrating C, C++, and even Fortran into Excel. 
-VBA, C# VSTO, and JavaScript require data to be marshalled into their
+VBA, C#, and JavaScript require data to be marshalled into their
 world and then copied back to native Excel.
 
 There is a reason why many companies don't use the ancient Microsoft Excel C SDK. 
@@ -16,8 +16,12 @@ Just register your functions and macros by telling excel how to call them.
 
 An Excel function is purely functional.
 Every Excel function returns a result that depends only on the function arguments.
+Specify the return type, what C++ function to be called by Excel,
+and the argument types. Put it in a category and provide a short help description
+to make it easy for users to find and use your function.
+More extensive documentation can be provided by a URL.
 
-Register `xll_hypot` as `STD.HYPOT` in Excel.
+Here is what you need to write in order to register `xll_hypot` as `STD.HYPOT` in Excel.
 If `x` and `y` are doubles then `std::hypot(x, y)` is the length of 
 the hypotenuse of a right triangle with sides `x` and `y`.
 ```C++
@@ -32,7 +36,7 @@ AddIn xai_hypot(
 	.HelpTopic("https://learn.microsoft.com/en-us/cpp/c-runtime-library/reference/hypot-hypotf-hypotl-hypot-hypotf-hypotl?view=msvc-170")
 );
 ```
-Implement `xll_hypot` by calling `std::hypot` from the C++ standard library.
+You must also implement `xll_hypot` by calling `std::hypot` from the C++ standard library.
 ```C++
 double WINAPI xll_hypot(double x, double y)
 {
@@ -42,6 +46,9 @@ double WINAPI xll_hypot(double x, double y)
 ```
 Note every function registered with Excel must be declared `WINAPI`
 and exported with `#pragma XLLEXPORT` in its body.
+The first version of Excel was written in Pascal and the `WINAPI` calling convention
+is a historical artifact of that. Unlike Unix, Windows does not make functions
+visible outside of a shared library unless they are explicitly exported.
 
 ## Macro
 
