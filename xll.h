@@ -11,5 +11,15 @@
 #include "fp.h"
 
 
-// Set and get return value of xlAddInManagerInfo.
-LPXLOPER12 AddInManagerInfo(const XLOPER12& info);
+// Set or return value of xlAddInManagerInfo.
+inline LPXLOPER12 AddInManagerInfo(const XLOPER12& info = xll::Nil)
+{
+	static xll::OPER x;
+
+	if (info.xltype == xltypeStr) {
+		x = info;
+	}
+
+	return &x;
+}
+

@@ -27,9 +27,8 @@ namespace xll {
 		{
 			OPER* ah = &argumentHelp[0];
 			for (const auto& arg : args) {
-				*ah++ = OPER({ arg.type, arg.name, arg.text });
+				*ah++ = OPER({ arg.type, arg.name, arg.help });
 			}
-			*fh = Nil;
 
 			return *this;
 		}
