@@ -2,6 +2,7 @@
 // Copyright (c) KALX, LLC. All rights reserved. No warranty made.
 #pragma once
 #include <functional>
+#include <map>
 #include <vector>
 
 // Use Auto<XXX> xao_foo(xll_foo) to run xll_foo when xlAutoXXX is called.

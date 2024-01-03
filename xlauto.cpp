@@ -92,6 +92,13 @@ xlAutoRemove(void)
 		if (!Auto<Remove>::Call()) {
 			return FALSE;
 		}
+		OPER ws = Excel(xlfGetDocument, 1);
+		OPER gn = Excel(xlfNames, ws, 3); // all names in active workbook
+		for (int i = 0; i < rows(ws); ++i) {
+			if (ws(i,0) == gn) {
+				XlfUnregister(ws(i, 1));
+			}
+		}
 	}
 	catch (const std::exception& ex) {
 		XLL_ERROR(ex.what());
@@ -150,6 +157,6 @@ extern "C" LPXLOPER12 WINAPI xlAddInManagerInfo12(LPXLOPER12 pxAction)
 	XLL_TRACE;
 	static XLOPER12 err = Err(xlerrValue);
 	
-	// coerce to int and check if action is 1
-	return Excel(xlCoerce, *pxAction, OPER(xltypeInt)) == 1 ? AddInManagerInfo(xll::Nil) : &err;
+	// Coerce to int and check if action is 1.
+	return Excel(xlCoerce, *pxAction, OPER(xltypeInt)) == 1 ? AddInManagerInfo() : &err;
 }

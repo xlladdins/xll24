@@ -1,6 +1,7 @@
 // xlerror.h - Error message box.
 // Copyright (c) KALX, LLC. All rights reserved. No warranty made.
 #pragma once
+#include <string_view>
 #include <Windows.h>
 #include "XLCALL.H"
 
@@ -53,12 +54,12 @@ inline HWND xllGetHwnd(void)
 	return (HWND)IntToPtr(xHwnd.val.w);
 }
 
-inline int XLL_ALERT(int level, LPCSTR text, LPCSTR caption, UINT type = 0)
+inline int XLL_ALERT(int level, std::string_view text, LPCSTR caption, UINT type = 0)
 {
 	int alert_level = get_alert_level();
 
 	if (alert_level & level) {
-		int ret = MessageBoxA(xllGetHwnd(), text, caption, MB_OKCANCEL | type);
+		int ret = MessageBoxA(xllGetHwnd(), std::string(text).c_str(), caption, MB_OKCANCEL | type);
 		if (ret == IDCANCEL) {
 			alert_level &= ~level;
 			set_alert_level(alert_level);
@@ -68,17 +69,17 @@ inline int XLL_ALERT(int level, LPCSTR text, LPCSTR caption, UINT type = 0)
 	return alert_level;
 }
 
-inline int XLL_ERROR(LPCSTR text)
+inline int XLL_ERROR(std::string_view text)
 {
 	return XLL_ALERT(XLL_ALERT_ERROR, text, "Error", MB_ICONERROR);
 }
 
-inline int XLL_WARNING(LPCSTR text)
+inline int XLL_WARNING(std::string_view text)
 {
 	return XLL_ALERT(XLL_ALERT_WARNING, text, "Warning", MB_ICONWARNING);
 }
 
-inline int XLL_INFORMATION(LPCSTR text)
+inline int XLL_INFORMATION(std::string_view text)
 {
 	return XLL_ALERT(XLL_ALERT_INFORMATION, text, "Information", MB_ICONINFORMATION);
 }

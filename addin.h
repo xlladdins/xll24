@@ -1,6 +1,7 @@
 // addin.h - create Excel add-ins to register
 // Copyright (c) KALX, LLC. All rights reserved. No warranty made.
 #pragma once
+#include <map>
 #include "register.h"
 
 namespace xll {
@@ -80,15 +81,23 @@ namespace xll {
 	};
 
 	struct AddIn {
+		//static inline std::map<OPER, Args> addins;
 		AddIn(const Args& args)
 		{
-			Auto<Register> reg([args]() { return XlfRegister(args).xltype == xltypeNum; });
+			//if (addins.contains(args.functionText)) {
+				//std::string msg = L"AddIn: " + view(args.functionText) + L" already registered";
+				//XLL_WARNING(std::string("AddIn: ") + view(args.functionText) + " already registered");
+			//}
+			Auto<Register> reg([args]() {
+				OPER regId = XlfRegister(args);
+
+				return regId.xltype == xltypeNum; });
 		}
 		AddIn(const AddIn&) = delete;
 		AddIn& operator=(const AddIn&) = delete;
 		~AddIn()
 		{
-			//Auto<Unregister> unregister;
+			//Auto<Remove> unreg([]() { return XlfUnregister(); };
 		}
 		// Auto<Unregister>
 		// Auto<Close>

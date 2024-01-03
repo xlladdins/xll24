@@ -103,13 +103,14 @@ namespace xll {
 	}
 	
 	// Really unregister a function.
+	// https://learn.microsoft.com/en-us/office/client-developer/excel/xlfunregister-form-1
 	// https://docs.microsoft.com/en-us/office/client-developer/excel/known-issues-in-excel-xll-development#unregistering-xll-commands-and-functions
 	// https://stackoverflow.com/questions/15343282/how-to-remove-an-excel-udf-programmatically
-	inline OPER XlfUnregister(const OPER& key)
+	inline bool XlfUnregister(const OPER& key)
 	{
 		OPER regid = Excel(xlfEvaluate, key);
 		if (type(regid) != xltypeNum) {
-			return ErrValue;
+			return false;
 		}
 		Excel(xlfSetName, key);
 		Excel(xlfUnregister, regid);
@@ -118,7 +119,7 @@ namespace xll {
 			OPER("xlAutoRemove"), OPER(XLL_SHORT), key, Missing, OPER(2));
 		Excel(xlfSetName, key);
 
-		return Excel(xlfUnregister, regid);
+		return Excel(xlfUnregister, regid) == true;
 	}
 
 } // namespace xll

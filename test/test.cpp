@@ -342,8 +342,7 @@ int xll_test()
 	return TRUE;
 }
 
-Auto<Open> xao_test(xll_test);
-AddIn xai_test(Macro(L"xll_test", L"XLL.TEST"));
+//AddIn xai_test(Macro(L"xll_test", L"XLL.TEST"));
 ///*
 AddIn xai_hypot(Function(XLL_DOUBLE, L"xll_hypot", L"XLL.HYPOT")
 	.Arguments({
