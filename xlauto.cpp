@@ -15,12 +15,9 @@ xlAutoOpen(void)
 {
 	XLL_TRACE;
 	try {
-		if (!Auto<xll::Open>::Call()) 
-			return FALSE;
-		if (!Auto<xll::Register>::Call())
-			return FALSE;
-		if (!Auto<xll::OpenAfter>::Call())
-			return FALSE;
+		ensure(Auto<xll::Open>::Call());
+		ensure(Auto<xll::Register>::Call());
+		ensure(Auto<xll::OpenAfter>::Call()); 
 	}
 	catch (const std::exception& ex) {
 		XLL_ERROR(ex.what());
@@ -43,9 +40,7 @@ xlAutoClose(void)
 {
 	XLL_TRACE;
 	try {
-		// UnRegister all functions and commands.
-		if (!Auto<Close>::Call())
-			return FALSE;
+		ensure(Auto<Close>::Call());
 	}
 	catch (const std::exception& ex) {
 		XLL_ERROR(ex.what());
@@ -69,16 +64,20 @@ xlAutoAdd(void)
 {
 	XLL_TRACE;
 	try {
-		Auto<Add>::Call();
+		ensure(Auto<Add>::Call());
 	}
 	catch (const std::exception& ex) {
 		XLL_ERROR(ex.what());
+
+		return FALSE;
 	}
 	catch (...) {
 		XLL_ERROR("Unknown exception in xlAutoAdd");
+
+		return FALSE;
 	}
 
-	return 1;
+	return TRUE;
 }
 
 // https://learn.microsoft.com/en-us/office/client-developer/excel/xlautoremove
@@ -89,16 +88,8 @@ xlAutoRemove(void)
 {
 	XLL_TRACE;
 	try {
-		if (!Auto<Remove>::Call()) {
-			return FALSE;
-		}
-		OPER ws = Excel(xlfGetDocument, 1);
-		OPER gn = Excel(xlfNames, ws, 3); // all names in active workbook
-		for (int i = 0; i < rows(ws); ++i) {
-			if (ws(i,0) == gn) {
-				XlfUnregister(ws(i, 1));
-			}
-		}
+		ensure(Auto<Remove>::Call());
+		ensure(Auto<Unregister>::Call());
 	}
 	catch (const std::exception& ex) {
 		XLL_ERROR(ex.what());
@@ -120,7 +111,10 @@ extern "C" void __declspec(dllexport) WINAPI
 xlAutoFree12(LPXLOPER12 px)
 {
 	XLL_TRACE;
-	Excel12(xlFree, 0, 1, px);
+	if (px->xltype & xlbitDLLFree) {
+		px->xltype &= ~xlbitDLLFree;
+		static_cast<OPER*>(px)->~OPER();
+	}
 }
 
 // https://learn.microsoft.com/en-us/office/client-developer/excel/xlautoregister-xlautoregister12
@@ -132,8 +126,13 @@ xlAutoRegister12(LPXLOPER12 pxName)
 	static XLOPER12 o;
 
 	try {
-		pxName = pxName;
-		// loop through all functions and commands!!!
+		const auto addin = AddIn::addins.find(OPER(*pxName));
+		if (addin != AddIn::addins.end()) {
+			o = XlfRegister(addin->second);
+		}
+		else {
+			o = ErrValue;
+		}
 	}
 	catch (const std::exception& ex) {
 		XLL_ERROR(ex.what());

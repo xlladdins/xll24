@@ -298,6 +298,7 @@ int fp_test()
 int xll_test()
 {
 	set_alert_level(7);
+	AddInManagerInfo(OPER("The xll_test add-in"));
 	//XlfRegister(Macro(L"?xll_test", L"XLL.TEST"));
 	/*
 	Excel(xlfRegister

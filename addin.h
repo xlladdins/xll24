@@ -81,26 +81,50 @@ namespace xll {
 	};
 
 	struct AddIn {
-		//static inline std::map<OPER, Args> addins;
+		static inline std::map<OPER, Args> addins;
 		AddIn(const Args& args)
 		{
-			//if (addins.contains(args.functionText)) {
-				//std::string msg = L"AddIn: " + view(args.functionText) + L" already registered";
-				//XLL_WARNING(std::string("AddIn: ") + view(args.functionText) + " already registered");
-			//}
+			if (const auto e = addins.find(args.functionText); e != addins.end()) {
+				const auto err = OPER(L"AddIn: ") & args.functionText & OPER(L" already registered as: ") & e->second.procedure;
+				XLL_WARNING(view(err));
+			}
+			else {
+				addins[args.functionText] = args;
+			}
 			Auto<Register> reg([args]() {
 				OPER regId = XlfRegister(args);
 
-				return regId.xltype == xltypeNum; });
+				return regId.xltype == xltypeNum; 
+			});
+			Auto<Unregister> unreg([]() {
+				try {
+					for (const auto& [text, args] : addins) {
+						if (!XlfUnregister(text)) {
+							const auto err = OPER(L"AddIn: failed to unregister: ") & text;
+							XLL_WARNING(view(err));
+
+							return FALSE;
+						}
+					}
+				}
+				catch (const std::exception& ex) {
+					XLL_ERROR(ex.what());
+
+					return FALSE;
+				}
+				catch (...) {
+					XLL_ERROR("AddIn::Auto<Close>: unknown exception");
+
+					return FALSE;
+				}
+
+				return TRUE;
+			});
 		}
 		AddIn(const AddIn&) = delete;
 		AddIn& operator=(const AddIn&) = delete;
 		~AddIn()
-		{
-			//Auto<Remove> unreg([]() { return XlfUnregister(); };
-		}
-		// Auto<Unregister>
-		// Auto<Close>
+		{ }
 	};
 
 } // namespace xll
