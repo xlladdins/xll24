@@ -118,7 +118,7 @@ namespace xll {
 		case xltypeBool:
 			return x.val.xbool <=> y.val.xbool;
 		case xltypeErr:
-			return std::partial_ordering::unordered;
+			return x.val.err <=> y.val.err;
 		case xltypeMulti:
 			return rows(x) != rows(y) ? rows(x) <=> rows(y)
 				: columns(x) != columns(y) ? columns(x) <=> columns(y)

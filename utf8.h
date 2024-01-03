@@ -90,6 +90,14 @@ namespace utf8 {
 			ensure(ws[2] == L'c');
 			ensure(ws[3] == L'\0'); // null terminated
 		}
+		{
+			auto ws = utf8::mbstowcs("abc", 2);
+			ensure(ws[0] == 2);
+			ensure(ws[1] == L'a');
+			ensure(ws[2] == L'b');
+			ensure(ws[3] == L'\0'); // null terminated
+		}
+
 		return 0;
 	}
 #endif // _DEBUG
