@@ -68,18 +68,44 @@ inline int XLL_ALERT(int level, std::string_view text, LPCSTR caption, UINT type
 
 	return alert_level;
 }
+inline int XLL_ALERT(int level, std::wstring_view text, LPCWSTR caption, UINT type = 0)
+{
+	int alert_level = get_alert_level();
+
+	if (alert_level & level) {
+		int ret = MessageBoxW(xllGetHwnd(), std::wstring(text).c_str(), caption, MB_OKCANCEL | type);
+		if (ret == IDCANCEL) {
+			alert_level &= ~level;
+			set_alert_level(alert_level);
+		}
+	}
+
+	return alert_level;
+}
 
 inline int XLL_ERROR(std::string_view text)
 {
 	return XLL_ALERT(XLL_ALERT_ERROR, text, "Error", MB_ICONERROR);
+}
+inline int XLL_ERROR(std::wstring_view text)
+{
+	return XLL_ALERT(XLL_ALERT_ERROR, text, L"Error", MB_ICONERROR);
 }
 
 inline int XLL_WARNING(std::string_view text)
 {
 	return XLL_ALERT(XLL_ALERT_WARNING, text, "Warning", MB_ICONWARNING);
 }
+inline int XLL_WARNING(std::wstring_view text)
+{
+	return XLL_ALERT(XLL_ALERT_WARNING, text, L"Warning", MB_ICONWARNING);
+}
 
 inline int XLL_INFORMATION(std::string_view text)
 {
 	return XLL_ALERT(XLL_ALERT_INFORMATION, text, "Information", MB_ICONINFORMATION);
+}
+inline int XLL_INFORMATION(std::wstring_view text)
+{
+	return XLL_ALERT(XLL_ALERT_INFORMATION, text, L"Information", MB_ICONINFORMATION);
 }

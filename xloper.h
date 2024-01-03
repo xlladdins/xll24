@@ -1,7 +1,6 @@
 // xloper.h - XLOPER12 helpers
 // Copyright (c) KALX, LLC. All rights reserved. No warranty made.
 #pragma once
-#include <compare>
 #include "ref.h"
 
 namespace xll {
@@ -102,48 +101,55 @@ namespace xll {
 		return std::span(BigData(x), count(x));
 	}
 
-	constexpr bool equal(const XLOPER12& x, const XLOPER12& y)
+	constexpr std::partial_ordering compare(const XLOPER12& x, const XLOPER12& y)
 	{
 		int xtype = type(x);
 		int ytype = type(y);
 
 		if (xtype != ytype) {
-			return false;
+			return xtype <=> ytype;
 		}
 
 		switch (xtype) {
 		case xltypeNum:
-			return x.val.num == y.val.num;
+			return x.val.num <=> y.val.num;
 		case xltypeStr:
-			return std::equal(view(x).begin(), view(x).end(), view(y).begin(), view(y).end());
+			return std::lexicographical_compare_three_way(view(x).begin(), view(x).end(), view(y).begin(), view(y).end());
 		case xltypeBool:
-			return x.val.xbool == y.val.xbool;
+			return x.val.xbool <=> y.val.xbool;
 		case xltypeErr:
-			return x.val.err == y.val.err;
+			return std::partial_ordering::unordered;
 		case xltypeMulti:
-			return rows(x) == rows(y) && columns(x) == columns(y)
-				&& std::equal(span(x).begin(), span(x).end(), span(y).begin(), span(y).end(), xll::equal);
+			return rows(x) != rows(y) ? rows(x) <=> rows(y)
+				: columns(x) != columns(y) ? columns(x) <=> columns(y)
+				: std::lexicographical_compare_three_way(span(x).begin(), span(x).end(), span(y).begin(), span(y).end(), xll::compare);
 		case xltypeInt:
-			return x.val.w == y.val.w;
+			return x.val.w <=> y.val.w;
 		case xltypeSRef:
-			return SRef(x) == SRef(y);
+			return SRef(x) <=> SRef(y);
 		case xltypeRef:
-			return x.val.mref.idSheet == y.val.mref.idSheet
-				&& std::equal(ref(x).begin(), ref(x).end(), ref(y).begin(), ref(y).end());
+			return x.val.mref.idSheet != y.val.mref.idSheet ? x.val.mref.idSheet <=> y.val.mref.idSheet
+				: std::lexicographical_compare_three_way(ref(x).begin(), ref(x).end(), ref(y).begin(), ref(y).end());
 		case xltypeBigData:
-			return std::equal(blob(x).begin(), blob(x).end(), blob(y).begin(), blob(y).end());
+			return count(x) != count(y) ? count(x) <=> count(y)
+				: std::lexicographical_compare_three_way(blob(x).begin(), blob(x).end(), blob(y).begin(), blob(y).end());
 		}
 
-		return true;
+		return std::partial_ordering::equivalent;
 	}
 } // namespace xll
 
+constexpr auto operator<=>(const XLOPER12& x, const XLOPER12& y)
+{
+	return xll::compare(x, y);
+}
 constexpr bool operator==(const XLOPER12& x, const XLOPER12& y)
 {
-	return xll::equal(x, y);
+	return xll::compare(x, y) == 0;
 }
+
 #ifdef _DEBUG
-static_assert(xll::equal(xll::Num(1.23), xll::Num(1.23)));
-static_assert(xll::Num(1.23) == xll::Num(1.23));
+static_assert((xll::Num(1.23) <=> xll::Num(1.23)) == 0);
+static_assert((xll::Num(1.23) <=> xll::Num(1.234)) < 0);
 #endif // _DEBUG
 

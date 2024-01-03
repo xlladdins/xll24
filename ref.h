@@ -1,6 +1,7 @@
 // ref.h - REF class to construct XLREF12 type
 // Copyright (c) KALX, LLC. All rights reserved. No warranty made.
 #pragma once
+#include <compare>
 #include "defines.h"
 #include "ensure.h"
 
@@ -54,6 +55,20 @@ constexpr bool operator==(const XLREF12& r, const XLREF12& s)
 		&& r.rwLast == s.rwLast
 		&& r.colFirst == s.colFirst
 		&& r.colLast == s.colLast;
+}
+// r is strictly contained in s
+constexpr bool operator<(const XLREF12 & r, const XLREF12 & s)
+{
+	return r.rwFirst > s.rwFirst
+		&& r.colFirst > s.colFirst
+		&& r.rwLast < s.rwLast
+		&& r.colLast < s.colLast;
+}
+constexpr auto operator<=>(const XLREF12& r, const XLREF12& s)
+{
+	return r < s ? std::strong_ordering::less
+		 : s < r ? std::strong_ordering::greater
+		 : std::strong_ordering::equivalent;
 }
 
 #ifdef _DEBUG
