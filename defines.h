@@ -213,13 +213,15 @@ namespace xll {
 	X(CLUSTER_SAFE, "", "&", "declares function to be cluster safe")             \
 	X(ASYNCHRONOUS, "", "X", "declares function to be asynchronous")             \
 
-#define XLL_ARG(a,b,c,d) constexpr const wchar_t* XLL_##a##4 = TEXT(b);
+#define XLL_L(s) L##s
+#define XLL_ARG(a,b,c,d) constexpr const wchar_t* XLL_##a##4 = XLL_L(b);
 	XLL_ARG_TYPE(XLL_ARG)
 #undef XLL_ARG
 
-#define XLL_ARG(a,b,c,d) constexpr const wchar_t* XLL_##a = TEXT(c);
+#define XLL_ARG(a,b,c,d) constexpr const wchar_t* XLL_##a = XLL_L(c);
 	XLL_ARG_TYPE(XLL_ARG)
 #undef XLL_ARG
+#undef XLL_L
 
 	// https://learn.microsoft.com/en-us/office/client-developer/excel/calling-into-excel-from-the-dll-or-xll#return-values 
 	// xlretX, description
