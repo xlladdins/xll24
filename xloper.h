@@ -5,17 +5,8 @@
 
 namespace xll {
 
-	constexpr int type(const XLOPER& x) noexcept
-	{
-		return x.xltype & ~(xlbitFree);
-	}
-	constexpr int type(const XLOPER12& x) noexcept
-	{
-		return x.xltype & ~(xlbitFree);
-	}
-
 	// return XLFree(x) in thread-safe functions
-	// Freed by Excel using xlFree when no longer needed.
+	// Freed by Excel when no longer needed.
 	constexpr LPXLOPER12 XLFree(XLOPER12& x) noexcept
 	{
 		x.xltype |= xlbitXLFree;
@@ -54,7 +45,7 @@ namespace xll {
 		case xltypeMulti:
 			return x.val.array.rows;
 		case xltypeSRef:
-			return rows(x.val.sref.ref);
+			return rows(SRef(x));
 		case xltypeMissing:
 		case xltypeNil:
 			return 0;
@@ -68,7 +59,7 @@ namespace xll {
 		case xltypeMulti:
 			return x.val.array.columns;
 		case xltypeSRef:
-			return columns(x.val.sref.ref);
+			return columns(SRef(x));
 		case xltypeMissing:
 		case xltypeNil:
 			return 0;
@@ -150,6 +141,7 @@ constexpr bool operator==(const XLOPER12& x, const XLOPER12& y)
 
 #ifdef _DEBUG
 static_assert((xll::Num(1.23) <=> xll::Num(1.23)) == 0);
-static_assert((xll::Num(1.23) <=> xll::Num(1.234)) < 0);
+static_assert((xll::Num(1.23) <=> xll::Num(1.24)) < 0);
+static_assert((xll::Num(1.25) <=> xll::Num(1.24)) > 0);
 #endif // _DEBUG
 

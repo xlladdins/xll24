@@ -113,13 +113,15 @@ namespace xll {
 			return false;
 		}
 		Excel(xlfSetName, key);
-		Excel(xlfUnregister, regid);
-
+		
+		return Excel(xlfUnregister, regid) == true;
+		/* Is this really necessary???
 		regid = Excel(xlfRegister, Excel(xlGetName),
 			OPER("xlAutoRemove"), OPER(XLL_SHORT), key, Missing, OPER(2));
 		Excel(xlfSetName, key);
 
 		return Excel(xlfUnregister, regid) == true;
+		*/
 	}
 
 } // namespace xll

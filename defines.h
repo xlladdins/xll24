@@ -6,7 +6,6 @@
 #define WIN32_LEAN_AND_MEAN
 #include <Windows.h>
 #include "XLCALL.H"
-#include "ensure.h"
 
 namespace xll {
 
@@ -28,7 +27,8 @@ namespace xll {
 	}
 
 	template<int X> struct type_traits {};
-#define XLL_TYPE(a, b, c, d) template<> struct type_traits<xltype##a> { using type = c; };
+#define XLL_TYPE(a, b, c, d) \
+	template<> struct type_traits<xltype##a> { using type = c; };
 	XLL_TYPE_SCALAR(XLL_TYPE)
 #undef XLL_TYPE
 #ifdef _DEBUG
@@ -40,6 +40,7 @@ namespace xll {
 #endif // _DEBUG
 
 	// Create XLOPER12 from scalar.
+	// constexpr XLOPER12 Num(double x) { XLOPER12 o; o.xltype = xltypeNum; o.val.num = x; return o; }
 #define XLL_SCALAR(a, b, c, d) constexpr XLOPER12 a(c x) \
 		{ XLOPER12 o; o.xltype = xltype##a; o.val.b = x; return o; }
 	XLL_TYPE_SCALAR(XLL_SCALAR)
@@ -58,11 +59,14 @@ namespace xll {
 #endif // _DEBUG
 
 	// Return scalar from XLOPER12.
+	// constexpr double Num(const XLOPER12& x) { return x.val.num; }
 #define XLL_SCALAR(a, b, c, d) constexpr c a(const XLOPER12& x) { return x.val.b; }
 	XLL_TYPE_SCALAR(XLL_SCALAR)
 #undef XLL_SCALAR
 #ifdef _DEBUG
 	static_assert(Num(Num(1.23)) == 1.23);
+	static_assert(Num(Num(Num(1.23))).xltype == xltypeNum);
+	static_assert(Num(Num(Num(1.23))).val.num == 1.23);
 	static_assert(Bool(Bool(true)) == TRUE);
 	static_assert(Err(Err(xlerrNA)) == xlerrNA);
 	static_assert(Int(Int(123)) == 123);
@@ -71,9 +75,9 @@ namespace xll {
 	// types requiring allocation where xX is pointer to data
 	// xltypeX, XLOPERX::val.X, xX, XLL_X, description
 #define XLL_TYPE_ALLOC(X) \
-    X(Str,     str + 1,             XCHAR*,    "Pointer to a counted Pascal string")      \
+    X(Str,     str + 1,             XCHAR*,    "Counted string")                          \
     X(Multi,   array.lparray,       XLOPER12*, "Two dimensional array of XLOPER12 types") \
-    X(Ref,     mref.lpmref->reftbl, XLREF12*,  "Multiple reference")                      \
+    X(Ref,     mref.lpmref->reftbl, XLREF12*,  "Array of single references")              \
     X(BigData, bigdata.h.lpbData,   BYTE*,     "Blob of binary data")                     \
 
 #define XLL_ALLOC(a, b, c, d)  | xltype##a
@@ -86,6 +90,7 @@ namespace xll {
 	}
 
 	// Return pointer to underlying data.
+	// constexpr XCHAR* Str(const XLOPER12& x) { return x.xltype & xltypeStr ? x.val.str + 1 : nullptr; }
 #define XLL_ALLOC(a,b,c,d)  constexpr c a(const XLOPER12& x) \
 		{ return x.xltype & xltype##a ? x.val.##b : nullptr; }
 	XLL_TYPE_ALLOC(XLL_ALLOC)
@@ -122,6 +127,14 @@ namespace xll {
 	X(DLLFree, "AutoFree owns memory") \
 
 	constexpr int xlbitFree = xlbitXLFree | xlbitDLLFree;
+	constexpr int type(const XLOPER& x) noexcept
+	{
+		return x.xltype & ~(xlbitFree);
+	}
+	constexpr int type(const XLOPER12& x)
+	{
+		return x.xltype & (~xlbitFree);
+	}
 
 #define XLL_NULL_TYPE(X)                    \
 	X(Missing, "missing function argument") \
@@ -142,11 +155,11 @@ namespace xll {
 	X(Num,   "#NUM!",   "invalid number")                                   \
 	X(NA,    "#N/A",    "value not available to a formula.")                \
 
-#ifdef _DEBUG
 #define XLL_ERR(a, b, c) constexpr XLOPER12 Err##a \
 		= XLOPER12{ .val = {.err = xlerr##a}, .xltype = xltypeErr };
 		XLL_TYPE_ERR(XLL_ERR)
 #undef XLL_ERR
+#ifdef _DEBUG
 #define XLL_ERR(a, b, c) \
 	static_assert(Err##a.val.err == xlerr##a); \
 	static_assert(Err##a.xltype == xltypeErr);
@@ -183,6 +196,7 @@ namespace xll {
 	}
 	static_assert(std::string_view(xlerr_description(xlerr::Null)) == "#NULL!: intersection of two ranges that do not intersect");
 
+	// Check for xltypeErr.
 #define ensure_err(res) ensure_message(xll::type(res) != xltypeErr, xll::xlerr_description((xll::xlerr)res.val.err));
 
 	// https://learn.microsoft.com/en-us/office/client-developer/excel/xlfregister-form-1#data-types
@@ -245,6 +259,7 @@ namespace xll {
 #undef XLL_RET
 		return "xlret type unknown";
 	}
+	// Check return value of Excel4/12.
 	#define	ensure_ret(ret) ensure_message(ret == xlretSuccess, xll::xlret_description(ret));
 
 } // namespace xll

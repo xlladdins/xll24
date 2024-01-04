@@ -21,12 +21,12 @@ int num_test()
 		ensure(!(o != o2));
 	}
 	{
-		ensure(OPER(true).as_num() == 1);
-		ensure(OPER(123).as_num() == 123);
-		ensure(OPER(1.23).as_num() == 1.23);
+		ensure(as_num(OPER(true)) == 1);
+		ensure(as_num(OPER(123)) == 123);
+		ensure(as_num(OPER(1.23)) == 1.23);
 		ensure(as_num(Missing) == 0);
 		ensure(as_num(Nil) == 0);
-		ensure(_isnan(OPER(L"abc").as_num()));
+		ensure(_isnan(as_num(OPER(L"abc"))));
 	}
 
 	return 0;

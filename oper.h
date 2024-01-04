@@ -5,6 +5,7 @@
 #include <cassert>
 #endif // _DEBUG
 #include <initializer_list>
+#include "ensure.h"
 #include "xloper.h"
 #include "utf8.h"
 
@@ -18,7 +19,7 @@ namespace xll {
 	{ };
 #undef XLL_IS_CHAR
 
-	// Length of null terminated string.
+	// Length of null terminated wide string.
 	constexpr XCHAR len(const XCHAR* s, XCHAR n = 0)
 	{
 		return *s && n < 0x4FFF ? len(s + 1, n + 1) : n;
@@ -41,12 +42,15 @@ namespace xll {
 			: XLOPER12{ o }
 		{
 			int xtype = type(o);// o.xltype; // type(o);
-			// Do not allocate if xlbitFree set.
+			// Do not allocate if xlbitFree set???
 			if (xtype == xltypeStr) {
 				alloc(val.str + 1, val.str[0]);
 			}
 			else if (xtype == xltypeMulti) {
 				alloc(rows(o), columns(o), Multi(o));
+			}
+			else if (xtype == xltypeBigData) {
+				alloc(val.bigdata.h.lpbData, val.bigdata.cbData);
 			}
 		}
 		constexpr OPER(const OPER& o)
@@ -92,17 +96,12 @@ namespace xll {
 		OPER& operator=(double num) noexcept
 		{
 			dealloc();
-			*this = Num(num);
 
-			return *this;
+			return *this = Num(num);
 		}
 		constexpr bool operator==(double num) const noexcept
 		{
-			return type(*this) == xltypeNum && val.num == num;
-		}
-		double as_num() const noexcept
-		{
-			return xll::as_num(*this);
+			return type(*this) == xltypeNum && as_num(*this) == num;
 		}
 
 		// Str - Counted wide character string.
@@ -136,30 +135,26 @@ namespace xll {
 		OPER& operator=(const XCHAR* str)
 		{
 			dealloc();
-			*this = OPER(str);
 
-			return *this;
+			return *this = OPER(str);
 		}
 		OPER& operator=(const char* str)
 		{
 			dealloc();
-			*this = OPER(str);
-
-			return *this;
+			
+			return *this = OPER(str);
 		}
 		OPER& operator=(const std::wstring_view& str)
 		{
 			dealloc();
-			*this = OPER(str.data(), static_cast<XCHAR>(str.size()));
 
-			return *this;
+			return *this = OPER(str.data(), static_cast<XCHAR>(str.size()));
 		}
 		OPER& operator=(const std::string_view& str)
 		{
 			dealloc();
-			*this = OPER(str.data());
-
-			return *this;
+			
+			return *this = OPER(str.data());
 		}
 		constexpr bool operator==(const XCHAR* str) const
 		{
@@ -201,6 +196,7 @@ namespace xll {
 			return operator&=(OPER(str));
 		}
 		*/
+
 		// Bool
 		constexpr explicit OPER(bool xbool)
 			: XLOPER12{ Bool(xbool) }
@@ -212,9 +208,8 @@ namespace xll {
 		OPER& operator=(bool xbool) noexcept
 		{
 			dealloc();
-			*this = Bool(xbool);
-
-			return *this;
+			
+			return *this = Bool(xbool);
 		}
 
 		// Int
@@ -228,6 +223,8 @@ namespace xll {
 					return val.w == w;
 				case xltypeNum:
 					return val.num == w;
+				case xltypeBool:
+					return val.xbool == w;
 			}
 
 			return false;
@@ -246,6 +243,7 @@ namespace xll {
 		constexpr OPER(std::initializer_list<XLOPER12> a)
 			: OPER(1, static_cast<int>(a.size()), a.begin())
 		{ }
+
 		OPER& reshape(int r, int c)
 		{
 			ensure(r * c == size(*this));
@@ -376,7 +374,10 @@ namespace xll {
 				for (auto& o : span(*this)) {
 					static_cast<OPER&>(o).dealloc();
 				}
-				delete[] static_cast<OPER*>(val.array.lparray);
+				delete[] static_cast<OPER*>(Multi(*this));
+			}
+			else if (xltype == xltypeBigData) {
+				delete[] BigData(*this);
 			}
 
 			xltype = xltypeNil;
@@ -410,6 +411,14 @@ namespace xll {
 			else {
 				xltype = xltypeNil;
 			}
+		}
+		// BigData
+		constexpr void alloc(const BYTE* data, int len)
+		{
+			xltype = xltypeBigData;
+			val.bigdata.cbData = len;
+			val.bigdata.h.lpbData = new BYTE[len];
+			std::copy_n(data, len, val.bigdata.h.lpbData);
 		}
 	};
 
