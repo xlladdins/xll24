@@ -798,7 +798,7 @@
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:xll"
         "ProductCode" = "8:{EDA889D0-1C13-44C7-9797-65837CB8F14F}"
-        "PackageCode" = "8:{AE3649D1-8954-4765-876A-2CA8C06732B7}"
+        "PackageCode" = "8:{92425D06-0315-4AE3-AEC7-F3293F30925C}"
         "UpgradeCode" = "8:{D3821F0B-5C0F-4ACB-83B9-427A6A173B04}"
         "AspNetVersion" = "8:"
         "RestartWWWService" = "11:FALSE"
@@ -1317,34 +1317,6 @@
         }
         "ProjectOutput"
         {
-            "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_878DC017F4464A74BC0BBD30EDEE4D87"
-            {
-            "SourcePath" = "8:"
-            "TargetName" = "8:"
-            "Tag" = "8:"
-            "Folder" = "8:_DD58E9147CD54C079F0523EC2F1D53CD"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            "ProjectOutputGroupRegister" = "3:1"
-            "OutputConfiguration" = "8:"
-            "OutputGroupCanonicalName" = "8:Built"
-            "OutputProjectGuid" = "8:{7D7375AF-E7E3-42D3-A00F-D8EE22C39924}"
-            "ShowKeyOutput" = "11:TRUE"
-                "ExcludeFilters"
-                {
-                }
-            }
         }
     }
 }
