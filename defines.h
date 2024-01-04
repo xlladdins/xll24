@@ -157,7 +157,7 @@ namespace xll {
 
 #define XLL_ERR(a, b, c) constexpr XLOPER12 Err##a \
 		= XLOPER12{ .val = {.err = xlerr##a}, .xltype = xltypeErr };
-		XLL_TYPE_ERR(XLL_ERR)
+	XLL_TYPE_ERR(XLL_ERR)
 #undef XLL_ERR
 #ifdef _DEBUG
 #define XLL_ERR(a, b, c) \

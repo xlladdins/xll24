@@ -1,11 +1,11 @@
-﻿# Excel add-in library
+﻿# xll library
 
 There is a reason why many companies still use the ancient 
 [Microsoft Excel C SDK](https://learn.microsoft.com/en-us/office/client-developer/excel/welcome-to-the-excel-software-development-kit), 
 It provides the highest possible performance
 for integrating C, C++, and even Fortran into Excel. 
 VBA, C#, and JavaScript require data to be marshalled into their
-world and then copied back to native Excel, but at least they run on your machine.
+world and then copied back to native Excel.
 Microsoft's [Python in Excel](https://www.microsoft.com/en-us/microsoft-365/python-in-excel)
 actually calls back to the mothership to do every calculation, 
 as if Python isn't slow enough already.
@@ -100,7 +100,7 @@ The xll library understand utf-8 encoded strings.
 
 ## Register
 
-Functions are added to Excel by _register_ing them.
+Functions are added to Excel by _registering_ them.
 You must specify the signature (return type and argument types) of the C function,
 its name, and the name Excel will use to call it. 
 

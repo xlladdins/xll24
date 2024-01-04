@@ -69,6 +69,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_58D9A4CF53D2407092B9E6733DD812AE"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_5FFE21FD49054E3EA97C716831BDFFF2"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -106,6 +112,12 @@
         "Entry"
         {
         "MsmKey" = "8:_C49D6FDAEBA240F5AC4B880EF45E8335"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_CBD84AD688FF47519F7C48BD71222AAB"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -388,6 +400,26 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_58D9A4CF53D2407092B9E6733DD812AE"
+            {
+            "SourcePath" = "8:..\\Templates\\ProjectTemplates\\Visual C++\\xll.zip"
+            "TargetName" = "8:xll.zip"
+            "Tag" = "8:"
+            "Folder" = "8:_31374200706E4498B852F9DF3B9A6BB4"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_5FFE21FD49054E3EA97C716831BDFFF2"
             {
             "SourcePath" = "8:..\\auto.h"
@@ -528,6 +560,26 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_CBD84AD688FF47519F7C48BD71222AAB"
+            {
+            "SourcePath" = "8:..\\Visualizers\\oper.natvis"
+            "TargetName" = "8:oper.natvis"
+            "Tag" = "8:"
+            "Folder" = "8:_E296051E312F493A8D588830993EA8DA"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_DC28C77A7850481E8958CFC4496288F6"
             {
             "SourcePath" = "8:..\\defines.h"
@@ -583,6 +635,72 @@
             "Property" = "8:ProgramMenuFolder"
                 "Folders"
                 {
+                }
+            }
+            "{1525181F-901A-416C-8A58-119130FE478E}:_2D591786803842798D5BE7C2DDF0F1D1"
+            {
+            "Name" = "8:#1918"
+            "AlwaysCreate" = "11:FALSE"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Property" = "8:PersonalFolder"
+                "Folders"
+                {
+                    "{9EF0B969-E518-4E46-987F-47570745A589}:_BE359DFBC22141E98D4D8FC4A533F6BA"
+                    {
+                    "Name" = "8:Visual Studio 2022"
+                    "AlwaysCreate" = "11:FALSE"
+                    "Condition" = "8:"
+                    "Transitive" = "11:FALSE"
+                    "Property" = "8:_1D8E887D107341049D5167128472577E"
+                        "Folders"
+                        {
+                            "{9EF0B969-E518-4E46-987F-47570745A589}:_4D03FF907D1F4185A750FF2D9B2112B3"
+                            {
+                            "Name" = "8:Templates"
+                            "AlwaysCreate" = "11:FALSE"
+                            "Condition" = "8:"
+                            "Transitive" = "11:FALSE"
+                            "Property" = "8:_8956072FD7FE4D46A6C84F2DBF9988A6"
+                                "Folders"
+                                {
+                                    "{9EF0B969-E518-4E46-987F-47570745A589}:_EB590037BC9A46B087E1C3A11C1DFD01"
+                                    {
+                                    "Name" = "8:ProjectTemplates"
+                                    "AlwaysCreate" = "11:FALSE"
+                                    "Condition" = "8:"
+                                    "Transitive" = "11:FALSE"
+                                    "Property" = "8:_D02E9F2B54B3455C9AD76B1CBE0BC6DB"
+                                        "Folders"
+                                        {
+                                            "{9EF0B969-E518-4E46-987F-47570745A589}:_31374200706E4498B852F9DF3B9A6BB4"
+                                            {
+                                            "Name" = "8:Visual C++"
+                                            "AlwaysCreate" = "11:FALSE"
+                                            "Condition" = "8:"
+                                            "Transitive" = "11:FALSE"
+                                            "Property" = "8:_E9E9A031D80640D488F11FA62F629AD2"
+                                                "Folders"
+                                                {
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            "{9EF0B969-E518-4E46-987F-47570745A589}:_E296051E312F493A8D588830993EA8DA"
+                            {
+                            "Name" = "8:Visualizers"
+                            "AlwaysCreate" = "11:FALSE"
+                            "Condition" = "8:"
+                            "Transitive" = "11:FALSE"
+                            "Property" = "8:_21DF7EAA87834DD882E18D173805A123"
+                                "Folders"
+                                {
+                                }
+                            }
+                        }
+                    }
                 }
             }
             "{3C67513D-01DD-4637-8A68-80971EB9504F}:_DD58E9147CD54C079F0523EC2F1D53CD"
