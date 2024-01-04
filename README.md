@@ -5,12 +5,27 @@ There is a reason why many companies still use the ancient
 It provides the highest possible performance
 for integrating C, C++, and even Fortran into Excel. 
 VBA, C#, and JavaScript require data to be marshalled into their
-world and then copied back to native Excel.
+world and then copied back to native Excel, but at least they run on your machine.
+Microsoft's [Python in Excel](https://www.microsoft.com/en-us/microsoft-365/python-in-excel)
+actually calls back to the mothership to do every calculation, 
+as if Python isn't slow enough already.
 
 There is a reason why many companies don't use the ancient Microsoft Excel C SDK. 
 It is notoriously difficult to use. 
 The xll library makes it easy to
-register your functions and macros. 
+register native code for functions and macros. 
+
+## Install
+
+Install `xll.msi`. This installs the library and header files.
+It also installs a template for creating new projects, natvis files for debugging,
+and Code Snippets for creating new functions and macros.
+
+## Use
+
+In Visual Studio create a new xll project...
+
+Add code snippets for functions and macros.
 
 ## Function
 
@@ -43,7 +58,7 @@ You can specify a URL in `.HelpTopic` that will be opened when
 [Help on this function](https://support.microsoft.com/en-us/office/excel-functions-by-category-5f91f4e9-7b42-46d2-9bd1-63f26a86c0eb)
 is clicked in the in the 
 [Insert Function](https://support.microsoft.com/en-us/office/insert-function-74474114-7c7f-43f5-bec3-096c56e2fb13)
-dialog.
+dialog. If you don't then it defaults to `https://google.com/search?q=xll_hypot`.
 
 The next step is to implement `xll_hypot` by calling `std::hypot` from the C++ standard library.
 ```C++
@@ -78,10 +93,6 @@ that will be opened when <font color=blue><u>Help on this function</u></font> is
 dialog.
 
 Macros take no arguments and return 1 if it succeeds and 0 if it fails.
-
-## Installation
-
-NuGet, standard Installer?
 
 ## Usage
 
