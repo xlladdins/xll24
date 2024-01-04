@@ -13,6 +13,27 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Visualizers">
+      <UniqueIdentifier>{c7e4eb05-26ca-4ebb-95c2-73244138e354}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Templates">
+      <UniqueIdentifier>{4c6a587b-a6f0-4d4e-a0ad-0d6d59a360d0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Templates\ProjectTemplates">
+      <UniqueIdentifier>{72ef6c60-d676-4609-8a1f-f826f08b3cf2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Templates\ProjectTemplates\Visual C++">
+      <UniqueIdentifier>{8665e4e8-b99a-445b-bc74-3540edeb66fd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Code Snippets">
+      <UniqueIdentifier>{f285a124-3a87-4854-8ca7-ecf86a39b8d8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Code Snippets\Visual C++">
+      <UniqueIdentifier>{69fc9709-1eff-4bda-a9db-78cee8566f95}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Code Snippets\Visual C++\My Code Snippets">
+      <UniqueIdentifier>{5ec6c3a2-2e57-4b9c-9fb2-c4cdfe4ea959}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="XLCALL.H">
@@ -63,6 +84,9 @@
     <ClInclude Include="fp.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="handle.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="XLCALL.CPP">
@@ -83,8 +107,16 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="README.md" />
+    <None Include="Templates\ProjectTemplates\Visual C++\xll.zip">
+      <Filter>Templates\ProjectTemplates\Visual C++</Filter>
+    </None>
+    <None Include="Code Snippets\Visual C++\My Code Snippets\xllFunction.snippet">
+      <Filter>Code Snippets\Visual C++\My Code Snippets</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
-    <Natvis Include="Visualizers\oper.natvis" />
+    <Natvis Include="Visualizers\oper.natvis">
+      <Filter>Visualizers</Filter>
+    </Natvis>
   </ItemGroup>
 </Project>

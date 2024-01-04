@@ -31,7 +31,7 @@
 				<Literal>
 					<ID>category</ID>
 					<ToolTip>Excel category for function</ToolTip>
-					<Default>User defined</Default>
+					<Default>XLL</Default>
 				</Literal>
 				<Literal>
 					<ID>helpTopic</ID>
@@ -40,16 +40,16 @@
 				</Literal>
 			</Declarations>
 			<Code Language="cpp">
-				<![CDATA[xll::AddIn xai_$name$(
-	xll::Function(XLL_$return$, "xll_$name$", "XLL.$name$")
-	.Args({
+				<![CDATA[AddIn xai_$name$(
+	Function(XLL_$return$, "xll_$name$", "$category$.$name$")
+	.Arguments({
 		// Arg(...), goes here
 	})
 	.FunctionHelp("$functionHelp$")
 	.Category("$category$")
 	.HelpTopic("$helpTopic")
 	};]]>
-				$return$ WINAPI xll_$name$(...)
+				$return$ WINAPI $category_$name$(...)
 				{
 				#pragma XLLEXPORT
 				try {
@@ -59,7 +59,7 @@
 				XLL_ERROR(ex.what());
 				}
 				catch (...) {
-				XLL_ERROR("unknown error in: " __FUNCTION__);
+				XLL_ERROR(__FUNCTION__ ": unknown error");
 				}
 
 				return // ...

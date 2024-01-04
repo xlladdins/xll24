@@ -108,6 +108,7 @@
     <ClInclude Include="export.h" />
     <ClInclude Include="fp.h" />
     <ClInclude Include="fpx.h" />
+    <ClInclude Include="handle.h" />
     <ClInclude Include="utf8.h" />
     <ClInclude Include="XLCALL.H" />
     <ClInclude Include="error.h" />
@@ -137,7 +138,9 @@
     <ClCompile Include="debug.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Code Snippets\Visual C++\My Code Snippets\xllFunction.snippet" />
     <None Include="README.md" />
+    <None Include="Templates\ProjectTemplates\Visual C++\xll.zip" />
   </ItemGroup>
   <ItemGroup>
     <Natvis Include="Visualizers\oper.natvis" />
