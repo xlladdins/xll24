@@ -137,7 +137,9 @@
     <ClCompile Include="debug.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Code Snippets\Visual C++\My Code Snippets\xllFunction.snippet" />
     <None Include="README.md" />
+    <None Include="Templates\ProjectTemplates\Visual C++\xll.zip" />
   </ItemGroup>
   <ItemGroup>
     <Natvis Include="Visualizers\oper.natvis" />
