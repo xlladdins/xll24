@@ -1,7 +1,7 @@
 // register.h - Excel function and macro registration.
 // Copyright (c) KALX, LLC. All rights reserved. No warranty made.
 #pragma once
-#include "excel.h"
+#include "handle.h"
 
 namespace xll {
 

@@ -1,4 +1,5 @@
 // test.cpp
+#include <numeric>
 #include "../xll.h"
 
 using namespace xll;
@@ -363,5 +364,20 @@ double WINAPI xll_hypot(double x, double y)
 	return std::hypot(x, y);
 }
 //*/
+
+AddIn xai_accumulate(
+	Function(XLL_DOUBLE, L"xll_accumulate", L"XLL.ACCUMULATE")
+	.Arguments({
+		Arg(XLL_FP, L"array", L"is an array of numbers."),
+		})
+	.Category(L"XLL")
+	.FunctionHelp("Return the sum of all the numbers passed in.")
+	.HelpTopic("https://docs.microsoft.com/en-us/cpp/standard-library/accumulate?view=msvc-170")
+);
+double WINAPI xll_accumulate(_FP12* pa)
+{
+#pragma XLLEXPORT
+	return std::accumulate(span(*pa).begin(), span(*pa).end(), 0.);
+}
 
 #endif

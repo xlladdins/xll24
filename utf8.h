@@ -48,8 +48,10 @@ namespace utf8 {
 
 		wchar_t* pws = mbstowcs(s, n);
 		ensure(pws);
-		ws.assign(pws + 1, pws[0]);
-		delete [] pws;
+		if (pws) {
+			ws.assign(pws + 1, pws[0]);
+			delete[] pws;
+		}
 
 		return ws;
 	}

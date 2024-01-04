@@ -5,6 +5,7 @@
 
 namespace xll {
 
+
 	// return XLFree(x) in thread-safe functions
 	// Freed by Excel when no longer needed.
 	constexpr LPXLOPER12 XLFree(XLOPER12& x) noexcept

@@ -8,6 +8,54 @@ extern "C" {
 }
 #include "defines.h"
 
+inline int rows(const FP12& a)
+{
+	return a.rows;
+}
+inline int columns(const FP12& a)
+{
+	return a.columns;
+}
+inline int size(const FP12& a)
+{
+	return a.rows * a.columns;
+}
+
+inline double* array(FP12& a)
+{
+	return a.array;
+}
+inline const double* array(const FP12& a)
+{
+	return a.array;
+}
+
+inline auto span(FP12& a)
+{
+	return std::span<double>(array(a), size(a));
+}
+inline auto span(const FP12& a)
+{
+	return std::span<const double>(array(a), size(a));
+}
+
+inline double* begin(FP12& a)
+{
+	return array(a);
+}
+inline const double* begin(const FP12& a)
+{
+	return array(a);
+}
+inline double* end(FP12& a)
+{
+	return array(a) + size(a);
+}
+inline const double* end(const FP12& a)
+{
+	return array(a) + size(a);
+}
+
 namespace xll {
 	class FPX {
 		struct fpx* _fpx;
@@ -93,6 +141,11 @@ namespace xll {
 			return std::span<double>(_fpx->array, size());
 		}
 	};
+}
+
+inline const std::span<double> span(const xll::FPX& a)
+{
+	return a.span();
 }
 
 constexpr bool operator==(const _FP12& a, const _FP12& b)

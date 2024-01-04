@@ -16,8 +16,8 @@ inline constexpr HANDLEX INVALID_HANDLEX = std::numeric_limits<HANDLEX>::quiet_N
 namespace xll {
 
 	// handle argument types for add-ins
-	inline LPCSTR XLL_HANDLEX = XLL_DOUBLE;
-	inline LPCSTR XLL_HANDLE = XLL_DOUBLE;
+	inline auto XLL_HANDLEX = XLL_DOUBLE;
+	inline auto XLL_HANDLE = XLL_DOUBLE;
 
 	/// <summary>
 	/// Convert a pointer to a handle.
@@ -251,7 +251,7 @@ namespace xll {
 		{
 			return dynamic_cast<U*>(p);
 		}
-
+		/*
 		// encode/decode handles to strings
 		template<class X>
 		class codec {
@@ -330,6 +330,7 @@ namespace xll {
 				return decode_(H_.val.str + 1 + off);
 			}
 		};
+		*/
 	};
 	
 }
