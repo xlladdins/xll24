@@ -1,4 +1,4 @@
-# Excel add-in library
+﻿# Excel add-in library
 
 There is a reason why many companies still use the ancient 
 [Microsoft Excel C SDK](https://learn.microsoft.com/en-us/office/client-developer/excel/welcome-to-the-excel-software-development-kit), 
@@ -78,6 +78,25 @@ visible outside of a shared library unless they are explicitly exported.
 
 An Excel macro only has side effects. It can do anything a user can do. 
 It takes no arguments and returns 1 on success and 0 on failure.
+
+To register a macro specify the name of the C++ function
+and the name Excel will use to call it.
+```C++
+AddIn xai_macro(
+	Macro("xll_macro", "XLL.MACRO")
+);
+```
+Then implement it.
+```
+int WINAPI xll_macro(void)
+{
+#pragma XLLEXPORT
+	Excel(xlcAlert, "你好 мир");
+
+	return 1;
+}
+```
+The xll library understand utf-8 encoded strings.
 
 ## Register
 
