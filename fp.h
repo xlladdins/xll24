@@ -88,6 +88,10 @@ namespace xll {
 		{
 			return reinterpret_cast<const _FP12&>(*_fpx);
 		}
+		const _FP12* operator&() const
+		{
+			return reinterpret_cast<const _FP12*>(_fpx);
+		}
 
 		constexpr int rows() const noexcept
 		{
@@ -104,7 +108,10 @@ namespace xll {
 
 		FPX& resize(int r, int c)
 		{
-			ensure(nullptr != (_fpx = fpx_realloc(_fpx, r, c)));
+			auto fpx_ = fpx_realloc(_fpx, r, c);
+			if (!fpx_) {
+				_fpx = fpx_;
+			}
 
 			return *this;
 		}
