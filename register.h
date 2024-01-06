@@ -5,7 +5,6 @@
 
 namespace xll {
 
-
 	struct Arg {
 		enum Type {
 			typeText, argumentText, argumentHelp
@@ -45,7 +44,6 @@ namespace xll {
 		
 		int prepare() // for call to xlfRegister
 		{
-
 			moduleText = Excel(xlGetName);
 
 			// C++ name mangling.
