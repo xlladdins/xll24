@@ -7,10 +7,8 @@
 
 namespace utf8 {
 
-	//!!! return std::wstring_view to allocated string
-	
 	// Multi-byte character string to counted wide character string allocated by new[].
-	// Returned string is null terminated if n is -1.
+	// Returned string is null terminated if n is -1 or nullptr on failure.
 	inline wchar_t* mbstowcs(const char* s, int n = -1)
 	{
 		wchar_t* ws = nullptr;
@@ -38,19 +36,6 @@ namespace utf8 {
 			// MBTWC includes terminating null if n == -1
 			ws[0] = static_cast<wchar_t>(wn - (n == -1));
 			ws[ws[0] + 1] = 0;
-		}
-
-		return ws;
-	}
-	inline std::wstring mbstowstring(const char* s, int n = -1)
-	{
-		std::wstring ws;
-
-		wchar_t* pws = mbstowcs(s, n);
-		ensure(pws);
-		if (pws) {
-			ws.assign(pws + 1, pws[0]);
-			delete[] pws;
 		}
 
 		return ws;
@@ -84,20 +69,6 @@ namespace utf8 {
 			ensure(s[2] == L'b');
 			ensure(s[3] == L'c');
 			ensure(s[4] == L'\0'); // null terminated
-		}
-		{
-			auto ws = utf8::mbstowstring("abc");
-			ensure(ws[0] == L'a');
-			ensure(ws[1] == L'b');
-			ensure(ws[2] == L'c');
-			ensure(ws[3] == L'\0'); // null terminated
-		}
-		{
-			auto ws = utf8::mbstowcs("abc", 2);
-			ensure(ws[0] == 2);
-			ensure(ws[1] == L'a');
-			ensure(ws[2] == L'b');
-			ensure(ws[3] == L'\0'); // null terminated
 		}
 
 		return 0;

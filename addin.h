@@ -56,7 +56,7 @@ namespace xll {
 		}
 		Function& Uncalced()
 		{
-			typeText = OPER(XLL_UNCALCED) & typeText;
+			typeText &= OPER(XLL_UNCALCED);
 
 			return *this;
 		}

@@ -181,13 +181,13 @@ namespace xll {
 				ensure(type(*this) == xltypeStr);
 				ensure(type(o) == xltypeStr);
 
-				XCHAR len = this->val.str[0];
+				XCHAR len = val.str[0];
 				XCHAR olen = o.val.str[0];
 				OPER res = OPER(nullptr, len + olen);
 				res.val.str[0] = len + olen;
 				std::copy_n(val.str + 1, len, res.val.str + 1);
 				std::copy_n(o.val.str + 1, olen, res.val.str + 1 + len);
-				std::swap(this->val.str, res.val.str);
+				std::swap(val.str, res.val.str);
 			}
 
 			return *this;
@@ -403,7 +403,7 @@ namespace xll {
 			xltype = xltypeStr;
 			val.str = new XCHAR[1 + static_cast<size_t>(len)];
 			val.str[0] = len;
-			if (str) {
+			if (str && len) {
 				std::copy_n(str, len, val.str + 1);
 			}
 		}

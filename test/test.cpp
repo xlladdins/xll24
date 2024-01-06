@@ -388,6 +388,7 @@ AddIn xai_get_workspace(
 			Arg(XLL_LPOPER, L"type_num", L" is a number that specifies what type of workbook information you want."),
 		})
 	.Uncalced()
+	//.ThreadSafe()
 	.Category(L"XLL")
 	.FunctionHelp(L"Returns information about a workbook.")
 	.HelpTopic(L"https://xlladdins.github.io/Excel4Macros/get.workbook.html")
@@ -396,7 +397,7 @@ LPOPER WINAPI xll_get_workspace(LPOPER po)
 {
 #pragma XLLEXPORT
 	static OPER o;
-
+	
 	o = Excel(xlfGetWorkspace, *po);
 
 	return &o;
