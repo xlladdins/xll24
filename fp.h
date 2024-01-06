@@ -109,7 +109,7 @@ namespace xll {
 		FPX& resize(int r, int c)
 		{
 			auto fpx_ = fpx_realloc(_fpx, r, c);
-			if (!fpx_) {
+			if (fpx_) {
 				_fpx = fpx_;
 			}
 

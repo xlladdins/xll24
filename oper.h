@@ -106,9 +106,7 @@ namespace xll {
 		// Str - Counted wide character string.
 		constexpr OPER(const XCHAR* str, XCHAR len)
 		{
-			if (str) {
-				alloc(str, len);
-			}
+			alloc(str, len);
 		}
 		/*
 		template<size_t len>
@@ -166,6 +164,7 @@ namespace xll {
 
 		OPER& operator&=(const XLOPER12& o)
 		{
+			/*
 			XLOPER12 res = Nil;
 
 			int ret = ::Excel12(xlfConcatenate, &res, 2, this, &o);
@@ -174,6 +173,22 @@ namespace xll {
 			ensure(xll::type(res) == xltypeStr);
 			operator=(res);
 			::Excel12(xlFree, 0, 1, &res);
+			*/
+			if (size(*this) == 0) {
+				operator=(o);
+			}
+			else {
+				ensure(type(*this) == xltypeStr);
+				ensure(type(o) == xltypeStr);
+
+				XCHAR len = this->val.str[0];
+				XCHAR olen = o.val.str[0];
+				OPER res = OPER(nullptr, len + olen);
+				res.val.str[0] = len + olen;
+				std::copy_n(val.str + 1, len, res.val.str + 1);
+				std::copy_n(o.val.str + 1, olen, res.val.str + 1 + len);
+				std::swap(this->val.str, res.val.str);
+			}
 
 			return *this;
 		}

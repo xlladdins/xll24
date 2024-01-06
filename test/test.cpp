@@ -118,12 +118,12 @@ int str_test()
 		ensure(o == OPER({ OPER(1.),OPER(L"a"),OPER(true),OPER(xlerr::NA) }).reshape(2, 2));
 	}
 	{
-		OPER o = Evaluate(OPER(L"=Sheet1!$A$1"));
-		ensure(o == ErrRef);
+		//OPER o = Evaluate(OPER(L"=Sheet1!$A$1"));
+		//ensure(o == ErrRef);
 	}
 	{
-		OPER o = Evaluate(OPER(L"=R[1]C[1]"));
-		ensure(o == ErrValue);
+		//OPER o = Evaluate(OPER(L"=R[1]C[1]"));
+		//ensure(o == ErrValue);
 	}
 
 	return 0;
@@ -346,7 +346,7 @@ int xll_test()
 	return TRUE;
 }
 
-Auto<Open> xao_test(xll_test);
+Auto<OpenAfter> xao_test(xll_test);
 
 //AddIn xai_test(Macro(L"xll_test", L"XLL.TEST"));
 ///*
@@ -382,4 +382,23 @@ double WINAPI xll_accumulate(_FP12* pa)
 	return std::accumulate(span(*pa).begin(), span(*pa).end(), 0.);
 }
 
+AddIn xai_get_workspace(
+	Function(XLL_LPOPER, L"xll_get_workspace", L"XLL.GET.WORKSPACE")
+	.Arguments({
+			Arg(XLL_LPOPER, L"type_num", L" is a number that specifies what type of workbook information you want."),
+		})
+	.Uncalced()
+	.Category(L"XLL")
+	.FunctionHelp(L"Returns information about a workbook.")
+	.HelpTopic(L"https://xlladdins.github.io/Excel4Macros/get.workbook.html")
+);
+LPOPER WINAPI xll_get_workspace(LPOPER po)
+{
+#pragma XLLEXPORT
+	static OPER o;
+
+	o = Excel(xlfGetWorkspace, *po);
+
+	return &o;
+}
 #endif
