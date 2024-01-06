@@ -9,7 +9,6 @@
 #include "xloper.h"
 #include "utf8.h"
 
-
 namespace xll {
 
 #define XLL_IS_CHAR(S,T) std::is_same<S, typename std::remove_cv<T>::type>::value
