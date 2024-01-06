@@ -2,9 +2,9 @@
 #include <stdlib.h>
 #include "fpx.h"
 
-int fpx_index(struct fpx* p, int r, int c)
+int fpx_index(struct fpx* p, int i, int j)
 {
-	return p->columns * r + c;
+	return p->columns * i + j;
 }
 
 struct fpx* fpx_malloc(int r, int c)

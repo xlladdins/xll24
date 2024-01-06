@@ -385,13 +385,12 @@ double WINAPI xll_accumulate(_FP12* pa)
 AddIn xai_get_workspace(
 	Function(XLL_LPOPER, L"xll_get_workspace", L"XLL.GET.WORKSPACE")
 	.Arguments({
-			Arg(XLL_LPOPER, L"type_num", L" is a number that specifies what type of workbook information you want."),
+			Arg(XLL_LPOPER, L"type_num", L" is a number that specifies what type of workspace information you want."),
 		})
 	.Uncalced()
-	//.ThreadSafe()
 	.Category(L"XLL")
 	.FunctionHelp(L"Returns information about a workbook.")
-	.HelpTopic(L"https://xlladdins.github.io/Excel4Macros/get.workbook.html")
+	.HelpTopic(L"https://xlladdins.github.io/Excel4Macros/get.workspace.html")
 );
 LPOPER WINAPI xll_get_workspace(LPOPER po)
 {
@@ -399,6 +398,26 @@ LPOPER WINAPI xll_get_workspace(LPOPER po)
 	static OPER o;
 	
 	o = Excel(xlfGetWorkspace, *po);
+
+	return &o;
+}
+
+AddIn xai_get_workbook(
+	Function(XLL_LPOPER, L"xll_get_workbook", L"XLL.GET.WORKBOOK")
+	.Arguments({
+			Arg(XLL_LPOPER, L"type_num", L" is a number that specifies what type of workbook information you want."),
+		})
+	.Uncalced()
+	.Category(L"XLL")
+	.FunctionHelp(L"Returns information about a workbook.")
+	.HelpTopic(L"https://xlladdins.github.io/Excel4Macros/get.workbook.html")
+);
+LPOPER WINAPI xll_get_workbook(LPOPER po)
+{
+#pragma XLLEXPORT
+	static OPER o;
+
+	o = Excel(xlfGetWorkbook, *po);
 
 	return &o;
 }

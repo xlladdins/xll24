@@ -7,6 +7,18 @@
 
 namespace utf8 {
 
+	// Wide character string size of multi-byte character string.
+	// Default to null terminated string.
+	inline int wcslen(const char* s, int n = -1)
+	{
+		return MultiByteToWideChar(CP_UTF8, 0, s, n, nullptr, 0);
+	}
+	// Fill ws with wide character string from multi-byte character string.
+	inline int mbstowcs(const char* s, int n, wchar_t* ws, int wn)
+	{
+		return MultiByteToWideChar(CP_UTF8, 0, s, n, ws, wn);
+	}
+
 	// Multi-byte character string to counted wide character string allocated by new[].
 	// Returned string is null terminated if n is -1 or nullptr on failure.
 	inline wchar_t* mbstowcs(const char* s, int n = -1)
@@ -20,22 +32,41 @@ namespace utf8 {
 			return ws;
 		}
 
-		int wn = MultiByteToWideChar(CP_UTF8, 0, s, n, nullptr, 0);
+		int wn = wcslen(s, n);
 		if (wn == 0) {
 			return nullptr;
 		}
 
 		ws = new wchar_t[static_cast<size_t>(wn) + 2];
 		if (ws) {
-			if (wn != MultiByteToWideChar(CP_UTF8, 0, s, n, ws + 1, wn)) {
+			if (wn != mbstowcs(s, n, ws + 1, wn)) {
 				delete [] ws;
 
 				return nullptr;
 			}
-			ensure(wn <= WCHAR_MAX/2);
-			// MBTWC includes terminating null if n == -1
+			if (wn > WCHAR_MAX / 2) {
+				delete[] ws;
+
+				return nullptr;
+			}
 			ws[0] = static_cast<wchar_t>(wn - (n == -1));
-			ws[ws[0] + 1] = 0;
+		}
+
+		return ws;
+	}
+	
+	inline std::wstring mbstowstring(const char* s, int n = -1)
+	{
+		std::wstring ws;
+
+		if (s && n != 0) {
+			int wn = wcslen(s, n);
+			if (wn != 0) {
+				ws.resize(wn);
+				if (wn == mbstowcs(s, n, ws.data(), wn)) {
+					ws.resize(wn - (n == -1)); // remove null terminator
+				}
+			}
 		}
 
 		return ws;
@@ -60,7 +91,6 @@ namespace utf8 {
 		{
 			uptr s{utf8::mbstowcs("")};
 			ensure(s[0] == 0);
-			ensure(s[1] == L'\0'); // null terminated
 		}
 		{
 			uptr s{ utf8::mbstowcs("abc") };
@@ -69,6 +99,20 @@ namespace utf8 {
 			ensure(s[2] == L'b');
 			ensure(s[3] == L'c');
 			ensure(s[4] == L'\0'); // null terminated
+		}
+		{
+			uptr s{ utf8::mbstowcs("abc", 2) };
+			ensure(s[0] == 2);
+			ensure(s[1] == L'a');
+			ensure(s[2] == L'b');
+			// ensure(s[3] == L'\0'); // not null terminated
+		}
+		{
+			ensure(mbstowstring("abc") == L"abc");
+			ensure(mbstowstring("abc", 2) == L"ab");
+			ensure(mbstowstring("abc", 0) == L"");
+			ensure(mbstowstring("") == L"");
+			ensure(mbstowstring(nullptr) == L"");
 		}
 
 		return 0;
