@@ -12,7 +12,7 @@ struct fpx {
 #pragma warning(pop)
 
 // Row-major order
-extern int fpx_index(struct fpx* fpx, int r, int c);
+extern int fpx_index(struct fpx* fpx, int i, int j);
 struct fpx* fpx_malloc(int r, int c);
 struct fpx* fpx_realloc(struct fpx* fpx, int r, int c);
 void fpx_free(struct fpx*);

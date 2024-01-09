@@ -65,7 +65,8 @@ namespace xll {
 
 				// typeText, argumentText, functionHelp
 				OPER comma = OPER(L"");
-				while (i < 22 && argumentHelp[i] != Nil) {
+				constexpr size_t n = sizeof(argumentHelp) / sizeof(OPER);
+				while (i < n && argumentHelp[i] != Nil) {
 					typeText = typeText & argumentHelp[i][Arg::Type::typeText];
 					argumentText &= comma & argumentHelp[i][Arg::Type::argumentText];
 					argumentHelp[i] = argumentHelp[i][Arg::Type::argumentHelp];
@@ -85,9 +86,10 @@ namespace xll {
 	{
 		OPER res;
 
-		LPXLOPER12 as[32];
+		constexpr size_t n = sizeof(Args)/ sizeof(OPER);
+		LPXLOPER12 as[n];
 		int count = args.prepare();
-		for (int i = 0; i < count; ++i) {
+		for (int i = 0; i < n && i < count; ++i) {
 			as[i] = (LPXLOPER12) &args + i;
 		}
 
@@ -112,14 +114,11 @@ namespace xll {
 		}
 		Excel(xlfSetName, key);
 		
-		return Excel(xlfUnregister, regid) == true;
-		/* Is this really necessary???
 		regid = Excel(xlfRegister, Excel(xlGetName),
 			OPER("xlAutoRemove"), OPER(XLL_SHORT), key, Missing, OPER(2));
 		Excel(xlfSetName, key);
 
 		return Excel(xlfUnregister, regid) == true;
-		*/
 	}
 
 } // namespace xll
