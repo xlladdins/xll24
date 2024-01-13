@@ -4,7 +4,7 @@
 #include "auto.h"
 #include "xll.h"
 
-#define XLL_TRACE XLL_INFORMATION(__FUNCTION__)
+#define XLL_TRACE // XLL_INFORMATION(__FUNCTION__)
 
 using namespace xll;
 
