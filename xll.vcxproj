@@ -75,6 +75,10 @@
       <SubSystem>Windows</SubSystem>
       <TreatLibWarningAsErrors>true</TreatLibWarningAsErrors>
     </Lib>
+    <PostBuildEvent>
+      <Command>
+      </Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -99,6 +103,16 @@
       <SubSystem>Windows</SubSystem>
       <TreatLibWarningAsErrors>true</TreatLibWarningAsErrors>
     </Lib>
+    <PostBuildEvent>
+      <Command>xcopy *.h "Templates\ProjectTemplates\Visual C++\xll\xll" /y
+xcopy *.c "Templates\ProjectTemplates\Visual C++\xll\xll" /y
+xcopy *.cpp "Templates\ProjectTemplates\Visual C++\xll\xll" /y 
+xcopy *.lib "Templates\ProjectTemplates\Visual C++\xll\xll"  /y
+xcopy xll.* "Templates\ProjectTemplates\Visual C++\xll\xll" /y</Command>
+    </PostBuildEvent>
+    <PostBuildEvent>
+      <Message>copy xll</Message>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="addin.h" />
