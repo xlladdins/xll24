@@ -293,6 +293,18 @@ int fp_test()
 		ensure(a[1] == 2);
 		ensure(a[2] == 3);
 		ensure(a(1, 0) == 3);
+
+		FPX a2{ a };
+		ensure(a == a2);
+		a = a2;
+		ensure(!(a != a2));
+		a2 = std::move(a);
+		ensure(!a); // use after move 
+		ensure(a2);
+
+		FPX a3(std::move(a2));
+		ensure(!a2); // use after move 
+		ensure(a3);
 	}
 
 	return 0;
