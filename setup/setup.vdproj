@@ -81,12 +81,6 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_58D9A4CF53D2407092B9E6733DD812AE"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_5FFE21FD49054E3EA97C716831BDFFF2"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -130,12 +124,6 @@
         "Entry"
         {
         "MsmKey" = "8:_C49D6FDAEBA240F5AC4B880EF45E8335"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_C9AFD54C127D443CAF74D243B18E4408"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -464,26 +452,6 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_58D9A4CF53D2407092B9E6733DD812AE"
-            {
-            "SourcePath" = "8:..\\Templates\\ProjectTemplates\\Visual C++\\xll.zip"
-            "TargetName" = "8:xll.zip"
-            "Tag" = "8:"
-            "Folder" = "8:_31374200706E4498B852F9DF3B9A6BB4"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_5FFE21FD49054E3EA97C716831BDFFF2"
             {
             "SourcePath" = "8:..\\auto.h"
@@ -644,26 +612,6 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_C9AFD54C127D443CAF74D243B18E4408"
-            {
-            "SourcePath" = "8:..\\Code Snippets\\Visual C++\\My Code Snippets\\xllFunction.snippet"
-            "TargetName" = "8:xllFunction.snippet"
-            "Tag" = "8:"
-            "Folder" = "8:_5E6E7D67923043AD8BF95A10F676B96C"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_CBD84AD688FF47519F7C48BD71222AAB"
             {
             "SourcePath" = "8:..\\Visualizers\\oper.natvis"
@@ -792,39 +740,6 @@
                                     }
                                 }
                             }
-                            "{9EF0B969-E518-4E46-987F-47570745A589}:_85E720BE6C444BE2AA5B1526AEB93FBF"
-                            {
-                            "Name" = "8:Code Snippets"
-                            "AlwaysCreate" = "11:FALSE"
-                            "Condition" = "8:"
-                            "Transitive" = "11:FALSE"
-                            "Property" = "8:_02E4CE8376214C358219B5B57EB8F1E3"
-                                "Folders"
-                                {
-                                    "{9EF0B969-E518-4E46-987F-47570745A589}:_3963B5F9DCAF44C9AA745719D20D8756"
-                                    {
-                                    "Name" = "8:Visual C++"
-                                    "AlwaysCreate" = "11:FALSE"
-                                    "Condition" = "8:"
-                                    "Transitive" = "11:FALSE"
-                                    "Property" = "8:_9602B71BEFD54EB597BBDB9129984089"
-                                        "Folders"
-                                        {
-                                            "{9EF0B969-E518-4E46-987F-47570745A589}:_5E6E7D67923043AD8BF95A10F676B96C"
-                                            {
-                                            "Name" = "8:My Code Snippets"
-                                            "AlwaysCreate" = "11:FALSE"
-                                            "Condition" = "8:"
-                                            "Transitive" = "11:FALSE"
-                                            "Property" = "8:_08721F9CCB61455FB18434AA77193F3D"
-                                                "Folders"
-                                                {
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
                             "{9EF0B969-E518-4E46-987F-47570745A589}:_E296051E312F493A8D588830993EA8DA"
                             {
                             "Name" = "8:Visualizers"
@@ -935,7 +850,7 @@
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:xll"
         "ProductCode" = "8:{EDA889D0-1C13-44C7-9797-65837CB8F14F}"
-        "PackageCode" = "8:{92425D06-0315-4AE3-AEC7-F3293F30925C}"
+        "PackageCode" = "8:{DAB8F127-B7B9-4187-BB58-E81428881B8E}"
         "UpgradeCode" = "8:{D3821F0B-5C0F-4ACB-83B9-427A6A173B04}"
         "AspNetVersion" = "8:"
         "RestartWWWService" = "11:FALSE"

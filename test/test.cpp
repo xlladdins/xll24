@@ -4,8 +4,6 @@
 
 using namespace xll;
 
-
-
 #ifdef _DEBUG
 int num_test()
 {
@@ -235,7 +233,15 @@ int evaluate_test()
 {
 	{
 		OPER o = Evaluate(OPER(L"=1+2"));
+		ensure(o != L"=1+2");
 		ensure(o == 3.)
+		ensure(o == 3);
+		ensure(o != true);
+	}
+	{
+		OPER o = Evaluate(OPER("=1+2")); // utf-8 to wide character string
+		ensure(o != "=1+2");
+		ensure(o == 3.);
 		ensure(o == 3);
 		ensure(o != true);
 	}
@@ -299,11 +305,15 @@ int fp_test()
 		a = a2;
 		ensure(!(a != a2));
 		a2 = std::move(a);
+#pragma warning(push)
+#pragma warning(disable: 26800)
 		ensure(!a); // use after move 
 		ensure(a2);
 
 		FPX a3(std::move(a2));
 		ensure(!a2); // use after move 
+#pragma warning(pop)
+		ensure(a3);
 		ensure(a3);
 	}
 
@@ -312,7 +322,6 @@ int fp_test()
 
 int xll_test()
 {
-	set_alert_level(7);
 	AddInManagerInfo(OPER("The xll_test add-in"));
 	//XlfRegister(Macro(L"?xll_test", L"XLL.TEST"));
 	///*
@@ -372,6 +381,9 @@ int xll_test()
 }
 
 Auto<OpenAfter> xao_test(xll_test);
+#endif
+
+Auto<Open> xao_sal([]() { set_alert_level(7); return TRUE; });
 
 //AddIn xai_test(Macro(L"xll_test", L"XLL.TEST"));
 ///*
@@ -430,8 +442,8 @@ LPOPER WINAPI xll_get_workspace(LPOPER po)
 AddIn xai_get_workbook(
 	Function(XLL_LPOPER, L"xll_get_workbook", L"XLL.GET.WORKBOOK")
 	.Arguments({
-			Arg(XLL_LPOPER, L"type_num", L" is a number that specifies what type of workbook information you want."),
-		})
+		Arg(XLL_LPOPER, L"type_num", L" is a number that specifies what type of workbook information you want."),
+	})
 	.Uncalced()
 	.Category(L"XLL")
 	.FunctionHelp(L"Returns information about a workbook.")
@@ -446,4 +458,22 @@ LPOPER WINAPI xll_get_workbook(LPOPER po)
 
 	return &o;
 }
-#endif
+
+AddIn xai_evaluate(
+	Function(XLL_LPOPER, L"xll_evaluate", L"XLL.EVALUATE")
+	.Arguments({
+		Arg(XLL_LPOPER, L"formula_text", L"is the expression in the form of text that you want to evaluate."),
+		})
+	.Category(L"XLL")
+	.FunctionHelp(L"Evaluates a formula or expression that is in the form of text and returns the result.")
+	.HelpTopic(L"https://xlladdins.github.io/Excel4Macros/evaluate.html")
+);
+LPOPER WINAPI xll_evaluate(LPOPER po)
+{
+#pragma XLLEXPORT
+	static OPER o;
+
+	o = Excel(xlfEvaluate, *po);
+
+	return &o;
+}
