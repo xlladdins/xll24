@@ -105,8 +105,7 @@
       <TreatLibWarningAsErrors>true</TreatLibWarningAsErrors>
     </Lib>
     <PostBuildEvent>
-      <Command>
-      </Command>
+      <Command>xll.bat</Command>
     </PostBuildEvent>
     <PostBuildEvent>
       <Message>

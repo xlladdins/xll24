@@ -13,19 +13,27 @@ as if Python isn't slow enough already.
 There is a reason why many companies don't use the ancient Microsoft Excel C SDK. 
 It is notoriously difficult to use. 
 The xll library makes it easy to
-register native code for functions and macros. 
+register native code to call functions and run macros from Excel. 
 
 ## Install
 
-Install `xll.msi`. This installs the library and header files.
-It also installs a template for creating new projects, natvis files for debugging,
-and Code Snippets for creating new functions and macros.
+Run [`xll.msi`](setup/Release/xll.msi) to install a template project called `xll` that will
+show up when you create a new project in Visual Studio.
 
 ## Use
 
-In Visual Studio create a new xll project...
+In Visual Studio create a new [xll project](img/new_project.png).
 
-Add code snippets for functions and macros.
+...example...
+
+## Excel
+
+Everything Excel has to offer is available through the [`Excel`](excel.h) function.
+
+
+## Create
+
+Write your own functions or call 3-rd party libraries.
 
 ## Function
 
