@@ -192,7 +192,7 @@ namespace xll {
 #define XLL_ERR_DESC(a, b, c) if (err == xlerr::##a) return b ": " c;
 		XLL_TYPE_ERR(XLL_ERR_DESC)
 #undef XLL_ERR_DESC
-			return "unknown xlerr type";
+		return "unknown xlerr type";
 	}
 	static_assert(std::string_view(xlerr_description(xlerr::Null)) == "#NULL!: intersection of two ranges that do not intersect");
 

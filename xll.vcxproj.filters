@@ -25,15 +25,6 @@
     <Filter Include="Templates\ProjectTemplates\Visual C++">
       <UniqueIdentifier>{8665e4e8-b99a-445b-bc74-3540edeb66fd}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Code Snippets">
-      <UniqueIdentifier>{f285a124-3a87-4854-8ca7-ecf86a39b8d8}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Code Snippets\Visual C++">
-      <UniqueIdentifier>{69fc9709-1eff-4bda-a9db-78cee8566f95}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Code Snippets\Visual C++\My Code Snippets">
-      <UniqueIdentifier>{5ec6c3a2-2e57-4b9c-9fb2-c4cdfe4ea959}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="XLCALL.H">
@@ -107,12 +98,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="README.md" />
-    <None Include="Templates\ProjectTemplates\Visual C++\xll.zip">
-      <Filter>Templates\ProjectTemplates\Visual C++</Filter>
-    </None>
-    <None Include="Code Snippets\Visual C++\My Code Snippets\xllFunction.snippet">
-      <Filter>Code Snippets\Visual C++\My Code Snippets</Filter>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <Natvis Include="Visualizers\oper.natvis">

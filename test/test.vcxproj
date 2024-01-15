@@ -77,7 +77,7 @@
       <LinkTimeCodeGeneration>
       </LinkTimeCodeGeneration>
       <Profile>true</Profile>
-      <AdditionalOptions>/WHOLEARCHIVE:xll %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>/wholearchive:xll %(AdditionalOptions)</AdditionalOptions>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -103,7 +103,7 @@
       <TreatLinkerWarningAsErrors>true</TreatLinkerWarningAsErrors>
       <TurnOffAssemblyGeneration>true</TurnOffAssemblyGeneration>
       <LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>
-      <AdditionalOptions>/WHOLEARCHIVE:xll %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>/wholearchive:xll %(AdditionalOptions)</AdditionalOptions>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>

@@ -66,8 +66,9 @@ namespace xll {
 		FPX(int r, int c)
 			: _fpx(fpx_malloc(r, c))
 		{
-			ensure(_fpx->array);
+			ensure(_fpx);
 		}
+		// Copy from array having at least r*c elements.
 		FPX(int r, int c, const double* a)
 			: FPX(r, c)
 		{
@@ -76,11 +77,42 @@ namespace xll {
 		FPX(std::initializer_list<double> a)
 			: FPX(1, static_cast<int>(a.size()), a.begin())
 		{ }
-		FPX(const FPX&) = delete;
-		FPX& operator=(const FPX&) = delete;
+		FPX(const FPX& a)
+			: FPX(a.rows(), a.columns(), a.array())
+		{ }
+		FPX(FPX&& a) noexcept
+			: _fpx(a._fpx)
+		{
+			a._fpx = nullptr;
+		}
+		FPX& operator=(const FPX& a)
+		{
+			if (this != &a) {
+				fpx_free(_fpx);
+				_fpx = fpx_malloc(a.rows(), a.columns());
+				std::copy_n(a.array(), a.size(), _fpx->array);
+			}
+
+			return *this;
+		}
+		FPX& operator=(FPX&& a) noexcept
+		{
+			if (this != &a) {
+				fpx_free(_fpx);
+				_fpx = a._fpx;
+				a._fpx = nullptr;
+			}
+
+			return *this;
+		}
 		~FPX()
 		{
 			fpx_free(_fpx);
+		}
+
+		explicit operator bool() const noexcept
+		{
+			return _fpx != nullptr;
 		}
 
 		// type punning
@@ -88,7 +120,7 @@ namespace xll {
 		{
 			return reinterpret_cast<const _FP12&>(*_fpx);
 		}
-		const _FP12* operator&() const
+		const _FP12* get() const
 		{
 			return reinterpret_cast<const _FP12*>(_fpx);
 		}
@@ -104,6 +136,14 @@ namespace xll {
 		constexpr int size() const noexcept
 		{
 			return rows() * columns();
+		}
+		constexpr double* array() noexcept
+		{
+			return _fpx->array;
+		}
+		constexpr const double* array() const noexcept
+		{
+			return _fpx->array;
 		}
 
 		FPX& resize(int r, int c)
@@ -143,10 +183,15 @@ namespace xll {
 			return _fpx->array[fpx_index(_fpx, i, j)];
 		}
 
+		std::span<double> span()
+		{
+			return std::span<double>(_fpx->array, size());
+		}
 		const std::span<double> span() const
 		{
 			return std::span<double>(_fpx->array, size());
 		}
+
 	};
 }
 
@@ -159,5 +204,5 @@ constexpr bool operator==(const _FP12& a, const _FP12& b)
 {
 	return a.rows == b.rows 
 		&& a.columns == b.columns 
-		&& std::equal(a.array, a.array + a.rows*a.columns, b.array);
+		&& std::equal(a.array, a.array + size(a), b.array);
 }

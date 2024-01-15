@@ -52,6 +52,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <TargetExt>.lib</TargetExt>
+    <PostBuildEventUseInBuild>true</PostBuildEventUseInBuild>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -104,14 +105,11 @@
       <TreatLibWarningAsErrors>true</TreatLibWarningAsErrors>
     </Lib>
     <PostBuildEvent>
-      <Command>xcopy *.h "Templates\ProjectTemplates\Visual C++\xll\xll" /y
-xcopy *.c "Templates\ProjectTemplates\Visual C++\xll\xll" /y
-xcopy *.cpp "Templates\ProjectTemplates\Visual C++\xll\xll" /y 
-xcopy *.lib "Templates\ProjectTemplates\Visual C++\xll\xll"  /y
-xcopy xll.* "Templates\ProjectTemplates\Visual C++\xll\xll" /y</Command>
+      <Command>xll.bat</Command>
     </PostBuildEvent>
     <PostBuildEvent>
-      <Message>copy xll</Message>
+      <Message>
+      </Message>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -152,9 +150,7 @@ xcopy xll.* "Templates\ProjectTemplates\Visual C++\xll\xll" /y</Command>
     <ClCompile Include="debug.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Code Snippets\Visual C++\My Code Snippets\xllFunction.snippet" />
     <None Include="README.md" />
-    <None Include="Templates\ProjectTemplates\Visual C++\xll.zip" />
   </ItemGroup>
   <ItemGroup>
     <Natvis Include="Visualizers\oper.natvis" />

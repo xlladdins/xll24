@@ -8,26 +8,41 @@ VBA, C#, and JavaScript require data to be marshalled into their
 world and then copied back to native Excel.
 Microsoft's [Python in Excel](https://www.microsoft.com/en-us/microsoft-365/python-in-excel)
 actually calls back to the mothership to do every calculation, 
-as if Python isn't slow enough already.
+as if Python isn't slow enough already. 
+
+It is doubtful Microsoft will update the Excel C SDK. Many companies
+rely on it to keep existing native add-ins working.
+No other API can can provide a pointer to an array of doubles
+that can be used directly by native code without copying.
 
 There is a reason why many companies don't use the ancient Microsoft Excel C SDK. 
 It is notoriously difficult to use. 
 The xll library makes it easy to
-register native code for functions and macros. 
+register native code to call functions and run macros from Excel. 
 
 ## Install
 
-Install `xll.msi`. This installs the library and header files.
-It also installs a template for creating new projects, natvis files for debugging,
-and Code Snippets for creating new functions and macros.
+Run [`setup`](setup/Release/setup.msi) to install a template project called `xll` that will
+show up when you create a new project in Visual Studio.
 
 ## Use
 
-In Visual Studio create a new xll project...
+In Visual Studio create a new [xll project](img/new_project.png).
 
-Add code snippets for functions and macros.
+...example...
 
-## Function
+## Excel
+
+Everything Excel has to offer is available through the [`Excel`](excel.h) function.
+The first argument is the Excel function code for a function or macro.
+The remaining arguments are documented in 
+[Excel4Macros](https://xlladdins.github.io/Excel4Macros/index.html).
+
+## Create
+
+Write your own functions or call 3-rd party libraries.
+
+### Function
 
 An Excel function is purely functional. 
 It returns a result that depends only on the function arguments.
@@ -74,7 +89,7 @@ The first version of Excel was written in Pascal and the `WINAPI` calling conven
 is a historical artifact of that. Unlike Unix, Windows does not make functions
 visible outside of a shared library unless they are explicitly exported.
 
-## Macro
+### Macro
 
 An Excel macro only has side effects. It can do anything a user can do. 
 It takes no arguments and returns 1 on success and 0 on failure.
@@ -96,7 +111,7 @@ int WINAPI xll_macro(void)
 	return 1;
 }
 ```
-The xll library understand utf-8 encoded strings.
+The xll library converts utf-8 strings to wide character strings used by Excel.
 
 ## Register
 
@@ -112,14 +127,3 @@ that will be opened when <font color=blue><u>Help on this function</u></font> is
 dialog.
 
 Macros take no arguments and return 1 if it succeeds and 0 if it fails.
-
-## Usage
-
-After installing the NuGet package you can find Code Snippets
-for a Function and Macro add-in.
-
-## xlAuto functions
-
-The Excel C SDK requires a number of functions that Excel uses to 
-control the lifetime of the add-in. An add-in is just a DLL that.
-
