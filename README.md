@@ -8,7 +8,12 @@ VBA, C#, and JavaScript require data to be marshalled into their
 world and then copied back to native Excel.
 Microsoft's [Python in Excel](https://www.microsoft.com/en-us/microsoft-365/python-in-excel)
 actually calls back to the mothership to do every calculation, 
-as if Python isn't slow enough already.
+as if Python isn't slow enough already. 
+
+It is doubtful Microsoft will update the Excel C SDK. Many companies
+rely on it to keep existing native add-ins working.
+No other API can can provide a pointer to an array of doubles
+that can be used directly by native code without copying.
 
 There is a reason why many companies don't use the ancient Microsoft Excel C SDK. 
 It is notoriously difficult to use. 
@@ -17,7 +22,7 @@ register native code to call functions and run macros from Excel.
 
 ## Install
 
-Run [`xll.msi`](setup/Release/xll.msi) to install a template project called `xll` that will
+Run [`setup`](setup/Release/setup.msi) to install a template project called `xll` that will
 show up when you create a new project in Visual Studio.
 
 ## Use
@@ -29,7 +34,9 @@ In Visual Studio create a new [xll project](img/new_project.png).
 ## Excel
 
 Everything Excel has to offer is available through the [`Excel`](excel.h) function.
-
+The first argument is the Excel function code for a function or macro.
+The remaining arguments are documented in 
+[Excel4Macros](https://xlladdins.github.io/Excel4Macros/index.html).
 
 ## Create
 
