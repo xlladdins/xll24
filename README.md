@@ -42,7 +42,7 @@ The remaining arguments are documented in
 
 Write your own functions or call 3-rd party libraries.
 
-## Function
+### Function
 
 An Excel function is purely functional. 
 It returns a result that depends only on the function arguments.
@@ -89,7 +89,7 @@ The first version of Excel was written in Pascal and the `WINAPI` calling conven
 is a historical artifact of that. Unlike Unix, Windows does not make functions
 visible outside of a shared library unless they are explicitly exported.
 
-## Macro
+### Macro
 
 An Excel macro only has side effects. It can do anything a user can do. 
 It takes no arguments and returns 1 on success and 0 on failure.
@@ -111,7 +111,7 @@ int WINAPI xll_macro(void)
 	return 1;
 }
 ```
-The xll library understand utf-8 encoded strings.
+The xll library converts utf-8 strings to wide character strings used by Excel.
 
 ## Register
 
@@ -127,14 +127,3 @@ that will be opened when <font color=blue><u>Help on this function</u></font> is
 dialog.
 
 Macros take no arguments and return 1 if it succeeds and 0 if it fails.
-
-## Usage
-
-After installing the NuGet package you can find Code Snippets
-for a Function and Macro add-in.
-
-## xlAuto functions
-
-The Excel C SDK requires a number of functions that Excel uses to 
-control the lifetime of the add-in. An add-in is just a DLL that.
-
