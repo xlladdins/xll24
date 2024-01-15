@@ -18,7 +18,7 @@ namespace xll {
 
 	struct Function : public Args {
 		template<class T> requires xll::is_char<T>::value
-		Function(const T* type, const T* procedure, const T* functionText)
+		Function(const wchar_t* type, const T* procedure, const T* functionText)
 			: Args{ .procedure = OPER(procedure),
 					.typeText = OPER(type),
 					.functionText = OPER(functionText),

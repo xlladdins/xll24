@@ -396,9 +396,9 @@ double WINAPI xll_accumulate(_FP12* pa)
 }
 
 AddIn xai_get_workspace(
-	Function(XLL_LPOPER, L"xll_get_workspace", L"XLL.GET.WORKSPACE")
+	Function(XLL_LPOPER, "xll_get_workspace", "XLL.GET.WORKSPACE")
 	.Arguments({
-			Arg(XLL_LPOPER, L"type_num", L" is a number that specifies what type of workspace information you want."),
+			Arg(XLL_LPOPER, "type_num", " is a number that specifies what type of workspace information you want."),
 		})
 	.Uncalced()
 	.Category(L"XLL")

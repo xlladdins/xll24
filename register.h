@@ -11,7 +11,7 @@ namespace xll {
 		};
 		OPER type, name, help;
 		template<class T> requires xll::is_char<T>::value
-			Arg(const T* type, const T* name, const T* help)
+			Arg(const wchar_t* type, const T* name, const T* help)
 			: type(OPER(type)), name(OPER(name)), help(OPER(help))
 		{ }
 	};
