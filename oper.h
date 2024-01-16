@@ -5,7 +5,6 @@
 #include <cassert>
 #endif // _DEBUG
 #include <initializer_list>
-#include "ensure.h"
 #include "xloper.h"
 #include "utf8.h"
 
