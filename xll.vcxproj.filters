@@ -33,7 +33,7 @@
     <ClInclude Include="xll.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="error.h">
+    <ClInclude Include="alert.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="excel.h">

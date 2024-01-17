@@ -123,7 +123,7 @@
     <ClInclude Include="handle.h" />
     <ClInclude Include="utf8.h" />
     <ClInclude Include="XLCALL.H" />
-    <ClInclude Include="error.h" />
+    <ClInclude Include="alert.h" />
     <ClInclude Include="excel.h" />
     <ClInclude Include="xll.h" />
     <ClInclude Include="oper.h" />

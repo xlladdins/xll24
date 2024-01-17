@@ -1,19 +1,14 @@
 ﻿# xll library
 
 There is a reason why many companies still use the ancient 
-[Microsoft Excel C SDK](https://learn.microsoft.com/en-us/office/client-developer/excel/welcome-to-the-excel-software-development-kit), 
+[Microsoft Excel C Software Development Kit](https://learn.microsoft.com/en-us/office/client-developer/excel/welcome-to-the-excel-software-development-kit), 
 It provides the highest possible performance
 for integrating C, C++, and even Fortran into Excel. 
 VBA, C#, and JavaScript require data to be marshalled into their
 world and then copied back to native Excel.
 Microsoft's [Python in Excel](https://www.microsoft.com/en-us/microsoft-365/python-in-excel)
-actually calls back to the mothership to do every calculation, 
+actually calls over the network to do every calculation, 
 as if Python isn't slow enough already. 
-
-It is doubtful Microsoft will update the Excel C SDK. Many companies
-rely on it to keep existing native add-ins working.
-No other API can can provide a pointer to an array of doubles
-that can be used directly by native code without copying.
 
 There is a reason why many companies don't use the ancient Microsoft Excel C SDK. 
 It is notoriously difficult to use. 
@@ -34,19 +29,26 @@ In Visual Studio create a new [xll project](img/new_project.png).
 ## Excel
 
 Everything Excel has to offer is available through the [`Excel`](excel.h) function.
-The first argument is the Excel function code for a function or macro.
-The remaining arguments are documented in 
+The first argument is an `int` defined in
+[`XLCALL.H`](XLCALL.H) provided by the C SDK 
+specifying the Excel 
+function or macro to call.
+The arguments are documented in 
 [Excel4Macros](https://xlladdins.github.io/Excel4Macros/index.html).
 
 ## Create
 
-Write your own functions or call 3-rd party libraries.
+Write your own functions or call 3-rd party libraries using
+the [`AddIn`](addin.h) class. 
 
 ### Function
 
-An Excel function is purely functional. 
-It returns a result that depends only on the function arguments.
-To call a C or C++ function from Excel you must register it with Excel.
+An Excel function is a pure function. 
+It returns a result that depends only on its arguments
+and has no side effects.
+To call a C or C++ function from Excel use
+[`AddIn`](addin.h) to instantiate an object
+that specifies the information Excel needs.
 
 Here is how to register `xll_hypot` as `STD.HYPOT` in Excel.
 If `x` and `y` are doubles then `xll_hypot(x, y)` returns the length of 
@@ -94,8 +96,7 @@ visible outside of a shared library unless they are explicitly exported.
 An Excel macro only has side effects. It can do anything a user can do. 
 It takes no arguments and returns 1 on success and 0 on failure.
 
-To register a macro specify the name of the C++ function
-and the name Excel will use to call it.
+To register a macro specify the name of the C++ function and the name Excel will use to call it.
 ```C++
 AddIn xai_macro(
 	Macro("xll_macro", "XLL.MACRO")
@@ -113,17 +114,3 @@ int WINAPI xll_macro(void)
 ```
 The xll library converts utf-8 strings to wide character strings used by Excel.
 
-## Register
-
-Functions are added to Excel by _registering_ them.
-You must specify the signature (return type and argument types) of the C function,
-its name, and the name Excel will use to call it. 
-
-It is a good idea to specify the Insert Function category and 
-a short function help description as well.
-You can also specify a URL to more extensive documentation
-that will be opened when <font color=blue><u>Help on this function</u></font> is clicked in the 
-[Insert Function](https://support.microsoft.com/en-us/office/insert-function-74474114-7c7f-43f5-bec3-096c56e2fb13) 
-dialog.
-
-Macros take no arguments and return 1 if it succeeds and 0 if it fails.

@@ -2,7 +2,7 @@
 // Copyright (c) KALX, LLC. All rights reserved. No warranty made.
 #pragma once
 #include "export.h"
-#include "error.h"
+#include "alert.h"
 #include "fp.h"
 #include "auto.h"
 #include "addin.h"

@@ -1,8 +1,8 @@
-// error.h - Error message box.
+// alert.h - Error, Warning, and Information alerts
 // Copyright (c) KALX, LLC. All rights reserved. No warranty made.
 #pragma once
 #include <string_view>
-#include <Windows.h>
+#include <windows.h>
 #include "XLCALL.H"
 
 enum xll_alert_type {
