@@ -2,6 +2,7 @@
 // Copyright (c) KALX, LLC. All rights reserved. No warranty made.
 #pragma once
 #include <map>
+#include "handle.h"
 #include "register.h"
 
 namespace xll {
