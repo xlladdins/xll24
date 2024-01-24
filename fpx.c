@@ -9,7 +9,7 @@ int fpx_index(struct fpx* p, int i, int j)
 
 struct fpx* fpx_malloc(int r, int c)
 {
-	struct fpx* fpx = malloc(sizeof(struct fpx) + r * c * sizeof(double));
+	struct fpx* fpx = malloc(sizeof(struct fpx) + (size_t)r * (size_t)c * sizeof(double));
 
 	if (fpx) {
 		fpx->rows = r;
@@ -21,7 +21,7 @@ struct fpx* fpx_malloc(int r, int c)
 
 struct fpx* fpx_realloc(struct fpx* p, int r, int c)
 {
-	struct fpx* _p = realloc(p, sizeof(struct fpx) + r * c * sizeof(double));
+	struct fpx* _p = realloc(p, sizeof(struct fpx) + (size_t)r * (size_t)c * sizeof(double));
 
 	if (_p) {
 		_p->rows = r;

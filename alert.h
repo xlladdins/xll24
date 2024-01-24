@@ -14,14 +14,16 @@ enum xll_alert_type {
 #define XLL_SUB_KEY "Software\\KALX\\xll"
 #define XLL_VALUE_NAME "AlertLevel"
 
-inline int get_alert_level()
+inline int get_alert_level() noexcept
 {
-	HKEY hkey;
-	DWORD disp, data = XLL_ALERT_ERROR| XLL_ALERT_WARNING| XLL_ALERT_INFORMATION;
+	HKEY hkey{ 0 };
+	DWORD disp{ 0 };
+	DWORD data = XLL_ALERT_ERROR | XLL_ALERT_WARNING | XLL_ALERT_INFORMATION;
 
 	LSTATUS status = RegCreateKeyExA(HKEY_CURRENT_USER, XLL_SUB_KEY, 0, nullptr, 0, KEY_READ, 0, &hkey, &disp);
 	if (status == ERROR_SUCCESS) {
-		DWORD type, size = sizeof(data);
+		DWORD type{ 0 };
+		DWORD size = sizeof(data);
 		status = RegQueryValueExA(hkey, XLL_VALUE_NAME, 0, &type, (LPBYTE)&data, &size);
 		if (status == ERROR_FILE_NOT_FOUND) {
 			RegSetValueExA(hkey, XLL_VALUE_NAME, 0, REG_DWORD, (LPBYTE)&data, sizeof(DWORD));

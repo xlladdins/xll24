@@ -325,6 +325,13 @@ int fp_test()
 
 int WINAPI xll_test()
 {
+#pragma XLLEXPORT
+	int xal = get_alert_level();
+	set_alert_level(1);
+	int al = get_alert_level();
+	ensure(1 == al);
+	set_alert_level(xal);
+
 	AddInManagerInfo(OPER("The xll_test add-in"));
 	XlfRegister(Macro(L"?xll_test", L"XLL.TEST"));
 	///*

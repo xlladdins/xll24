@@ -16,6 +16,8 @@ DllMain(HINSTANCE hDLL, ULONG reason, [[maybe_unused]] LPVOID lpReserved)
 		break;
 	case DLL_PROCESS_DETACH:
 		break;
+	default:
+		break;
 	}
 
 	return TRUE;
