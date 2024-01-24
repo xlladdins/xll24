@@ -9,6 +9,7 @@
 #ifdef NENSURE
 
 #define ensure(x)
+#define ensure_message(x, s)
 
 #else
 

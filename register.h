@@ -1,10 +1,21 @@
 // register.h - Excel function and macro registration.
 // Copyright (c) KALX, LLC. All rights reserved. No warranty made.
+// https://learn.microsoft.com/en-us/office/client-developer/excel/xlfregister-form-1
+// Excel12(xlfRegister, LPXLOPER12 pxRes, int iCount,
+//	LPXLOPER12 pxModuleText, LPXLOPER12 pxProcedure,
+//	LPXLOPER12 pxTypeText, LPXLOPER12 pxFunctionText,
+//	LPXLOPER12 pxArgumentText, LPXLOPER12 pxMacroType,
+//	LPXLOPER12 pxCategory, LPXLOPER12 pxShortcutText,
+//	LPXLOPER12 pxHelpTopic, LPXLOPER12 pxFunctionHelp,
+//	LPXLOPER12 pxArgumentHelp1, LPXLOPER12 pxArgumentHelp2,
+//	...);
+
 #pragma once
 #include "excel.h"
 
 namespace xll {
 
+	// Individual argument for an add-in function.
 	struct Arg {
 		enum Type {
 			typeText, argumentText, argumentHelp
@@ -16,6 +27,7 @@ namespace xll {
 		{ }
 	};
 
+	// Arguments for xlfRegister.
 	struct Args {
 		OPER moduleText;
 		OPER procedure;
@@ -27,7 +39,7 @@ namespace xll {
 		OPER shortcutText;
 		OPER helpTopic;
 		OPER functionHelp;
-		OPER argumentHelp[22];
+		OPER argumentHelp[20];
 
 		bool is_hidden() const
 		{
@@ -42,7 +54,8 @@ namespace xll {
 			return macroType == 2;
 		}
 		
-		int prepare() // for call to xlfRegister
+		// Fix up arguments for call to xlfRegister.
+		int prepare() 
 		{
 			moduleText = Excel(xlGetName);
 
@@ -53,10 +66,9 @@ namespace xll {
 			}
 
 			int i = 0;
-			//!!! search github ???
 			if (is_function()) {
 				if (helpTopic == Nil) {
-					helpTopic = OPER(L"https://google.com/search?q=");
+					helpTopic = OPER(L"https://google.com/search?q="); // github???
 					helpTopic &= procedure;
 				}
 				if (view(helpTopic).starts_with(L"http")) {
@@ -81,6 +93,7 @@ namespace xll {
 		}
 	};
 
+	// Register a function or macro to be called by Excel.
 	// https://learn.microsoft.com/en-us/office/client-developer/excel/xlfregister-form-1
 	inline OPER XlfRegister(Args args)
 	{

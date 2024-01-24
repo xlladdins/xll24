@@ -7,7 +7,9 @@
 #define NOMINMAX
 #include <Windows.h>
 #include <minwindef.h>
+extern "C" {
 #include "XLCALL.H"
+}
 #include "ensure.h"
 
 namespace xll {

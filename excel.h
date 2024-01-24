@@ -3,6 +3,7 @@
 // https://xlladdins.github.io/Excel4Macros/
 #pragma once
 #include <array>
+#include <vector>
 #include "oper.h"
 
 namespace xll {
@@ -12,9 +13,10 @@ namespace xll {
 	{
 		OPER res;
 
-		std::array os{ std::move(OPER(ts))... };
+		//std::array os{ std::move(OPER(ts))... };
+		std::vector<OPER> os{ OPER(ts)... };
 		LPXLOPER12 as[sizeof...(ts)];
-		for (size_t i = 0; i < sizeof...(ts); ++i) {
+		for (size_t i = 0; i < os.size(); ++i) {
 			as[i] = &os[i];
 		}
 
