@@ -54,8 +54,23 @@ namespace xll {
 		{
 			return macroType == 2;
 		}
+
+		// Number of non Nil arguments
+		int count() const
+		{
+			int i = 0;
+
+			if (is_function()) {
+				while (i < 20 && argumentHelp[i] != Nil) {
+					++i;
+				}
+			}
+
+			return i;
+		}
 		
 		// Fix up arguments for call to xlfRegister.
+		// Return count to be used in call to xlfRegister.
 		int prepare() 
 		{
 			moduleText = Excel(xlGetName);
@@ -67,12 +82,13 @@ namespace xll {
 				procedure = OPER(L"?") & procedure;
 			}
 
-			int i = 0;
+			int n = count();
 			if (is_function()) {
 				if (helpTopic == Nil) {
 					helpTopic = OPER(L"https://google.com/search?q="); // github???
 					helpTopic &= procedure;
 				}
+
 				const auto help = view(helpTopic);
 				if (help.starts_with(L"http") && !help.ends_with(L"!0")) {
 					helpTopic &= OPER(L"!0");
@@ -80,19 +96,17 @@ namespace xll {
 
 				// typeText, argumentText, functionHelp
 				OPER comma = OPER(L"");
-				constexpr size_t n = sizeof(argumentHelp) / sizeof(OPER);
-				while (i < n && argumentHelp[i] != Nil) {
+				for (int i = 0; i < n; ++i) {
 					typeText = typeText & argumentHelp[i][Arg::Type::typeText];
 					argumentText &= comma & argumentHelp[i][Arg::Type::argumentText];
 					argumentHelp[i] = argumentHelp[i][Arg::Type::argumentHelp];
 					comma = OPER(L", ");
-					++i;
 				}
+				// https://docs.microsoft.com/en-us/office/client-developer/excel/known-issues-in-excel-xll-development#argument-description-string-truncation-in-the-function-wizard
+				argumentHelp[++n] = OPER(L"");
 			}
-			// https://docs.microsoft.com/en-us/office/client-developer/excel/known-issues-in-excel-xll-development#argument-description-string-truncation-in-the-function-wizard
-			argumentHelp[i] = OPER(L"");
 
-			return static_cast<int>(offsetof(Args, argumentHelp)/sizeof(OPER) + i + 1);
+			return static_cast<int>(offsetof(Args, argumentHelp) / sizeof(OPER) + n);
 		}
 	};
 

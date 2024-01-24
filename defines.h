@@ -6,9 +6,9 @@
 #define WIN32_LEAN_AND_MEAN
 #define NOMINMAX
 #include <Windows.h>
-#include <minwindef.h>
+//#include <minwindef.h>
 extern "C" {
-#include "XLCALL.H"
+#include "XLCALL.H" // NOLINT
 }
 #include "ensure.h"
 
@@ -97,7 +97,7 @@ namespace xll {
 	// Return pointer to underlying data.
 	// constexpr XCHAR* Str(const XLOPER12& x) { return x.xltype & xltypeStr ? x.val.str + 1 : nullptr; }
 #define XLL_ALLOC(a,b,c,d)  constexpr c a(const XLOPER12& x) \
-		{ return x.xltype & xltype##a ? x.val.##b : nullptr; }
+		{ return x.xltype & xltype##a ? x.val.b : nullptr; }
 	XLL_TYPE_ALLOC(XLL_ALLOC)
 #undef XLL_ALLOC
 
@@ -185,7 +185,7 @@ namespace xll {
 
 	constexpr const char* xlerr_string(xlerr err)
 	{
-#define XLL_ERR_STRING(a, b, c) if (err == xlerr::##a) return b;
+#define XLL_ERR_STRING(a, b, c) if (err == xlerr::a) return b;
 		XLL_TYPE_ERR(XLL_ERR_STRING)
 			return "unknown xlerr type";
 #undef XLL_ERR_STRING
@@ -194,7 +194,7 @@ namespace xll {
 
 	constexpr const char* xlerr_description(xlerr err)
 	{
-#define XLL_ERR_DESC(a, b, c) if (err == xlerr::##a) return b ": " c;
+#define XLL_ERR_DESC(a, b, c) if (err == xlerr::a) return b ": " c;
 		XLL_TYPE_ERR(XLL_ERR_DESC)
 #undef XLL_ERR_DESC
 		return "unknown xlerr type";

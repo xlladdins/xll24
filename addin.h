@@ -9,7 +9,7 @@ namespace xll {
 
 	struct Macro : public Args {
 		template<class T> requires xll::is_char<T>::value
-		Macro(const T* procedure, const T* functionText, const T* shortcut = nullptr)
+			Macro(const T* procedure, const T* functionText, const T* shortcut = nullptr)
 			: Args{ .procedure = OPER(procedure),
 					.functionText = OPER(functionText),
 					.macroType = OPER(2.),
@@ -19,7 +19,7 @@ namespace xll {
 
 	struct Function : public Args {
 		template<class T> requires xll::is_char<T>::value
-		Function(const wchar_t* type, const T* procedure, const T* functionText)
+			Function(const wchar_t* type, const T* procedure, const T* functionText)
 			: Args{ .procedure = OPER(procedure),
 					.typeText = OPER(type),
 					.functionText = OPER(functionText),
@@ -35,21 +35,21 @@ namespace xll {
 			return *this;
 		}
 		template<class T> requires xll::is_char<T>::value
-		Function& Category(const T* category_)
+			Function& Category(const T* category_)
 		{
 			category = OPER(category_);
 
 			return *this;
 		}
 		template<class T> requires xll::is_char<T>::value
-		Function& FunctionHelp(const T* functionHelp_)
+			Function& FunctionHelp(const T* functionHelp_)
 		{
 			functionHelp[0] = OPER(functionHelp_);
 
 			return *this;
 		}
 		template<class T> requires xll::is_char<T>::value
-		Function& HelpTopic(const T* helpTopic_)
+			Function& HelpTopic(const T* helpTopic_)
 		{
 			helpTopic = OPER(helpTopic_);
 
@@ -85,22 +85,20 @@ namespace xll {
 		static inline std::map<OPER, Args> addins;
 		AddIn(const Args& args)
 		{
-			if (const auto e = addins.find(args.functionText); e != addins.end()) {
-				const auto err = OPER(L"AddIn: ") 
-					& args.functionText & OPER(L" already registered as: ") & e->second.procedure;
+			const auto [iter, success] = addins.emplace(args.functionText, args);
+			if (!success) {
+				const auto err = OPER(L"AddIn: ")
+					& args.functionText & OPER(L" already registered as: ") & args.functionText;
 				XLL_WARNING(view(err));
 			}
 			else {
-				addins[args.functionText] = args;
-			}
-			Auto<Register> reg([&args]() {
-				OPER regId = XlfRegister(args);
+				Auto<Register> reg([iter]() {
+					OPER regId = XlfRegister(iter->second);
 
-				return regId.xltype == xltypeNum; 
-			});
-			Auto<Unregister> unreg([]() {
-				try {
-					for (const auto& [text, args] : addins) {
+					return regId.xltype == xltypeNum;
+					});
+				Auto<Unregister> unreg([text = args.functionText]() {
+					try {
 						if (!XlfUnregister(text)) {
 							const auto err = OPER(L"AddIn: failed to unregister: ") & text;
 							XLL_WARNING(view(err));
@@ -108,20 +106,20 @@ namespace xll {
 							return FALSE;
 						}
 					}
-				}
-				catch (const std::exception& ex) {
-					XLL_ERROR(ex.what());
+					catch (const std::exception& ex) {
+						XLL_ERROR(ex.what());
 
-					return FALSE;
-				}
-				catch (...) {
-					XLL_ERROR("AddIn::Auto<Close>: unknown exception");
+						return FALSE;
+					}
+					catch (...) {
+						XLL_ERROR("AddIn::Auto<Unregister>: unknown exception");
 
-					return FALSE;
-				}
+						return FALSE;
+					}
 
-				return TRUE;
-			});
+					return TRUE;
+					});
+			}
 		}
 		AddIn(const AddIn&) = delete;
 		AddIn& operator=(const AddIn&) = delete;

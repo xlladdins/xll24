@@ -6,7 +6,7 @@ using namespace xll;
 
 #ifdef _DEBUG
 
-XLL_CONST(DOUBLE, XLL_PI, 3.14159265358979323846, "pi", "XLL", "");
+//XLL_CONST(DOUBLE, XLL_PI, 3.14159265358979323846, "pi", "XLL", "");
 
 int num_test()
 {
@@ -323,11 +323,11 @@ int fp_test()
 	return 0;
 }
 
-int xll_test()
+int WINAPI xll_test()
 {
 	AddInManagerInfo(OPER("The xll_test add-in"));
 	XlfRegister(Macro(L"?xll_test", L"XLL.TEST"));
-	/*
+	///*
 	Excel(xlfRegister
 		, Excel(xlGetName)
 		, L"xll_test"
@@ -340,7 +340,7 @@ int xll_test()
 		, Nil
 		, Nil
 		, L"");
-	*/
+	//*/
 	/*
 	+[0]	0x000000b5df6e7788 xltypeStr L"<C:\\Users\\keith\\source\\repos\\xlladdins\\xll\\x64\\Debug\\test.xll"	const xloper12 *
 		+[1]	0x000000b5df6e76e8 xltypeStr L"\x14?xll_spreadsheet_doc"	const xloper12 *

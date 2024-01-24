@@ -15,4 +15,4 @@
 #pragma comment(linker, "/export:xlAutoFree12@4=xlAutoFree12")
 #pragma comment(linker, "/export:xlAutoRegister12@4=xlAutoRegister12")
 #pragma comment(linker, "/export:xlAddInManagerInfo12@4=xlAddInManagerInfo12")
-#pragma comment(linker, "/export:xlAddInManagerInfo@4=xlAddInManagerInfo")
+//#pragma comment(linker, "/export:xlAddInManagerInfo@4=xlAddInManagerInfo")
