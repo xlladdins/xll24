@@ -21,8 +21,9 @@ namespace xll {
 			typeText, argumentText, argumentHelp
 		};
 		OPER type, name, help;
-		template<class T> requires xll::is_char<T>::value
-			Arg(const wchar_t* type, const T* name, const T* help)
+		template<class T> 
+			requires xll::is_char<T>::value
+		Arg(const wchar_t* type, const T* name, const T* help)
 			: type(OPER(type)), name(OPER(name)), help(OPER(help))
 		{ }
 	};
@@ -61,6 +62,7 @@ namespace xll {
 
 			// C++ name mangling.
 			ensure(type(procedure) == xltypeStr);
+			ensure(procedure.val.str[0] > 0);
 			if (procedure.val.str[1] != L'?') {
 				procedure = OPER(L"?") & procedure;
 			}
@@ -71,7 +73,8 @@ namespace xll {
 					helpTopic = OPER(L"https://google.com/search?q="); // github???
 					helpTopic &= procedure;
 				}
-				if (view(helpTopic).starts_with(L"http")) {
+				const auto help = view(helpTopic);
+				if (help.starts_with(L"http") && !help.ends_with(L"!0")) {
 					helpTopic &= OPER(L"!0");
 				}
 

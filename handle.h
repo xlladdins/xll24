@@ -12,12 +12,10 @@
 using HANDLEX = double;
 inline constexpr HANDLEX INVALID_HANDLEX = std::numeric_limits<HANDLEX>::quiet_NaN();
 
-
 namespace xll {
 
 	// handle argument types for add-ins
-	inline auto XLL_HANDLEX = XLL_DOUBLE;
-	inline auto XLL_HANDLE = XLL_DOUBLE;
+	inline const XCHAR* XLL_HANDLEX = XLL_DOUBLE;
 
 	/// <summary>
 	/// Convert a pointer to a handle.

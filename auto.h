@@ -21,7 +21,7 @@ namespace xll {
 	template<class T>
 	class Auto {
 		using macro = std::function<int(void)>;
-		inline static std::vector<macro> macros;
+		static inline std::vector<macro> macros;
 	public:
 		Auto(macro&& m)
 		{
