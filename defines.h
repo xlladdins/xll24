@@ -26,7 +26,7 @@ namespace xll {
 #undef XLL_SCALAR
 	constexpr bool is_scalar(const XLOPER12& x)
 	{
-		return x.xltype & xltypeScalar;
+		return (x.xltype & xltypeScalar) != 0;
 	}
 
 	template<int X> struct type_traits {};
@@ -76,7 +76,7 @@ namespace xll {
 #endif // _DEBUG
 
 	// types requiring allocation where xX is pointer to data
-	// xltypeX, XLOPERX::val.X, xX, XLL_X, description
+	// xltypeX, XLOPERX::val.X, xX, description
 #define XLL_TYPE_ALLOC(X) \
     X(Str,     str + 1,             XCHAR*,    "Counted string")                          \
     X(Multi,   array.lparray,       XLOPER12*, "Two dimensional array of XLOPER12 types") \
@@ -89,7 +89,7 @@ namespace xll {
 #undef XLL_ALLOC
 	constexpr bool is_alloc(const XLOPER12& x)
 	{
-		return x.xltype & xltypeAlloc;
+		return (x.xltype & xltypeAlloc) != 0;
 	}
 
 	// Return pointer to underlying data.
@@ -130,11 +130,11 @@ namespace xll {
 	X(DLLFree, "AutoFree owns memory") \
 
 	constexpr int xlbitFree = xlbitXLFree | xlbitDLLFree;
-	constexpr int type(const XLOPER& x) noexcept
+	constexpr WORD type(const XLOPER& x) noexcept
 	{
 		return x.xltype & ~(xlbitFree);
 	}
-	constexpr int type(const XLOPER12& x)
+	constexpr DWORD type(const XLOPER12& x)
 	{
 		return x.xltype & (~xlbitFree);
 	}
@@ -147,8 +147,8 @@ namespace xll {
 	XLL_NULL_TYPE(XLL_NULL)
 #undef XLL_NULL
 
-		// https://learn.microsoft.com/en-us/office/client-developer/excel/excel-worksheet-and-expression-evaluation#returning-errors
-		// xlerrX, Excel error string, error description
+	// https://learn.microsoft.com/en-us/office/client-developer/excel/excel-worksheet-and-expression-evaluation#returning-errors
+	// xlerrX, Excel error string, error description
 #define XLL_TYPE_ERR(X)                                                     \
 	X(Null,  "#NULL!",  "intersection of two ranges that do not intersect") \
 	X(Div0,  "#DIV/0!", "formula divides by zero")                          \

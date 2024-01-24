@@ -86,13 +86,14 @@ namespace xll {
 		AddIn(const Args& args)
 		{
 			if (const auto e = addins.find(args.functionText); e != addins.end()) {
-				const auto err = OPER(L"AddIn: ") & args.functionText & OPER(L" already registered as: ") & e->second.procedure;
+				const auto err = OPER(L"AddIn: ") 
+					& args.functionText & OPER(L" already registered as: ") & e->second.procedure;
 				XLL_WARNING(view(err));
 			}
 			else {
 				addins[args.functionText] = args;
 			}
-			Auto<Register> reg([args]() {
+			Auto<Register> reg([&args]() {
 				OPER regId = XlfRegister(args);
 
 				return regId.xltype == xltypeNum; 

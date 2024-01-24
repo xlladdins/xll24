@@ -23,6 +23,7 @@ namespace xll {
 		return *s && n < 0x4FFF ? len(s + 1, n + 1) : n;
 	}
 	static_assert(len(L"abc") == 3);
+
 	// Length of null terminated string.
 	constexpr char len(const char* s, char n = 0)
 	{
@@ -39,8 +40,8 @@ namespace xll {
 		constexpr OPER(const XLOPER12& o)
 			: XLOPER12{ o }
 		{
-			int xtype = type(o);// o.xltype; // type(o);
-			// Do not allocate if xlbitFree set???
+			int xtype = type(o);
+
 			if (xtype == xltypeStr) {
 				alloc(val.str + 1, val.str[0]);
 			}

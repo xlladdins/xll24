@@ -19,7 +19,7 @@ inline int get_alert_level()
 	HKEY hkey;
 	DWORD disp, data = XLL_ALERT_ERROR| XLL_ALERT_WARNING| XLL_ALERT_INFORMATION;
 
-	LSTATUS status = RegCreateKeyExA(HKEY_CURRENT_USER, XLL_SUB_KEY, 0, 0, 0, KEY_READ, 0, &hkey, &disp);
+	LSTATUS status = RegCreateKeyExA(HKEY_CURRENT_USER, XLL_SUB_KEY, 0, nullptr, 0, KEY_READ, 0, &hkey, &disp);
 	if (status == ERROR_SUCCESS) {
 		DWORD type, size = sizeof(data);
 		status = RegQueryValueExA(hkey, XLL_VALUE_NAME, 0, &type, (LPBYTE)&data, &size);

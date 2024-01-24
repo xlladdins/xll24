@@ -326,7 +326,7 @@ int fp_test()
 int xll_test()
 {
 	AddInManagerInfo(OPER("The xll_test add-in"));
-	//XlfRegister(Macro(L"?xll_test", L"XLL.TEST"));
+	XlfRegister(Macro(L"?xll_test", L"XLL.TEST"));
 	/*
 	Excel(xlfRegister
 		, Excel(xlGetName)
@@ -390,7 +390,7 @@ Auto<Open> xao_sal([]() { set_alert_level(7); return TRUE; });
 
 //AddIn xai_test(Macro(L"xll_test", L"XLL.TEST"));
 ///*
-AddIn xai_hypot(Function(XLL_DOUBLE, L"xll_hypot", L"XLL.HYPOT")
+const AddIn xai_hypot(Function(XLL_DOUBLE, L"xll_hypot", L"XLL.HYPOT")
 	.Arguments({
 		Arg(XLL_DOUBLE, L"x", L"is a number."),
 		Arg(XLL_DOUBLE, L"y", L"is a number."),

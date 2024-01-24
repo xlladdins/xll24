@@ -49,6 +49,7 @@ namespace xll {
 
 			// C++ name mangling.
 			ensure(type(procedure) == xltypeStr);
+			ensure(procedure.val.str[0] > 0);
 			if (procedure.val.str[1] != L'?') {
 				procedure = OPER(L"?") & procedure;
 			}
@@ -60,7 +61,8 @@ namespace xll {
 					helpTopic = OPER(L"https://google.com/search?q=");
 					helpTopic &= procedure;
 				}
-				if (view(helpTopic).starts_with(L"http")) {
+				const auto help = view(helpTopic);
+				if (help.starts_with(L"http") && !help.ends_with(L"!0")) {
 					helpTopic &= OPER(L"!0");
 				}
 
