@@ -155,12 +155,14 @@ extern "C" LPXLOPER12 WINAPI
 xlAddInManagerInfo12(LPXLOPER12 pxAction)
 {
 	XLL_TRACE;
+	static XLOPER12 errValue{ Err(xlerrValue) };
+
 	// Coerce to int and check if action is 1.
 	if (Excel(xlCoerce, *pxAction, OPER(xltypeInt)) == 1) {
 		return AddInManagerInfo();
 	}
 	
-	return static_cast<LPXLOPER12>(&ErrValue);
+	return &errValue;
 }
 // https://learn.microsoft.com/en-us/office/client-developer/excel/xladdinmanagerinfo-xladdinmanagerinfo12
 // Called by Microsoft Excel when the Add-in Manager is invoked for the first time.

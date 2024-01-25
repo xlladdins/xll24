@@ -24,9 +24,9 @@ inline int get_alert_level() noexcept
 	if (status == ERROR_SUCCESS) {
 		DWORD type{ 0 };
 		DWORD size = sizeof(data);
-		status = RegQueryValueExA(hkey, XLL_VALUE_NAME, 0, &type, static_cast<LPBYTE>(&data), &size);
+		status = RegQueryValueExA(hkey, XLL_VALUE_NAME, 0, &type, (LPBYTE)&data, &size);
 		if (status == ERROR_FILE_NOT_FOUND) {
-			RegSetValueExA(hkey, XLL_VALUE_NAME, 0, REG_DWORD, static_cast<LPBYTE>(&data), sizeof(DWORD));
+			RegSetValueExA(hkey, XLL_VALUE_NAME, 0, REG_DWORD, (LPBYTE)&data, sizeof(DWORD));
 		}
 	}
 
@@ -39,7 +39,7 @@ inline void set_alert_level(int level)
 
 	LSTATUS status = RegCreateKeyExA(HKEY_CURRENT_USER, XLL_SUB_KEY, 0, 0, 0, KEY_WRITE, 0, &hkey, &disp);
 	if (status == ERROR_SUCCESS) {
-		status = RegSetValueExA(hkey, XLL_VALUE_NAME, 0, REG_DWORD, static_cast<LPBYTE>(&level), sizeof(DWORD));
+		status = RegSetValueExA(hkey, XLL_VALUE_NAME, 0, REG_DWORD, (LPBYTE)&level, sizeof(DWORD));
 	}
 }
 

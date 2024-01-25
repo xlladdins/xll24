@@ -204,5 +204,5 @@ constexpr bool operator==(const _FP12& a, const _FP12& b)
 {
 	return a.rows == b.rows 
 		&& a.columns == b.columns 
-		&& std::equal(a.array, a.array + size(a), b.array);
+		&& std::equal(begin(a), end(a), begin(b), end(b));
 }

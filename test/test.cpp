@@ -6,7 +6,7 @@ using namespace xll;
 
 #ifdef _DEBUG
 
-//XLL_CONST(DOUBLE, XLL_PI, 3.14159265358979323846, "pi", "XLL", "");
+XLL_CONST(DOUBLE, XLL_PI, 3.14159265358979323846, "pi", "XLL", "");
 
 int num_test()
 {
@@ -334,41 +334,6 @@ int WINAPI xll_test()
 
 	AddInManagerInfo(OPER("The xll_test add-in"));
 	XlfRegister(Macro(L"?xll_test", L"XLL.TEST"));
-	///*
-	Excel(xlfRegister
-		, Excel(xlGetName)
-		, L"xll_test"
-		, Nil
-		, L"XLL.TEST"
-		, Nil
-		, 2.0000000000000000
-		, L"XLL"
-		, Nil
-		, Nil
-		, Nil
-		, L"");
-	//*/
-	/*
-	+[0]	0x000000b5df6e7788 xltypeStr L"<C:\\Users\\keith\\source\\repos\\xlladdins\\xll\\x64\\Debug\\test.xll"	const xloper12 *
-		+[1]	0x000000b5df6e76e8 xltypeStr L"\x14?xll_spreadsheet_doc"	const xloper12 *
-		+[2]	0x00007ff88bc7e728 {test.xll!xll::XOPER<xloper12> o} xltypeNil	const xloper12 *
-		+[3]	0x000001c327215350 xltypeStr L"\x3DOC"	const xloper12 *
-		+[4]	0x00007ff88bc7e728 {test.xll!xll::XOPER<xloper12> o} xltypeNil	const xloper12 *
-		+[5]	0x000001c3272152b0 xltypeNum 2.0000000000000000	const xloper12 *
-		+[6]	0x000001c327214b30 xltypeStr L"\x3XLL"	const xloper12 *
-		+[7]	0x00007ff88bc7e728 {test.xll!xll::XOPER<xloper12> o} xltypeNil	const xloper12 *
-		+[8]	0x000000b5df6e77c8 xltypeNil	const xloper12 *
-		+[9]	0x00007ff88bc7e728 {test.xll!xll::XOPER<xloper12> o} xltypeNil	const xloper12 *
-		+[10]	0x000000b5df6e8998 xltypeStr L"\0"	const xloper12 *
-	*/
-	/*
-	const auto& fargs = Function(XLL_DOUBLE, L"?xll_func", L"XLL.FUNC")
-		.Arguments({
-			Arg(XLL_DOUBLE, L"x", L"is a number.")
-			})
-		;
-	XlfRegister(fargs);
-	*/
 
 	try {
 		utf8::test();

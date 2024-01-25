@@ -103,24 +103,25 @@ namespace xll {
 					comma = OPER(L", ");
 				}
 				// https://docs.microsoft.com/en-us/office/client-developer/excel/known-issues-in-excel-xll-development#argument-description-string-truncation-in-the-function-wizard
-				argumentHelp[++n] = OPER(L"");
+				argumentHelp[n] = OPER(L"");
 			}
 
-			return static_cast<int>(offsetof(Args, argumentHelp) / sizeof(OPER) + n);
+			return static_cast<int>(offsetof(Args, argumentHelp) / sizeof(OPER) + n + 1);
 		}
 	};
 
 	// Register a function or macro to be called by Excel.
 	// https://learn.microsoft.com/en-us/office/client-developer/excel/xlfregister-form-1
-	inline OPER XlfRegister(Args args)
+	inline OPER XlfRegister(const Args& args_)
 	{
 		OPER res;
 
+		Args args(args_);
 		constexpr size_t n = sizeof(Args)/ sizeof(OPER);
 		LPXLOPER12 as[n];
 		const int count = args.prepare();
 		for (int i = 0; i < n && i < count; ++i) {
-			as[i] = static_cast<LPXLOPER12>(&args + 1);
+			as[i] = (LPXLOPER12)&args + i;
 		}
 
 		const int ret = ::Excel12v(xlfRegister, &res, count, &as[0]);
