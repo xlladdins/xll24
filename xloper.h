@@ -35,9 +35,9 @@ namespace xll {
 		case xltypeMissing:
 		case xltypeNil:
 			return 0;
+		default:
+			return std::numeric_limits<double>::quiet_NaN();
 		}
-
-		return std::numeric_limits<double>::quiet_NaN();
 	}
 
 	constexpr int rows(const XLOPER12& x) noexcept
@@ -64,9 +64,9 @@ namespace xll {
 		case xltypeMissing:
 		case xltypeNil:
 			return 0;
+		default:
+			return 1;
 		}
-
-		return 1;
 	}
 	constexpr int size(const XLOPER12& x) noexcept
 	{
@@ -95,8 +95,8 @@ namespace xll {
 
 	constexpr std::partial_ordering compare(const XLOPER12& x, const XLOPER12& y)
 	{
-		int xtype = type(x);
-		int ytype = type(y);
+		const int xtype = type(x);
+		const int ytype = type(y);
 
 		if (xtype != ytype) {
 			return xtype <=> ytype;

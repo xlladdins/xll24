@@ -24,9 +24,9 @@ inline int get_alert_level() noexcept
 	if (status == ERROR_SUCCESS) {
 		DWORD type{ 0 };
 		DWORD size = sizeof(data);
-		status = RegQueryValueExA(hkey, XLL_VALUE_NAME, 0, &type, (LPBYTE)&data, &size);
+		status = RegQueryValueExA(hkey, XLL_VALUE_NAME, 0, &type, static_cast<LPBYTE>(&data), &size);
 		if (status == ERROR_FILE_NOT_FOUND) {
-			RegSetValueExA(hkey, XLL_VALUE_NAME, 0, REG_DWORD, (LPBYTE)&data, sizeof(DWORD));
+			RegSetValueExA(hkey, XLL_VALUE_NAME, 0, REG_DWORD, static_cast<LPBYTE>(&data), sizeof(DWORD));
 		}
 	}
 
@@ -39,21 +39,21 @@ inline void set_alert_level(int level)
 
 	LSTATUS status = RegCreateKeyExA(HKEY_CURRENT_USER, XLL_SUB_KEY, 0, 0, 0, KEY_WRITE, 0, &hkey, &disp);
 	if (status == ERROR_SUCCESS) {
-		status = RegSetValueExA(hkey, XLL_VALUE_NAME, 0, REG_DWORD, (LPBYTE)&level, sizeof(DWORD));
+		status = RegSetValueExA(hkey, XLL_VALUE_NAME, 0, REG_DWORD, static_cast<LPBYTE>(&level), sizeof(DWORD));
 	}
 }
 
 // Handle to Excel window.
-inline HWND xllGetHwnd(void)
+inline HWND xllGetHwnd(void) noexcept
 {
 	XLOPER12 xHwnd = { .xltype = xltypeNil };
 
-	int ret = Excel12(xlGetHwnd, &xHwnd, 0);
+	const int ret = Excel12(xlGetHwnd, &xHwnd, 0);
 	if (ret != xlretSuccess || xHwnd.xltype != xltypeInt) {
 		return NULL;
 	}
 
-	return (HWND)IntToPtr(xHwnd.val.w);
+	return static_cast<HWND>(IntToPtr(xHwnd.val.w));
 }
 
 inline int XLL_ALERT(int level, std::string_view text, LPCSTR caption, UINT type = 0)
@@ -61,7 +61,7 @@ inline int XLL_ALERT(int level, std::string_view text, LPCSTR caption, UINT type
 	int alert_level = get_alert_level();
 
 	if (alert_level & level) {
-		int ret = MessageBoxA(xllGetHwnd(), std::string(text).c_str(), caption, MB_OKCANCEL | type);
+		const int ret = MessageBoxA(xllGetHwnd(), std::string(text).c_str(), caption, MB_OKCANCEL | type);
 		if (ret == IDCANCEL) {
 			alert_level &= ~level;
 			set_alert_level(alert_level);

@@ -9,12 +9,12 @@ namespace utf8 {
 
 	// Wide character string size of multi-byte character string.
 	// Default to null terminated string.
-	inline int wcslen(const char* s, int n = -1)
+	inline int wcslen(const char* s, int n = -1) noexcept
 	{
 		return MultiByteToWideChar(CP_UTF8, 0, s, n, nullptr, 0);
 	}
 	// Fill ws with wide character string from multi-byte character string.
-	inline int mbstowcs(const char* s, int n, wchar_t* ws, int wn)
+	inline int mbstowcs(const char* s, int n, wchar_t* ws, int wn) noexcept
 	{
 		return MultiByteToWideChar(CP_UTF8, 0, s, n, ws, wn);
 	}
@@ -32,7 +32,7 @@ namespace utf8 {
 			return ws;
 		}
 
-		int wn = wcslen(s, n);
+		const int wn = wcslen(s, n);
 		if (wn == 0) {
 			return nullptr;
 		}
@@ -60,7 +60,7 @@ namespace utf8 {
 		std::wstring ws;
 
 		if (s && n != 0) {
-			int wn = wcslen(s, n);
+			const int wn = wcslen(s, n);
 			if (wn != 0) {
 				ws.resize(wn);
 				if (wn == mbstowcs(s, n, ws.data(), wn)) {

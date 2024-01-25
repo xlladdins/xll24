@@ -8,7 +8,7 @@
 #include <crtdbg.h>
 
 struct CrtDbg {
-	CrtDbg(int flags = _CRTDBG_ALLOC_MEM_DF)
+	CrtDbg(int flags = _CRTDBG_ALLOC_MEM_DF) noexcept
 	{
 		_CrtSetDbgFlag(_CrtSetDbgFlag(_CRTDBG_REPORT_FLAG) | flags);
 		//_crtBreakAlloc = 419;
@@ -16,7 +16,7 @@ struct CrtDbg {
 	// When information about a memory block is reported by one of the debug 
 	// dump functions, this number is enclosed in braces, such as {36}.
 	// Alternatively, set _crtBreakAlloc in the debugger.
-	static long SetBreakAlloc(long breakAlloc)
+	static long SetBreakAlloc(long breakAlloc) noexcept
 	{
 		return breakAlloc ? _CrtSetBreakAlloc(breakAlloc) : 0;
 	}
@@ -24,7 +24,7 @@ struct CrtDbg {
 	// has a valid debug heap block type identifier. Any of the last three
 	// arguments may be NULL.
 	static int IsMemoryBlock(const void* userData, unsigned int size,
-		long* requestNumber, char** filename, int* linenumber)
+		long* requestNumber, char** filename, int* linenumber) noexcept
 	{
 		return _CrtIsMemoryBlock(userData, size, requestNumber, filename, linenumber);
 	}
@@ -34,6 +34,8 @@ struct CrtDbg {
 
 		return IsMemoryBlock(userData, size, &req, 0, 0) ? req : 0;
 	}
+	CrtDbg(const CrtDbg&) = delete;
+	CrtDbg& operator=(const CrtDbg&) = delete;
 	~CrtDbg()
 	{
 		if (!(_CrtSetDbgFlag(_CRTDBG_REPORT_FLAG) & _CRTDBG_LEAK_CHECK_DF))

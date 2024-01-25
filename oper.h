@@ -20,14 +20,14 @@ namespace xll {
 	// Length of null terminated wide string.
 	constexpr XCHAR len(const XCHAR* s, XCHAR n = 0)
 	{
-		return *s && n < 0x4FFF ? len(s + 1, n + 1) : n;
+		return s && *s && n < 0x4FFF ? len(s + 1, n + 1) : n;
 	}
 	static_assert(len(L"abc") == 3);
 
 	// Length of null terminated string.
 	constexpr char len(const char* s, char n = 0)
 	{
-		return *s && n < 0xFF ? len(s + 1, n + 1) : n;
+		return s && *s && n < 0xFF ? len(s + 1, n + 1) : n;
 	}
 	static_assert(len("abc") == 3);
 
@@ -73,7 +73,7 @@ namespace xll {
 		OPER(OPER&& o) noexcept
 			: XLOPER12{ .val = o.val , .xltype = std::exchange(o.xltype, xltypeNil) }
 		{ }
-		OPER& operator=(OPER&& o) noexcept
+		OPER& operator=(OPER&& o)
 		{
 			if (this != &o) {
 				dealloc();
@@ -92,7 +92,7 @@ namespace xll {
 		constexpr explicit OPER(double num) noexcept
 			: XLOPER12{ Num(num) }
 		{ }
-		OPER& operator=(double num) noexcept
+		OPER& operator=(double num)
 		{
 			dealloc();
 

@@ -257,7 +257,7 @@ namespace xll {
 	X(xlretInvAsynchronousContext, "invalid asynchronous function handle")   \
 	X(xlretNotClusterSafe,         "not supported on cluster")               \
 
-	inline const char* xlret_description(int ret)
+	inline const char* xlret_description(int ret) noexcept
 	{
 #define XLL_RET(a,b) if (ret == a) return b;
 		XLL_RET_TYPE(XLL_RET)

@@ -120,7 +120,7 @@ xlAutoFree12(LPXLOPER12 px)
 // https://learn.microsoft.com/en-us/office/client-developer/excel/xlautoregister-xlautoregister12
 // Look up name and register.
 extern "C" LPXLOPER12 __declspec(dllexport) WINAPI
-xlAutoRegister12(LPXLOPER12 pxName)
+xlAutoRegister12(const LPXLOPER12 pxName)
 {
 	XLL_TRACE;
 	static XLOPER12 o;
@@ -160,7 +160,7 @@ xlAddInManagerInfo12(LPXLOPER12 pxAction)
 		return AddInManagerInfo();
 	}
 	
-	return const_cast<LPXLOPER12>(&ErrValue);
+	return static_cast<LPXLOPER12>(&ErrValue);
 }
 // https://learn.microsoft.com/en-us/office/client-developer/excel/xladdinmanagerinfo-xladdinmanagerinfo12
 // Called by Microsoft Excel when the Add-in Manager is invoked for the first time.

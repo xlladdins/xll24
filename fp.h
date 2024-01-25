@@ -8,50 +8,50 @@ extern "C" {
 }
 #include "defines.h"
 
-inline int rows(const FP12& a)
+inline int rows(const FP12& a) noexcept
 {
 	return a.rows;
 }
-inline int columns(const FP12& a)
+inline int columns(const FP12& a) noexcept
 {
 	return a.columns;
 }
-inline int size(const FP12& a)
+inline int size(const FP12& a) noexcept
 {
 	return a.rows * a.columns;
 }
 
-inline double* array(FP12& a)
+inline double* array(FP12& a) noexcept
 {
 	return a.array;
 }
-inline const double* array(const FP12& a)
+inline const double* array(const FP12& a) noexcept
 {
 	return a.array;
 }
 
-inline auto span(FP12& a)
+inline auto span(FP12& a) noexcept
 {
 	return std::span<double>(array(a), size(a));
 }
-inline auto span(const FP12& a)
+inline auto span(const FP12& a) noexcept
 {
 	return std::span<const double>(array(a), size(a));
 }
 
-inline double* begin(FP12& a)
+inline double* begin(FP12& a) noexcept
 {
 	return array(a);
 }
-inline const double* begin(const FP12& a)
+inline const double* begin(const FP12& a) noexcept
 {
 	return array(a);
 }
-inline double* end(FP12& a)
+inline double* end(FP12& a) noexcept
 {
 	return array(a) + size(a);
 }
-inline const double* end(const FP12& a)
+inline const double* end(const FP12& a) noexcept
 {
 	return array(a) + size(a);
 }
@@ -60,7 +60,7 @@ namespace xll {
 	class FPX {
 		struct fpx* _fpx;
 	public:
-		FPX()
+		FPX() noexcept
 			: _fpx(nullptr)
 		{ }
 		FPX(int r, int c)
@@ -116,11 +116,11 @@ namespace xll {
 		}
 
 		// type punning
-		operator const _FP12&() const
+		operator const _FP12&() const noexcept
 		{
 			return reinterpret_cast<const _FP12&>(*_fpx);
 		}
-		const _FP12* get() const
+		const _FP12* get() const noexcept
 		{
 			return reinterpret_cast<const _FP12*>(_fpx);
 		}
@@ -146,7 +146,7 @@ namespace xll {
 			return _fpx->array;
 		}
 
-		FPX& resize(int r, int c)
+		FPX& resize(int r, int c) noexcept
 		{
 			auto fpx_ = fpx_realloc(_fpx, r, c);
 			if (fpx_) {
@@ -165,25 +165,25 @@ namespace xll {
 			return *this;
 		}
 
-		double operator[](int i) const
+		double operator[](int i) const noexcept
 		{
 			return _fpx->array[i];
 		}
-		double& operator[](int i)
+		double& operator[](int i) noexcept
 		{
 			return _fpx->array[i];
 		}
 
-		double operator()(int i, int j) const
+		double operator()(int i, int j) const noexcept
 		{
 			return _fpx->array[fpx_index(_fpx, i, j)];
 		}
-		double& operator()(int i, int j)
+		double& operator()(int i, int j) noexcept
 		{
 			return _fpx->array[fpx_index(_fpx, i, j)];
 		}
 
-		std::span<double> span()
+		std::span<double> span() noexcept
 		{
 			return std::span<double>(_fpx->array, size());
 		}

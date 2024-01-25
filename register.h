@@ -118,12 +118,12 @@ namespace xll {
 
 		constexpr size_t n = sizeof(Args)/ sizeof(OPER);
 		LPXLOPER12 as[n];
-		int count = args.prepare();
+		const int count = args.prepare();
 		for (int i = 0; i < n && i < count; ++i) {
-			as[i] = (LPXLOPER12) &args + i;
+			as[i] = static_cast<LPXLOPER12>(&args + 1);
 		}
 
-		int ret = ::Excel12v(xlfRegister, &res, count, &as[0]);
+		const int ret = ::Excel12v(xlfRegister, &res, count, &as[0]);
 
 		ensure_ret(ret);
 		ensure_err(res);

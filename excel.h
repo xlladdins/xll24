@@ -34,7 +34,7 @@ namespace xll {
 	{
 		OPER res;
 
-		int ret = ::Excel12v(fn, &res, 0, nullptr);
+		const int ret = ::Excel12v(fn, &res, 0, nullptr);
 		ensure_ret(ret);
 		ensure_err(res);
 		if (res.xltype & xltypeAlloc) {

@@ -92,12 +92,12 @@ namespace xll {
 				XLL_WARNING(view(err));
 			}
 			else {
-				Auto<Register> reg([iter]() {
+				const Auto<Register> reg([iter]() {
 					OPER regId = XlfRegister(iter->second);
 
 					return regId.xltype == xltypeNum;
 					});
-				Auto<Unregister> unreg([text = args.functionText]() {
+				const Auto<Unregister> unreg([text = args.functionText]() {
 					try {
 						if (!XlfUnregister(text)) {
 							const auto err = OPER(L"AddIn: failed to unregister: ") & text;
