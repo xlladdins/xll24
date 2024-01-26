@@ -6,7 +6,7 @@ using namespace xll;
 
 #ifdef _DEBUG
 
-XLL_CONST(DOUBLE, XLL_PI, 3.14159265358979323846, "pi", "XLL", "");
+//XLL_CONST(DOUBLE, XLL_PI, 3.14159265358979323846, "pi", "XLL", "");
 
 int num_test()
 {

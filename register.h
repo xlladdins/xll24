@@ -106,7 +106,9 @@ namespace xll {
 				argumentHelp[n] = OPER(L"");
 			}
 
-			return static_cast<int>(offsetof(Args, argumentHelp) / sizeof(OPER) + n + 1);
+			constexpr size_t off = offsetof(Args, Args::argumentHelp) / sizeof(OPER);
+
+			return static_cast<int>(off + n + 1);
 		}
 	};
 
