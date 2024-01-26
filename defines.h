@@ -272,5 +272,5 @@ namespace xll {
 // Function returning a constant value.
 #define XLL_CONST(type, name, value, help, cat, topic) \
 xll::AddIn xai_ ## name (xll::Function(XLL_##type, "_xll_" #name, #name) \
-.FunctionHelp(help).Category(cat).HelpTopic(topic)); \
+.Arguments({}).FunctionHelp(help).Category(cat).HelpTopic(topic)); \
 extern "C" __declspec(dllexport) type WINAPI xll_ ## name () { return value; }
