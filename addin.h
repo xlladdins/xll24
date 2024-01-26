@@ -82,20 +82,34 @@ namespace xll {
 	};
 
 	struct AddIn {
-		static inline std::map<OPER, Args> addins;
-		AddIn(const Args& args)
+		static inline std::map<OPER, Args*> addins;
+		Args args;
+		AddIn(const Args& args_)
+			: args(args_)
 		{
-			const auto [iter, success] = addins.emplace(args.functionText, args);
+			const auto [iter, success] = addins.emplace(args.functionText, &args);
 			if (!success) {
 				const auto err = OPER(L"AddIn: ")
 					& args.functionText & OPER(L" already registered as: ") & args.functionText;
 				XLL_WARNING(view(err));
 			}
 			else {
-				const Auto<Register> reg([iter]() {
-					OPER regId = XlfRegister(iter->second);
+				const Auto<Register> reg([&]() -> int {
+					try {
+						OPER regId = XlfRegister(std::move(args));
 
-					return regId.xltype == xltypeNum;
+						return regId.xltype == xltypeNum;
+					}
+					catch (const std::exception& ex) {
+						XLL_ERROR(ex.what());
+
+						return false;
+					}
+					catch (...) {
+						XLL_ERROR("AddIn::Auto<Register>: unknown exception");
+
+						return false;
+					}
 					});
 				const Auto<Unregister> unreg([text = args.functionText]() {
 					try {
@@ -121,7 +135,9 @@ namespace xll {
 					});
 			}
 		}
-		AddIn(const AddIn&) = delete;
+		AddIn(AddIn&& addin)
+			: args(addin.args)
+		{ }
 		AddIn& operator=(const AddIn&) = delete;
 		~AddIn()
 		{ }

@@ -6,7 +6,7 @@ using namespace xll;
 
 #ifdef _DEBUG
 
-//XLL_CONST(DOUBLE, XLL_PI, 3.14159265358979323846, "pi", "XLL", "");
+XLL_CONST(DOUBLE, XLL_PI, 3.14159265358979323846, "pi", "XLL", "");
 
 int num_test()
 {
@@ -359,6 +359,15 @@ Auto<OpenAfter> xao_test(xll_test);
 #endif
 
 Auto<Open> xao_sal([]() { set_alert_level(7); return TRUE; });
+
+const AddIn xai_const(Function(XLL_DOUBLE, "xll_const", "XLL.CONST")
+	.Arguments({})
+);
+double WINAPI xll_const()
+{
+#pragma XLLEXPORT
+	return 3.14159265358979323846;
+}
 
 //AddIn xai_test(Macro(L"xll_test", L"XLL.TEST"));
 ///*

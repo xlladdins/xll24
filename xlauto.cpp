@@ -128,7 +128,7 @@ xlAutoRegister12(const LPXLOPER12 pxName)
 	try {
 		const auto addin = AddIn::addins.find(OPER(*pxName));
 		if (addin != AddIn::addins.end()) {
-			o = XlfRegister(addin->second);
+			o = XlfRegister(std::move(*addin->second));
 		}
 		else {
 			o = ErrValue;

@@ -78,13 +78,16 @@ namespace xll {
 			// C++ name mangling.
 			ensure(type(procedure) == xltypeStr);
 			ensure(procedure.val.str[0] > 0);
-			if (procedure.val.str[1] != L'?') {
+			if (procedure.val.str[1] == L'_') {
+				procedure = OPER(procedure.val.str + 2, procedure.val.str[0] - 1);
+			}
+			else if (procedure.val.str[1] != L'?') {
 				procedure = OPER(L"?") & procedure;
 			}
 
 			int n = count();
 			if (is_function()) {
-				if (helpTopic == Nil) {
+				if (helpTopic == Nil || helpTopic == L"") {
 					helpTopic = OPER(L"https://google.com/search?q="); // github???
 					helpTopic &= procedure;
 				}
@@ -114,11 +117,11 @@ namespace xll {
 
 	// Register a function or macro to be called by Excel.
 	// https://learn.microsoft.com/en-us/office/client-developer/excel/xlfregister-form-1
-	inline OPER XlfRegister(const Args& args_)
+	inline OPER XlfRegister(Args&& args)
 	{
 		OPER res;
 
-		Args args(args_);
+		//Args args(args_);
 		constexpr size_t n = sizeof(Args)/ sizeof(OPER);
 		LPXLOPER12 as[n];
 		const int count = args.prepare();
