@@ -326,11 +326,11 @@ int fp_test()
 int WINAPI xll_test()
 {
 #pragma XLLEXPORT
-	int xal = get_alert_level();
-	set_alert_level(1);
-	int al = get_alert_level();
+	int xal = get_alert_mask();
+	set_alert_mask(1);
+	int al = get_alert_mask();
 	ensure(1 == al);
-	set_alert_level(xal);
+	set_alert_mask(xal);
 
 	AddInManagerInfo(OPER("The xll_test add-in"));
 	XlfRegister(Macro(L"?xll_test", L"XLL.TEST"));
@@ -358,7 +358,7 @@ int WINAPI xll_test()
 Auto<OpenAfter> xao_test(xll_test);
 #endif
 
-Auto<Open> xao_sal([]() { set_alert_level(7); return TRUE; });
+Auto<Open> xao_sal([]() { set_alert_mask(7); return TRUE; });
 
 const AddIn xai_const(Function(XLL_DOUBLE, "xll_const", "XLL.CONST")
 	.Arguments({})
@@ -384,7 +384,16 @@ const AddIn xai_hypot(Function(XLL_DOUBLE, L"xll_hypot", L"XLL.HYPOT")
 double WINAPI xll_hypot(double x, double y)
 {
 #pragma XLLEXPORT
-	return std::hypot(x, y);
+	const OPER o = Excel(xlfSqrt, Excel(xlfSumsq, OPER(x), OPER(y)));
+	double h = std::hypot(x, y);
+	if (h != Num(o)) {
+		XLL_WARNING("This should never happen.");
+	}
+	if (o != h) {
+		XLL_WARNING("This should never happen.");
+	}
+
+	return h;
 }
 //*/
 

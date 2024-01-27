@@ -1,20 +1,21 @@
 // alert.h - Error, Warning, and Information alerts
 // Copyright (c) KALX, LLC. All rights reserved. No warranty made.
+// Store alert mask in registry to persist across sessions.
 #pragma once
 #include <string_view>
 #include <windows.h>
 #include "XLCALL.H"
 
-enum xll_alert_type {
+enum xll_alert_level {
 	XLL_ALERT_ERROR = 1,
 	XLL_ALERT_WARNING = 2,
 	XLL_ALERT_INFORMATION = 4,
 };
 
 #define XLL_SUB_KEY "Software\\KALX\\xll"
-#define XLL_VALUE_NAME "AlertLevel"
+#define XLL_VALUE_NAME "AlertMask"
 
-inline int get_alert_level() noexcept
+inline int get_alert_mask() noexcept
 {
 	HKEY hkey{ 0 };
 	DWORD disp{ 0 };
@@ -32,7 +33,7 @@ inline int get_alert_level() noexcept
 
 	return data;
 }
-inline void set_alert_level(int level)
+inline void set_alert_mask(int level)
 {
 	HKEY hkey;
 	DWORD disp;
@@ -58,13 +59,13 @@ inline HWND xllGetHwnd(void) noexcept
 
 inline int XLL_ALERT(int level, std::string_view text, LPCSTR caption, UINT type = 0)
 {
-	int alert_level = get_alert_level();
+	int alert_level = get_alert_mask();
 
 	if (alert_level & level) {
 		const int ret = MessageBoxA(xllGetHwnd(), std::string(text).c_str(), caption, MB_OKCANCEL | type);
 		if (ret == IDCANCEL) {
 			alert_level &= ~level;
-			set_alert_level(alert_level);
+			set_alert_mask(alert_level);
 		}
 	}
 
@@ -72,13 +73,13 @@ inline int XLL_ALERT(int level, std::string_view text, LPCSTR caption, UINT type
 }
 inline int XLL_ALERT(int level, std::wstring_view text, LPCWSTR caption, UINT type = 0)
 {
-	int alert_level = get_alert_level();
+	int alert_level = get_alert_mask();
 
 	if (alert_level & level) {
 		int ret = MessageBoxW(xllGetHwnd(), std::wstring(text).c_str(), caption, MB_OKCANCEL | type);
 		if (ret == IDCANCEL) {
 			alert_level &= ~level;
-			set_alert_level(alert_level);
+			set_alert_mask(alert_level);
 		}
 	}
 

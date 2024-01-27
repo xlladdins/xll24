@@ -86,7 +86,7 @@ double WINAPI xll_hypot(double x, double y)
 	return std::hypot(x,y);
 }
 ```
-Note every function registered with Excel must be declared `WINAPI`
+Every function registered with Excel must be declared `WINAPI`
 and exported with `#pragma XLLEXPORT` in its body.
 The first version of Excel was written in Pascal and the `WINAPI` calling convention
 is a historical artifact of that. Unlike Unix, Windows does not make functions
@@ -94,7 +94,7 @@ visible outside of a shared library unless they are explicitly exported.
 The pragma does that for you.
 
 Keep function implementations simple. Grab the arguments you told Excel to provide,
-call a function, and return the result. Write functions in platform independent
+call a function, and return the result. Write the function in platform independent
 code that can be compiled on Windows, Mac, and Linux. 
 
 ### Macro
@@ -120,3 +120,6 @@ int WINAPI xll_macro(void)
 ```
 The xll library converts utf-8 strings to wide character strings used by Excel.
 
+## AddIn
+
+The [`AddIn'](addin.h) class is used to register functions and macros with Excel.
