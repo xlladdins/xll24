@@ -17,6 +17,7 @@ register native code to call functions and run macros from Excel.
 
 ## Install
 
+The xll library requires 64-bit Excel on Windows and Visual Studio 2022.
 Run [`setup`](setup/Release/setup.msi) to install a template project called `xll` that will
 show up when you create a new project in Visual Studio.
 
@@ -24,22 +25,22 @@ show up when you create a new project in Visual Studio.
 
 In Visual Studio create a new [xll project](img/new_project.png).
 
-...example...
+...video...
 
 ## Excel
 
 Everything Excel has to offer is available through the [`Excel`](excel.h) function.
-The first argument is an `int` defined in
-[`XLCALL.H`](XLCALL.H) provided by the C SDK 
-specifying the Excel 
-function or macro to call.
-The arguments are documented in 
+The first argument is a _function number_ defined in C SDK header file
+[`XLCALL.H`](XLCALL.H).
+specifying the Excel function or macro to call.
+The arguments for each function number are documented in 
 [Excel4Macros](https://xlladdins.github.io/Excel4Macros/index.html).
 
-## Create
+Function number for functions begin with `xlf` and for macros with `xlc`.
+Function can have no side effects. They returns a value based only on its arguments.
+Macros only have side effects. They can do anything a user can do and return 1 on success or 0 on failure.
 
-Write your own functions or call 3-rd party libraries using
-the [`AddIn`](addin.h) class. 
+The [`AddIn`](addin.h) class is used to register functions and macros with Excel.
 
 ### Function
 
@@ -47,7 +48,7 @@ An Excel function is a pure function.
 It returns a result that depends only on its arguments
 and has no side effects.
 To call a C or C++ function from Excel use
-[`AddIn`](addin.h) to instantiate an object
+the [`AddIn`](addin.h) class to instantiate an object
 that specifies the information Excel needs.
 
 Here is how to register `xll_hypot` as `STD.HYPOT` in Excel.
@@ -68,7 +69,7 @@ AddIn xai_hypot(
 C++ does not have named arguments so the `Function` class uses the 
 [named parameter idiom](https://isocpp.org/wiki/faq/ctors#named-parameter-idiom).
 
-`.Category`, `.FunctionHelp`, and `.HelpTopic` are optional but people using your
+The member functions `.Category`, `.FunctionHelp`, and `.HelpTopic` are optional but people using your
 handiwork will appreciate it if you supply them. 
 
 You can specify a URL in `.HelpTopic` that will be opened when 
@@ -77,7 +78,7 @@ is clicked in the in the
 [Insert Function](https://support.microsoft.com/en-us/office/insert-function-74474114-7c7f-43f5-bec3-096c56e2fb13)
 dialog. If you don't then it defaults to `https://google.com/search?q=xll_hypot`.
 
-The next step is to implement `xll_hypot` by calling `std::hypot` from the C++ standard library.
+Implement `xll_hypot` by calling `std::hypot` from the C++ standard library.
 ```C++
 double WINAPI xll_hypot(double x, double y)
 {
@@ -90,11 +91,16 @@ and exported with `#pragma XLLEXPORT` in its body.
 The first version of Excel was written in Pascal and the `WINAPI` calling convention
 is a historical artifact of that. Unlike Unix, Windows does not make functions
 visible outside of a shared library unless they are explicitly exported.
+The pragma does that for you.
+
+Keep function implementations simple. Grab the arguments you told Excel to provide,
+call a function, and return the result. Write functions in platform independent
+code that can be compiled on Windows, Mac, and Linux. 
 
 ### Macro
 
 An Excel macro only has side effects. It can do anything a user can do. 
-It takes no arguments and returns 1 on success and 0 on failure.
+It takes no arguments and returns 1 on success or 0 on failure.
 
 To register a macro specify the name of the C++ function and the name Excel will use to call it.
 ```C++

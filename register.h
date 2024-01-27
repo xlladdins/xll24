@@ -55,7 +55,7 @@ namespace xll {
 			return macroType == 2;
 		}
 
-		// Number of non Nil arguments
+		// Number of initial non Nil arguments
 		int count() const
 		{
 			int i = 0;
@@ -121,9 +121,9 @@ namespace xll {
 	{
 		OPER res;
 
-		//Args args(args_);
 		constexpr size_t n = sizeof(Args)/ sizeof(OPER);
-		LPXLOPER12 as[n];
+		LPXLOPER12 as[n]; // array of pointers to arguments
+		
 		const int count = args.prepare();
 		for (int i = 0; i < n && i < count; ++i) {
 			as[i] = (LPXLOPER12)&args + i;
@@ -142,17 +142,17 @@ namespace xll {
 	// https://learn.microsoft.com/en-us/office/client-developer/excel/xlfunregister-form-1
 	// https://docs.microsoft.com/en-us/office/client-developer/excel/known-issues-in-excel-xll-development#unregistering-xll-commands-and-functions
 	// https://stackoverflow.com/questions/15343282/how-to-remove-an-excel-udf-programmatically
-	inline bool XlfUnregister(const OPER& key)
+	inline bool XlfUnregister(const OPER& procedure)
 	{
-		OPER regid = Excel(xlfEvaluate, key);
+		OPER regid = Excel(xlfEvaluate, procedure);
 		if (type(regid) != xltypeNum) {
 			return false;
 		}
-		Excel(xlfSetName, key);
+		Excel(xlfSetName, procedure);
 		
 		regid = Excel(xlfRegister, Excel(xlGetName),
-			OPER("xlAutoRemove"), OPER(XLL_SHORT), key, Missing, OPER(2));
-		Excel(xlfSetName, key);
+			OPER("xlAutoRemove"), OPER(XLL_SHORT), procedure, Missing, OPER(2));
+		Excel(xlfSetName, procedure);
 
 		return Excel(xlfUnregister, regid) == true;
 	}
