@@ -12,7 +12,7 @@ namespace xll {
 			Macro(const T* procedure, const T* functionText, const T* shortcut = nullptr)
 			: Args{ .procedure = OPER(procedure),
 					.functionText = OPER(functionText),
-					.macroType = OPER(2.),
+					.macroType = OPER(2),
 					.shortcutText = shortcut ? OPER(shortcut) : OPER{} }
 		{ }
 	};
@@ -23,7 +23,7 @@ namespace xll {
 			: Args{ .procedure = OPER(procedure),
 					.typeText = OPER(type),
 					.functionText = OPER(functionText),
-					.macroType = OPER(1.) }
+					.macroType = OPER(1) }
 		{ }
 		Function& Arguments(const std::initializer_list<Arg>& args)
 		{
@@ -79,22 +79,28 @@ namespace xll {
 
 			return *this;
 		}
+		Function& Hide()
+		{
+			macroType = OPER(0);
+
+			return *this;
+		}
 	};
 
 	class AddIn {
 		Args args;
 
-		// register function with Excel
+		// Auto<Register> function with Excel
 		void Register()
 		{
 			if (addins.contains(args.functionText)) {
 				const auto err = OPER(L"AddIn: ")
-					& args.functionText & OPER(L" already registered as: ") & args.functionText;
+					& args.functionText & OPER(L" already registered");
 				XLL_WARNING(view(err));
 			}
 			else {
 				addins[args.functionText] = &args;
-				const Auto<xll::Register> reg([&]() -> int {
+				const Auto<xll::Register> xao_reg([&]() -> int {
 					try {
 						OPER regId = XlfRegister(std::move(args));
 
@@ -110,14 +116,14 @@ namespace xll {
 
 						return false;
 					}
-					});
-
+				});
 			}
 		}
 
+		// Auto<Unregister> function with Excel
 		void Unregister()
 		{
-			const Auto<xll::Unregister> unreg([text = args.functionText]() {
+			const Auto<xll::Unregister> xao_unreg([text = args.functionText]() {
 				try {
 					if (!XlfUnregister(text)) {
 						const auto err = OPER(L"AddIn: failed to unregister: ") & text;
@@ -138,19 +144,13 @@ namespace xll {
 				}
 
 				return TRUE;
-				});
+			});
 		}
 	public:
 		static inline std::map<OPER, Args*> addins;
 		
 		AddIn(const Args& args_)
 			: args(args_)
-		{
-			Register();
-			Unregister();
-		}
-		AddIn(AddIn&& addin)
-			: args(addin.args)
 		{
 			Register();
 			Unregister();

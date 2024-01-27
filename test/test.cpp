@@ -6,7 +6,7 @@ using namespace xll;
 
 #ifdef _DEBUG
 
-XLL_CONST(DOUBLE, XLL_PI, 3.14159265358979323846, "Return the contant pi.", "XLL", "");
+XLL_CONST(DOUBLE, XLL_PI, 3.14159265358979323846, "Return the constant pi.", "XLL", "");
 
 int num_test()
 {
@@ -358,7 +358,7 @@ int WINAPI xll_test()
 Auto<OpenAfter> xao_test(xll_test);
 #endif
 
-Auto<Open> xao_sal([]() { set_alert_mask(7); return TRUE; });
+Auto<Open> xao_sam([]() { set_alert_mask(7); return TRUE; });
 
 const AddIn xai_const(Function(XLL_DOUBLE, "xll_const", "XLL.CONST"));
 double WINAPI xll_const()
