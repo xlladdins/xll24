@@ -122,4 +122,5 @@ The xll library converts utf-8 strings to wide character strings used by Excel.
 
 ## AddIn
 
-The [`AddIn'](addin.h) class is used to register functions and macros with Excel.
+The [`AddIn`](addin.h) class stores [`Args`] that are used to register functions and macros with Excel.
+The constructor 

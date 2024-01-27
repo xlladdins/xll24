@@ -1,4 +1,5 @@
 // fpx.h - Excel FP12 data type.
+// Copyright (c) KALX, LLC. All rights reserved. No warranty made.
 #pragma once
 
 #pragma warning(push)

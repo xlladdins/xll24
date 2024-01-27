@@ -6,7 +6,7 @@ using namespace xll;
 
 #ifdef _DEBUG
 
-XLL_CONST(DOUBLE, XLL_PI, 3.14159265358979323846, "pi", "XLL", "");
+XLL_CONST(DOUBLE, XLL_PI, 3.14159265358979323846, "Return the contant pi.", "XLL", "");
 
 int num_test()
 {
@@ -280,24 +280,24 @@ int fp_test()
 {
 	{
 		FPX a(2, 3);
-		ensure(a.size() == 6);
-		ensure(a.rows() == 2);
-		ensure(a.columns() == 3);
+		ensure(size(a) == 6);
+		ensure(rows(a) == 2);
+		ensure(columns(a) == 3);
 		ensure(a == a);
 		ensure(!(a != a));
 	}
 	{
 		FPX a({ 1,2,3 });
-		ensure(a.size() == 3);
-		ensure(a.rows() == 1);
-		ensure(a.columns() == 3);
+		ensure(size(a) == 3);
+		ensure(rows(a) == 1);
+		ensure(columns(a) == 3);
 		ensure(a[0] == 1);
 		ensure(a[1] == 2);
 		ensure(a[2] == 3);
 		a.resize(2, 2);
-		ensure(a.size() == 4);
-		ensure(a.rows() == 2);
-		ensure(a.columns() == 2);
+		ensure(size(a) == 4);
+		ensure(rows(a) == 2);
+		ensure(columns(a) == 2);
 		ensure(a[0] == 1);
 		ensure(a[1] == 2);
 		ensure(a[2] == 3);
@@ -360,9 +360,7 @@ Auto<OpenAfter> xao_test(xll_test);
 
 Auto<Open> xao_sal([]() { set_alert_mask(7); return TRUE; });
 
-const AddIn xai_const(Function(XLL_DOUBLE, "xll_const", "XLL.CONST")
-	.Arguments({})
-);
+const AddIn xai_const(Function(XLL_DOUBLE, "xll_const", "XLL.CONST"));
 double WINAPI xll_const()
 {
 #pragma XLLEXPORT

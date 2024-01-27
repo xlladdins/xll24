@@ -81,20 +81,20 @@ namespace xll {
 		}
 	};
 
-	struct AddIn {
-		static inline std::map<OPER, Args*> addins;
+	class AddIn {
 		Args args;
-		AddIn(const Args& args_)
-			: args(args_)
+
+		// register function with Excel
+		void Register()
 		{
-			const auto [iter, success] = addins.emplace(args.functionText, &args);
-			if (!success) {
+			if (addins.contains(args.functionText)) {
 				const auto err = OPER(L"AddIn: ")
 					& args.functionText & OPER(L" already registered as: ") & args.functionText;
 				XLL_WARNING(view(err));
 			}
 			else {
-				const Auto<Register> reg([&]() -> int {
+				addins[args.functionText] = &args;
+				const Auto<xll::Register> reg([&]() -> int {
 					try {
 						OPER regId = XlfRegister(std::move(args));
 
@@ -111,33 +111,50 @@ namespace xll {
 						return false;
 					}
 					});
-				const Auto<Unregister> unreg([text = args.functionText]() {
-					try {
-						if (!XlfUnregister(text)) {
-							const auto err = OPER(L"AddIn: failed to unregister: ") & text;
-							XLL_WARNING(view(err));
 
-							return FALSE;
-						}
-					}
-					catch (const std::exception& ex) {
-						XLL_ERROR(ex.what());
-
-						return FALSE;
-					}
-					catch (...) {
-						XLL_ERROR("AddIn::Auto<Unregister>: unknown exception");
-
-						return FALSE;
-					}
-
-					return TRUE;
-					});
 			}
+		}
+
+		void Unregister()
+		{
+			const Auto<xll::Unregister> unreg([text = args.functionText]() {
+				try {
+					if (!XlfUnregister(text)) {
+						const auto err = OPER(L"AddIn: failed to unregister: ") & text;
+						XLL_WARNING(view(err));
+
+						return FALSE;
+					}
+				}
+				catch (const std::exception& ex) {
+					XLL_ERROR(ex.what());
+
+					return FALSE;
+				}
+				catch (...) {
+					XLL_ERROR("AddIn::Auto<Unregister>: unknown exception");
+
+					return FALSE;
+				}
+
+				return TRUE;
+				});
+		}
+	public:
+		static inline std::map<OPER, Args*> addins;
+		
+		AddIn(const Args& args_)
+			: args(args_)
+		{
+			Register();
+			Unregister();
 		}
 		AddIn(AddIn&& addin)
 			: args(addin.args)
-		{ }
+		{
+			Register();
+			Unregister();
+		}
 		AddIn& operator=(const AddIn&) = delete;
 		~AddIn()
 		{ }
