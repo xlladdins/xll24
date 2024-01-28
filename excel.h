@@ -3,7 +3,6 @@
 // https://xlladdins.github.io/Excel4Macros/
 #pragma once
 #include <array>
-#include <vector>
 #include "oper.h"
 
 namespace xll {

@@ -1,4 +1,5 @@
 // fpx.c - C VLA implementation of the fpx.h interface.
+// Copyright (c) KALX, LLC. All rights reserved. No warranty made.
 #include <stdlib.h>
 #include "fpx.h"
 
