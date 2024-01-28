@@ -4,16 +4,20 @@ There is a reason why many companies still use the ancient
 [Microsoft Excel C Software Development Kit](https://learn.microsoft.com/en-us/office/client-developer/excel/welcome-to-the-excel-software-development-kit), 
 It provides the highest possible performance
 for integrating C, C++, and even Fortran into Excel. 
-VBA, C#, and JavaScript require data to be marshalled into their
+VBA, C#, and JavaScript require data to be copied into their
 world and then copied back to native Excel.
 Microsoft's [Python in Excel](https://www.microsoft.com/en-us/microsoft-365/python-in-excel)
 actually calls over the network to do every calculation, 
-as if Python isn't slow enough already. 
+as if Python isn't slow enough already.
 
-There is a reason why many companies don't use the ancient Microsoft Excel C SDK. 
-It is notoriously difficult to use. 
+There is a reason why many companies don't use the ancient Microsoft Excel C SDK: 
+it is notoriously difficult to use. 
 The xll library makes it easy to
-register native code to call functions and run macros from Excel. 
+call native code from Excel and embed C++ in an object oriented way.
+
+A crucial ingredient of Python's success are modules that call native code.
+NumPy, Pandas, and SciPy call C and C++ that dilettantes use to leverage the performance of native code.
+This is also possible with Excel, that is used by several orders of magnitude more people than Python.
 
 ## Install
 
@@ -23,7 +27,7 @@ show up when you create a new project in Visual Studio.
 
 ## Use
 
-In Visual Studio create a new [xll project](img/new_project.png).
+Create a new xll project in Visual Studio.
 
 ...video...
 
@@ -33,19 +37,22 @@ Everything Excel has to offer is available through the [`Excel`](excel.h) functi
 The first argument is a _function number_ defined in C SDK header file
 [`XLCALL.H`](XLCALL.H).
 specifying the Excel function or macro to call.
-The arguments for each function number are documented in 
+Arguments for function numbers are documented in 
 [Excel4Macros](https://xlladdins.github.io/Excel4Macros/index.html).
 
-Function number for functions begin with `xlf` and for macros with `xlc`.
-Function can have no side effects. They returns a value based only on its arguments.
+Function numbers for functions begin with `xlf` and for macros with `xlc`.
+Functions have no side effects. They return a value based only on their arguments.
 Macros only have side effects. They can do anything a user can do and return 1 on success or 0 on failure.
+
+There are exceptions to this. The primary one is 
+[`xlfRegister`](https://learn.microsoft.com/en-us/office/client-developer/excel/xlfregister-form-1).
+It has the side effect of registering a function or macro with Excel.
 
 The [`AddIn`](addin.h) class is used to register functions and macros with Excel.
 
 ### Function
 
-An Excel function is a pure function. 
-It returns a result that depends only on its arguments
+An Excel function returns a result that depends only on its arguments
 and has no side effects.
 To call a C or C++ function from Excel use
 the [`AddIn`](addin.h) class to instantiate an object
@@ -69,10 +76,10 @@ AddIn xai_hypot(
 C++ does not have named arguments so the `Function` class uses the 
 [named parameter idiom](https://isocpp.org/wiki/faq/ctors#named-parameter-idiom).
 
-The member functions `.Category`, `.FunctionHelp`, and `.HelpTopic` are optional but people using your
+The member functions `Category`, `FunctionHelp`, and `HelpTopic` are optional but people using your
 handiwork will appreciate it if you supply them. 
 
-You can specify a URL in `.HelpTopic` that will be opened when 
+You can specify a URL in `HelpTopic` that will be opened when 
 [Help on this function](https://support.microsoft.com/en-us/office/excel-functions-by-category-5f91f4e9-7b42-46d2-9bd1-63f26a86c0eb)
 is clicked in the in the 
 [Insert Function](https://support.microsoft.com/en-us/office/insert-function-74474114-7c7f-43f5-bec3-096c56e2fb13)
@@ -88,14 +95,17 @@ double WINAPI xll_hypot(double x, double y)
 ```
 Every function registered with Excel must be declared `WINAPI`
 and exported with `#pragma XLLEXPORT` in its body.
-The first version of Excel was written in Pascal and the `WINAPI` calling convention
+The first version of Excel was written in [Pascal](https://dl.acm.org/doi/10.1145/155360.155378)
+and the `WINAPI` calling convention
 is a historical artifact of that. Unlike Unix, Windows does not make functions
 visible outside of a shared library unless they are explicitly exported.
 The pragma does that for you.
 
-Keep function implementations simple. Grab the arguments you told Excel to provide,
-call a function, and return the result. Write the function in platform independent
-code that can be compiled on Windows, Mac, and Linux. 
+Keep the Excel `WINAPI` function implementations simple. Grab the arguments you told Excel to provide,
+call your platform independent function, and return the result. 
+Provide a header file and library for your C and C++ code so it can be used on
+Windows, Mac, and Linux
+to get the same results displayed in Excel. 
 
 ### Macro
 

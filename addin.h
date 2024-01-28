@@ -81,7 +81,23 @@ namespace xll {
 		}
 		Function& Hide()
 		{
-			macroType = OPER(0);
+			if (is_function()) {
+				macroType = OPER(0);
+			}
+			else {
+				XLL_ERROR(__FUNCTION__ ": cannot hide macro");
+			}
+
+			return *this;
+		}
+		Function& Unhide()
+		{
+			if (is_function()) {
+				macroType = OPER(1);
+			}
+			else {
+				XLL_ERROR(__FUNCTION__ ": cannot hide macro");
+			}
 
 			return *this;
 		}

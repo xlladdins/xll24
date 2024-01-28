@@ -29,6 +29,7 @@ namespace xll {
 	};
 
 	// Arguments for xlfRegister.
+	constexpr int max_help = 20;
 	struct Args {
 		OPER moduleText;
 		OPER procedure;
@@ -40,7 +41,7 @@ namespace xll {
 		OPER shortcutText;
 		OPER helpTopic;
 		OPER functionHelp;
-		OPER argumentHelp[20];
+		OPER argumentHelp[max_help];
 
 		bool is_hidden() const
 		{
@@ -61,7 +62,7 @@ namespace xll {
 			int i = 0;
 
 			if (is_function()) {
-				while (i < 20 && argumentHelp[i] != Nil) {
+				while (i < max_help && argumentHelp[i] != Nil && argumentHelp[i] != L"") {
 					++i;
 				}
 			}
@@ -73,40 +74,45 @@ namespace xll {
 		// Return count to be used in call to xlfRegister.
 		int prepare() 
 		{
-			moduleText = Excel(xlGetName);
-
-			// C++ name mangling.
-			ensure(type(procedure) == xltypeStr);
-			ensure(procedure.val.str[0] > 0);
-			if (procedure.val.str[1] == L'_') {
-				procedure = OPER(procedure.val.str + 2, procedure.val.str[0] - 1);
-			}
-			else if (procedure.val.str[1] != L'?') {
-				procedure = OPER(L"?") & procedure;
-			}
-
 			int n = count();
-			if (is_function()) {
-				if (helpTopic == Nil || helpTopic == L"") {
-					helpTopic = OPER(L"https://google.com/search?q="); // github???
-					helpTopic &= procedure;
+
+			// idempotent
+			if (moduleText == Nil) {
+				moduleText = Excel(xlGetName);
+
+				ensure(type(procedure) == xltypeStr);
+				ensure(procedure.val.str[0] > 0);
+				// C functions start with _
+				if (procedure.val.str[1] == L'_') {
+					procedure = OPER(procedure.val.str + 2, procedure.val.str[0] - 1);
+				}
+				// C++ name mangling.
+				else if (procedure.val.str[1] != L'?') {
+					procedure = OPER(L"?") & procedure;
 				}
 
-				const auto help = view(helpTopic);
-				if (help.starts_with(L"http") && !help.ends_with(L"!0")) {
-					helpTopic &= OPER(L"!0");
-				}
+				if (is_function()) {
+					if (helpTopic == Nil || helpTopic == L"") {
+						helpTopic = OPER(L"https://google.com/search?q="); // github???
+						helpTopic &= procedure;
+					}
 
-				// typeText, argumentText, functionHelp
-				OPER comma = OPER(L"");
-				for (int i = 0; i < n; ++i) {
-					typeText = typeText & argumentHelp[i][Arg::Type::typeText];
-					argumentText &= comma & argumentHelp[i][Arg::Type::argumentText];
-					argumentHelp[i] = argumentHelp[i][Arg::Type::argumentHelp];
-					comma = OPER(L", ");
+					const auto help = view(helpTopic);
+					if (help.starts_with(L"http") && !help.ends_with(L"!0")) {
+						helpTopic &= OPER(L"!0");
+					}
+
+					// typeText, argumentText, functionHelp
+					OPER comma = OPER(L"");
+					for (int i = 0; i < n; ++i) {
+						typeText = typeText & argumentHelp[i][Arg::Type::typeText];
+						argumentText &= comma & argumentHelp[i][Arg::Type::argumentText];
+						argumentHelp[i] = argumentHelp[i][Arg::Type::argumentHelp];
+						comma = OPER(L", ");
+					}
+					// https://docs.microsoft.com/en-us/office/client-developer/excel/known-issues-in-excel-xll-development#argument-description-string-truncation-in-the-function-wizard
+					argumentHelp[n] = OPER(L"");
 				}
-				// https://docs.microsoft.com/en-us/office/client-developer/excel/known-issues-in-excel-xll-development#argument-description-string-truncation-in-the-function-wizard
-				argumentHelp[n] = OPER(L"");
 			}
 
 			constexpr size_t off = offsetof(Args, Args::argumentHelp) / sizeof(OPER);
@@ -146,6 +152,9 @@ namespace xll {
 	{
 		OPER regid = Excel(xlfEvaluate, procedure);
 		if (type(regid) != xltypeNum) {
+			OPER err(L"XlfUnregister: procedure not registered: ");
+			XLL_WARNING(view(err & procedure));
+			
 			return false;
 		}
 		Excel(xlfSetName, procedure);
