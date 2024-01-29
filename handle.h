@@ -1,5 +1,8 @@
 // handle.h - handles to C++ objects
 // Copyright (c) KALX, LLC. All rights reserved. No warranty made.
+// A handle<T> acts much like a std::unique_ptr<T> but is owned by the cell it is created in.
+// The 64-bits of the pointer are cast to a double and returned to Excel as a funny looking number.
+// In Windows the first 16 bits of a pointer are always 0 so the double is an exact integer.
 #pragma once
 #include <limits>
 #include <map>
@@ -15,8 +18,8 @@ inline constexpr HANDLEX INVALID_HANDLEX = std::numeric_limits<HANDLEX>::quiet_N
 
 namespace xll {
 
-	// handle argument types for add-ins
-	inline const XCHAR* XLL_HANDLEX = XLL_DOUBLE;
+	// Excel double.
+	const inline XCHAR* XLL_HANDLEX = XLL_DOUBLE;
 
 	/// <summary>
 	/// Convert a pointer to a handle.
@@ -250,22 +253,19 @@ namespace xll {
 		{
 			return dynamic_cast<U*>(p);
 		}
-		/*
+
 		// encode/decode handles to strings
-		template<class X>
 		class codec {
-			using xchar = traits<X>::xchar;
-			using xcstr = traits<X>::xcstr;
-			static uint8_t c2h(xchar c) // assumes ASCII
+			static uint8_t c2h(XCHAR c) // assumes ASCII
 			{
 				return static_cast<uint8_t>(c <= '9' ? c - '0' : 10 + c - 'A');
 			}
-			static xchar h2c(uint8_t h) // assumes ASCII
+			static XCHAR h2c(uint8_t h) // assumes ASCII
 			{
-				return static_cast<xchar>(h <= 9 ? '0' + h : 'A' + h - 10);
+				return static_cast<XCHAR>(h <= 9 ? '0' + h : 'A' + h - 10);
 			}
 			// "01..F" -> h
-			static HANDLEX decode_(xcstr pc)
+			static HANDLEX decode_(LPWSTR pc)
 			{
 				union {
 					T* h;
@@ -279,7 +279,7 @@ namespace xll {
 				return to_handle<T>(hc.h);
 			}
 			// h -> "01..F"
-			static void encode_(HANDLEX h, xchar* pc)
+			static void encode_(HANDLEX h, XCHAR* pc)
 			{
 				union {
 					T* h;
@@ -293,15 +293,15 @@ namespace xll {
 				}
 			}
 
-			XOPER<X> H;  // "prefix0123456789ABCDEFsuffix"
+			OPER H;  // "prefix0123456789ABCDEFsuffix"
 			unsigned off; // size of prefix
 		public:
 			// e.g., codec c(OPER("\\MyClass["), OPER("]"));
 			codec(const char* prefix, const char* suffix)
 				: H(prefix), off(H.val.str[0])
 			{
-				H.append("456789ABCDEF");
-				H.append(suffix);
+				H &= OPER("456789ABCDEF");
+				H &= OPER(suffix);
 			}
 			// use 
 			codec()
@@ -309,7 +309,7 @@ namespace xll {
 			{ }
 
 			// does not allocate memory
-			const XOPER<X>& encode(HANDLEX h)
+			const OPER& encode(HANDLEX h)
 			{
 				encode_(h, H.val.str + 1 + off);
 
@@ -317,9 +317,9 @@ namespace xll {
 			}
 
 			// does not allocate memory
-			HANDLEX decode(const XOPER<X>& H_)
+			HANDLEX decode(const OPER& H_)
 			{
-				ensure(H_.is_str());
+				ensure(isStr(H_));
 
 				// No prefix or suffix check. It will fail when used.
 				// Extra chars appended to suffix ok.
@@ -329,7 +329,7 @@ namespace xll {
 				return decode_(H_.val.str + 1 + off);
 			}
 		};
-		*/
+		
 	};
 	
 }

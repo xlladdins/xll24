@@ -23,23 +23,6 @@ namespace xll {
 		return &x;
 	}
 
-	constexpr double as_num(const XLOPER12& x) noexcept
-	{
-		switch (type(x)) {
-		case xltypeNum:
-			return x.val.num;
-		case xltypeBool:
-			return x.val.xbool;
-		case xltypeInt:
-			return x.val.w;
-		case xltypeMissing:
-		case xltypeNil:
-			return 0;
-		default:
-			return std::numeric_limits<double>::quiet_NaN();
-		}
-	}
-
 	constexpr int rows(const XLOPER12& x) noexcept
 	{
 		switch (type(x)) {

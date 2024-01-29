@@ -25,12 +25,12 @@ int num_test()
 		ensure(!(o != o2));
 	}
 	{
-		ensure(as_num(OPER(true)) == 1);
-		ensure(as_num(OPER(123)) == 123);
-		ensure(as_num(OPER(1.23)) == 1.23);
-		ensure(as_num(Missing) == 0);
-		ensure(as_num(Nil) == 0);
-		ensure(_isnan(as_num(OPER(L"abc"))));
+		ensure(asNum(OPER(true)) == 1);
+		ensure(asNum(OPER(123)) == 123);
+		ensure(asNum(OPER(1.23)) == 1.23);
+		ensure(asNum(Missing) == 0);
+		ensure(asNum(Nil) == 0);
+		ensure(_isnan(asNum(OPER(L"abc"))));
 	}
 
 	return 0;
@@ -48,6 +48,14 @@ int str_test()
 		ensure(o == o2);
 		o = o2;
 		ensure(!(o != o2));
+
+		o = L"abc";
+		ensure(o.xltype == xltypeStr);
+		ensure(o == L"abc");
+
+		o = "def"; // converts to wide character string
+		ensure(o.xltype == xltypeStr);
+		ensure(o == L"def");
 	}
 	{
 		OPER o("");
@@ -349,16 +357,16 @@ int WINAPI xll_test()
 	catch (const std::exception& ex) {
 		XLL_ERROR(ex.what());
 
-		return FALSE;
+		return false;
 	}
 
-	return TRUE;
+	return true;
 }
 
 Auto<OpenAfter> xao_test(xll_test);
 #endif
 
-Auto<Open> xao_sam([]() { set_alert_mask(7); return TRUE; });
+Auto<Open> xao_sam([]() { set_alert_mask(7); return true; });
 
 const AddIn xai_const(Function(XLL_DOUBLE, "xll_const", "XLL.CONST"));
 double WINAPI xll_const()

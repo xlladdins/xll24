@@ -73,7 +73,7 @@ namespace xll {
 		OPER(OPER&& o) noexcept
 			: XLOPER12{ .val = o.val , .xltype = std::exchange(o.xltype, xltypeNil) }
 		{ }
-		OPER& operator=(OPER&& o)
+		OPER& operator=(OPER&& o) noexcept
 		{
 			if (this != &o) {
 				dealloc();
@@ -100,7 +100,7 @@ namespace xll {
 		}
 		constexpr bool operator==(double num) const noexcept
 		{
-			return type(*this) == xltypeNum && as_num(*this) == num;
+			return type(*this) == xltypeNum && asNum(*this) == num;
 		}
 
 		// Str - Counted wide character string.
@@ -207,13 +207,28 @@ namespace xll {
 		{ }
 		bool operator==(bool xbool) const
 		{
-			return type(*this) == xltypeBool && (bool)val.xbool == xbool;
+			return type(*this) == xltypeBool && Bool(*this) == static_cast<BOOL>(xbool);
 		}
 		OPER& operator=(bool xbool) noexcept
 		{
 			dealloc();
 			
 			return *this = Bool(xbool);
+		}
+
+		// SRef
+		constexpr explicit OPER(const XLREF12& ref) noexcept
+			: XLOPER12{ SRef(ref) }
+		{ }
+		bool operator==(const XLREF12& ref) const
+		{
+			return type(*this) == xltypeSRef && SRef(*this) == ref;
+		}
+		OPER& operator=(const XLREF12& ref) noexcept
+		{
+			dealloc();
+
+			return *this = SRef(ref);
 		}
 
 		// Int
@@ -431,7 +446,7 @@ namespace xll {
 		XLOPER12 o = Nil;
 
 		Excel12(xlfEvaluate, &o, 1, &x);
-		if (is_alloc(o)) {
+		if (isAlloc(o)) {
 			o.xltype |= xlbitXLFree;	
 		}
 
@@ -443,7 +458,7 @@ namespace xll {
 		XLOPER12 o = Nil;
 
 		Excel12(xlfText, &o, 2, &x, &format);
-		if (is_alloc(o)) {
+		if (isAlloc(o)) {
 			o.xltype |= xlbitXLFree;
 		}
 
@@ -455,7 +470,7 @@ namespace xll {
 		XLOPER12 o = Nil;
 
 		Excel12(xlfValue, &o, 1, &x);
-		if (is_alloc(o)) {
+		if (isAlloc(o)) {
 			o.xltype |= xlbitXLFree;
 		}
 

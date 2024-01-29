@@ -14,6 +14,16 @@ extern "C" {
 
 namespace xll {
 
+	constexpr int xlbitFree = xlbitXLFree | xlbitDLLFree;
+	constexpr WORD type(const XLOPER& x) noexcept
+	{
+		return x.xltype & ~(xlbitFree);
+	}
+	constexpr DWORD type(const XLOPER12& x)
+	{
+		return x.xltype & (~xlbitFree);
+	}
+
 	// xltypeX, XLOPER12::val.X, X, description
 #define XLL_TYPE_SCALAR(X) \
     X(Num,  num,      double,  "IEEE 64-bit floating point") \
@@ -22,32 +32,19 @@ namespace xll {
     X(SRef, sref.ref, XLREF12, "Single reference")           \
     X(Int,  w,        int,     "32-bit signed integer")      \
 
+
 #define XLL_SCALAR(a, b, c, d)  | xltype##a
 	constexpr int xltypeScalar = 0 
 		XLL_TYPE_SCALAR(XLL_SCALAR);
 #undef XLL_SCALAR
-	constexpr bool is_scalar(const XLOPER12& x)
+	constexpr bool isScalar(const XLOPER12& x)
 	{
 		return (x.xltype & xltypeScalar) != 0;
 	}
 
-	template<int X> struct type_traits {};
-#define XLL_TYPE(a, b, c, d) \
-	template<> struct type_traits<xltype##a> { using type = c; };
-	XLL_TYPE_SCALAR(XLL_TYPE)
-#undef XLL_TYPE
-#ifdef _DEBUG
-	static_assert(std::is_same_v<type_traits<xltypeNum>::type, double>);
-	static_assert(std::is_same_v<type_traits<xltypeBool>::type, BOOL>);
-	static_assert(std::is_same_v<type_traits<xltypeErr>::type, int>);
-	static_assert(std::is_same_v<type_traits<xltypeSRef>::type, XLREF12>);
-	static_assert(std::is_same_v<type_traits<xltypeInt>::type, int>);
-#endif // _DEBUG
-
 	// Create XLOPER12 from scalar.
 	// constexpr XLOPER12 Num(double x) { XLOPER12 o; o.xltype = xltypeNum; o.val.num = x; return o; }
-#define XLL_SCALAR(a, b, c, d) constexpr XLOPER12 a(c x) \
-		{ XLOPER12 o; o.xltype = xltype##a; o.val.b = x; return o; }
+#define XLL_SCALAR(a, b, c, d) constexpr XLOPER12 a(c x) { XLOPER12 o; o.xltype = xltype##a; o.val.b = x; return o; }
 	XLL_TYPE_SCALAR(XLL_SCALAR)
 #undef XLL_SCALAR
 #ifdef _DEBUG
@@ -77,6 +74,35 @@ namespace xll {
 	static_assert(Int(Int(123)) == 123);
 #endif // _DEBUG
 
+	// isNum, ...
+#define XLL_IS(a, b, c, d) constexpr bool is##a(const XLOPER12& x) { return type(x) == xltype##a; }
+	XLL_TYPE_SCALAR(XLL_IS)
+#undef XLL_IS
+#ifdef _DEBUG
+	static_assert(isNum(Num(1.23)));
+	static_assert(isBool(Bool(true)));
+	static_assert(isErr(Err(xlerrNA)));
+	static_assert(isInt(Int(123)));
+#endif // _DEBUG
+
+	// Convert to number.
+	constexpr double asNum(const XLOPER12& x) noexcept
+	{
+		switch (type(x)) {
+		case xltypeNum:
+			return x.val.num;
+		case xltypeBool:
+			return x.val.xbool;
+		case xltypeInt:
+			return x.val.w;
+		case xltypeMissing:
+		case xltypeNil:
+			return 0;
+		default:
+			return std::numeric_limits<double>::quiet_NaN();
+		}
+	}
+
 	// types requiring allocation where xX is pointer to data
 	// xltypeX, XLOPERX::val.X, xX, description
 #define XLL_TYPE_ALLOC(X) \
@@ -85,11 +111,17 @@ namespace xll {
     X(Ref,     mref.lpmref->reftbl, XLREF12*,  "Array of single references")              \
     X(BigData, bigdata.h.lpbData,   BYTE*,     "Blob of binary data")                     \
 
+// isStr, ...
+#define XLL_IS(a, b, c, d) constexpr bool is##a(const XLOPER12& x) { return type(x) == xltype##a; }
+	XLL_TYPE_ALLOC(XLL_IS)
+#undef XLL_IS
+
 #define XLL_ALLOC(a, b, c, d)  | xltype##a
 	constexpr int xltypeAlloc = 0
 		XLL_TYPE_ALLOC(XLL_ALLOC);
 #undef XLL_ALLOC
-	constexpr bool is_alloc(const XLOPER12& x)
+
+	constexpr bool isAlloc(const XLOPER12& x)
 	{
 		return (x.xltype & xltypeAlloc) != 0;
 	}
@@ -100,16 +132,6 @@ namespace xll {
 		{ return x.xltype & xltype##a ? x.val.b : nullptr; }
 	XLL_TYPE_ALLOC(XLL_ALLOC)
 #undef XLL_ALLOC
-
-#define XLL_ALLOC(a, b, c, d) template<> struct type_traits<xltype##a> { using type = c; };
-	XLL_TYPE_ALLOC(XLL_ALLOC)
-#undef XLL_ALLOC
-#ifdef _DEBUG
-	static_assert(std::is_same_v<type_traits<xltypeStr>::type, XCHAR*>);	
-	static_assert(std::is_same_v<type_traits<xltypeMulti>::type, XLOPER12*>);
-	static_assert(std::is_same_v<type_traits<xltypeRef>::type, XLREF12*>);
-	static_assert(std::is_same_v<type_traits<xltypeBigData>::type, BYTE*>);
-#endif // _DEBUG
 
 	// Argument for std::span(ptr, count).
 	constexpr int count(const XLOPER12& x)
@@ -131,19 +153,14 @@ namespace xll {
 	X(XLFree,  "Excel owns memory")    \
 	X(DLLFree, "AutoFree owns memory") \
 
-	constexpr int xlbitFree = xlbitXLFree | xlbitDLLFree;
-	constexpr WORD type(const XLOPER& x) noexcept
-	{
-		return x.xltype & ~(xlbitFree);
-	}
-	constexpr DWORD type(const XLOPER12& x)
-	{
-		return x.xltype & (~xlbitFree);
-	}
-
 #define XLL_NULL_TYPE(X)                    \
 	X(Missing, "missing function argument") \
 	X(Nil,     "empty cell")                \
+
+// isMissing, ...
+#define XLL_IS(a, b) constexpr bool is##a(const XLOPER12& x) { return type(x) == xltype##a; }
+	XLL_NULL_TYPE(XLL_IS)
+#undef XLL_IS
 
 #define XLL_NULL(t, d) constexpr XLOPER12 t = XLOPER12{ .xltype = xltype##t };
 	XLL_NULL_TYPE(XLL_NULL)

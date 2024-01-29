@@ -5,6 +5,7 @@
 #include "alert.h"
 #include "fp.h"
 #include "auto.h"
+#include "handle.h"
 #include "addin.h"
 
 // Set or return value of xlAddInManagerInfo.
