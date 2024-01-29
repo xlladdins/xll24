@@ -16,14 +16,12 @@ namespace xll {
 	class Add {};
 	class Remove {};
 
-	namespace {
-		using macro = std::function<int(void)>;
-		inline std::vector<macro> macros;
-	}
-
 	// Register macros to be called in xlAuto functions.
 	template<class T>
 	struct Auto {
+		using macro = std::function<int(void)>;
+		static inline std::vector<macro> macros;
+
 		Auto(macro&& m)
 		{
 			macros.emplace_back(m);
@@ -34,7 +32,7 @@ namespace xll {
 	template<class T>
 	inline int Call(void)
 	{
-		for (const auto& m : macros) {
+		for (const auto& m : Auto<T>::macros) {
 			if (!m()) return 0;
 		}
 
