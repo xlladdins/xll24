@@ -25,17 +25,35 @@ The xll library requires 64-bit Excel on Windows and Visual Studio 2022.
 Run [`setup`](setup/Release/setup.msi) to install a template project called `xll` that will
 show up when you create a new project in Visual Studio.
 
-## Use
+## Build
 
 Create a new xll project in Visual Studio.
 
 ...video...
 
+## Use
+
+An `xll` add-in is a dynamic link library, or DLL, 
+that exports well-known functions that Excel calls.
+When an xll is opened in Excel it 
+[dynamically loads](https://learn.microsoft.com/en-us/windows/win32/api/libloaderapi/nf-libloaderapi-loadlibrarya) 
+the xll,
+[looks for](https://learn.microsoft.com/en-us/windows/win32/api/libloaderapi/nf-libloaderapi-getprocaddress),
+[`xlAutoOpen`](https://learn.microsoft.com/en-us/office/client-developer/excel/xlautoopen)
+and calls it. There are half a dozen 
+[`xlAuto` functions](https://learn.microsoft.com/en-us/office/client-developer/excel/add-in-manager-and-xll-interface-functions)
+that Excel calls. These are all implemented by the xll library.
+
+To add a function to be called by when Excel calls `xlAutoXXX` create an
+object of type `Auto<XXX>` and specify a function to be called.
+The function takes no arguments and returns an `int` to indicate success(1) or failure(0).
+See [`xlauto.h`](xlauto.h) for the list possible values for `XXX`.
+
 ## Excel
 
 Everything Excel has to offer is available through the [`Excel`](excel.h) function.
 The first argument is a _function number_ defined in C SDK header file
-[`XLCALL.H`](XLCALL.H).
+[`XLCALL.H`](XLCALL.H)
 specifying the Excel function or macro to call.
 Arguments for function numbers are documented in 
 [Excel4Macros](https://xlladdins.github.io/Excel4Macros/index.html).
@@ -47,6 +65,7 @@ Macros only have side effects. They can do anything a user can do and return 1 o
 There are exceptions to this. The primary one is 
 [`xlfRegister`](https://learn.microsoft.com/en-us/office/client-developer/excel/xlfregister-form-1).
 It has the side effect of registering a function or macro with Excel.
+
 
 The [`AddIn`](addin.h) class is used to register functions and macros with Excel.
 
