@@ -30,6 +30,7 @@ namespace xll {
 		}
 	};
 
+	// Call all macros registered for type T.
 	template<class T>
 	inline int Call(void)
 	{
