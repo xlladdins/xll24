@@ -46,7 +46,7 @@ that Excel calls. These are all implemented by the xll library.
 
 To add a function to be called by when Excel calls `xlAutoXXX` create an
 object of type `Auto<XXX>` and specify a function to be called.
-The function takes no arguments and returns an `int` to indicate success(1) or failure(0).
+The function takes no arguments and returns 1 to indicate success or 0 for failure.
 See [`auto.h`](auto.h) for the list possible values for `XXX`.
 
 ## Excel
