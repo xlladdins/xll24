@@ -159,7 +159,19 @@ namespace xll {
 		}
 		constexpr bool operator==(const char* str) const
 		{
-			return type(*this) == xltypeStr && *this == OPER(str);
+			if (type(*this) != xltypeStr) {
+				return false;
+			}
+			
+			int i = 0;
+			while (str[i] && i < val.str[0]) {
+				if (val.str[i + 1] != str[i]) {
+					return false;
+				}
+				++i;
+			}
+			
+			return str[i] == 0;
 		}
 
 		OPER& operator&=(const XLOPER12& o)
@@ -222,7 +234,7 @@ namespace xll {
 		{ }
 		bool operator==(const XLREF12& ref) const
 		{
-			return type(*this) == xltypeSRef && SRef(*this) == ref;
+			return type(*this) == xltypeSRef && val.sref.ref == ref;
 		}
 		OPER& operator=(const XLREF12& ref) noexcept
 		{
@@ -440,42 +452,6 @@ namespace xll {
 			std::copy_n(data, len, val.bigdata.h.lpbData);
 		}
 	};
-
-	inline OPER Evaluate(const XLOPER12& x)
-	{
-		XLOPER12 o = Nil;
-
-		Excel12(xlfEvaluate, &o, 1, &x);
-		if (isAlloc(o)) {
-			o.xltype |= xlbitXLFree;	
-		}
-
-		return OPER(o);
-	}
-	// Convert to string using Excel TEXT().
-	inline OPER Text(const XLOPER12& x, const OPER& format = OPER(L"General", 7))
-	{
-		XLOPER12 o = Nil;
-
-		Excel12(xlfText, &o, 2, &x, &format);
-		if (isAlloc(o)) {
-			o.xltype |= xlbitXLFree;
-		}
-
-		return OPER(o);
-	}
-	// Convert string to value type using VALUE().
-	inline OPER Value(const XLOPER12& x)
-	{
-		XLOPER12 o = Nil;
-
-		Excel12(xlfValue, &o, 1, &x);
-		if (isAlloc(o)) {
-			o.xltype |= xlbitXLFree;
-		}
-
-		return OPER(o);
-	}
 
 } // namespace xll
 

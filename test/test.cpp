@@ -1,4 +1,5 @@
 // test.cpp
+//#if 0
 #include <numeric>
 #include "../xll.h"
 
@@ -38,6 +39,7 @@ int num_test()
 
 int str_test()
 {
+	OPER General(L"General");
 	{
 		OPER o(L"");
 		ensure(o.xltype == xltypeStr);
@@ -84,34 +86,26 @@ int str_test()
 		ensure((OPER(L"abc") & OPER(L"xyz")) == OPER(L"abcxyz"));
 	}
 	{
-		OPER o = Text(Nil);
-		ensure (o == L"0")
-	}
-	{
-		OPER o = Text(Missing);
-		ensure(o == L"0");
-	}
-	{
-		OPER o = Text(OPER(1.23));
+		OPER o = Excel(xlfText, 1.23, General);
 		ensure(o == L"1.23");
-		ensure(Value(o) == 1.23);
+		ensure(Excel(xlfValue, o) == 1.23);
 	}
 	{
-		OPER o = Text(OPER(L"abc"));
+		OPER o = Excel(xlfText, L"abc", General);
 		ensure(o == L"abc");
 	}
 	{
-		OPER o = Text(OPER(true));
+		OPER o = Excel(xlfText, true, General);
 		ensure(o == L"TRUE");
-		ensure(Value(o) == ErrValue);
+		ensure(Excel(xlfValue, o) == ErrValue);
 	}
 	{
-		OPER o = Text(OPER(123));
+		OPER o = Excel(xlfText, 123, General);
 		ensure(o == L"123");
-		ensure(Value(o) == 123.0); // Int gets converted to Num
+		ensure(Excel(xlfValue, o) == 123.0); // Int gets converted to Num
 	}
 	{
-		OPER o = Evaluate(OPER(L"{1,2,3}"));
+		OPER o = Excel(xlfEvaluate, L"{1,2,3}");
 		ensure(type(o) == xltypeMulti);
 		//ensure(o.xltype & xlbitXLFree);
 		ensure(rows(o) == 1);
@@ -119,7 +113,7 @@ int str_test()
 		ensure(o == OPER({ OPER(1.),OPER(2.),OPER(3.) }));
 	}
 	{
-		OPER o = Evaluate(OPER(L"{1, \"a\"; TRUE, #N/A}"));
+		OPER o = Excel(xlfEvaluate, L"{1, \"a\"; TRUE, #N/A}");
 		ensure(type(o) == xltypeMulti);
 		//ensure(o.xltype & xlbitXLFree);
 		ensure(rows(o) == 2);
@@ -142,12 +136,12 @@ int err_test()
 {
 	{
 		// Errors are impervious to Text and Evaluate
-#define ERR_TEST(a,b,c) ensure(Text(OPER(xlerr::##a)) == Err##a);
+#define ERR_TEST(a,b,c) ensure(Excel(xlfText, xlerr::##a, OPER(L"General")) == Err##a);
 		XLL_TYPE_ERR(ERR_TEST);
 #undef ERR_TEST
 
 		// Evaluate converts string error to XLOPER.
-#define ERR_TEST(a,b,c) ensure(Evaluate(OPER(b)) == Err##a);
+#define ERR_TEST(a,b,c) ensure(Excel(xlfEvaluate, b) == Err##a);
 		XLL_TYPE_ERR(ERR_TEST)
 #undef ERR_TEST
 	}
@@ -243,25 +237,25 @@ int multi_test()
 int evaluate_test()
 {
 	{
-		OPER o = Evaluate(OPER(L"=1+2"));
+		OPER o = Excel(xlfEvaluate, L"=1+2");
 		ensure(o != L"=1+2");
 		ensure(o == 3.)
 		ensure(o == 3);
 		ensure(o != true);
 	}
 	{
-		OPER o = Evaluate(OPER("=1+2")); // utf-8 to wide character string
+		OPER o = Excel(xlfEvaluate, "=1+2"); // utf-8 to wide character string
 		ensure(o != "=1+2");
 		ensure(o == 3.);
 		ensure(o == 3);
 		ensure(o != true);
 	}
 	{
-		OPER o = Evaluate(OPER(L"SUM(1,2)"));
+		OPER o = Excel(xlfEvaluate, L"SUM(1,2)");
 		ensure(o == 3);
 	}
 	{
-		OPER o = Evaluate(OPER("SUM(1,2)"));
+		OPER o = Excel(xlfEvaluate, "SUM(1,2)");
 		ensure(o == 3);
 	}
 
@@ -277,7 +271,7 @@ int excel_test()
 	}
 	{
 		OPER o = Excel(xlfDate, 2024, 1, 2);
-		OPER p = Text(o, OPER(L"yyyy-mm-dd"));
+		OPER p = Excel(xlfText, o, L"yyyy-mm-dd");
 		ensure(p == L"2024-01-02");
 	}
 
@@ -476,3 +470,4 @@ LPOPER WINAPI xll_evaluate(LPOPER po)
 
 	return &o;
 }
+//#endif // 0

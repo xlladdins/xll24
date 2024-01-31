@@ -8,7 +8,7 @@
 namespace xll {
 
 	template<class... Ts>
-	inline OPER Excel(int fn, Ts... ts)
+	inline OPER Excel(int fn, Ts&&... ts)
 	{
 		OPER res;
 
@@ -20,7 +20,7 @@ namespace xll {
 
 		int ret = ::Excel12v(fn, &res, sizeof...(ts), &as[0]);
 		ensure_ret(ret);
-		ensure_err(res);
+		// ensure_err(res); // allow xltypeErr to be returned
 		if (res.xltype & xltypeAlloc) {
 			res.xltype |= xlbitXLFree;
 		}

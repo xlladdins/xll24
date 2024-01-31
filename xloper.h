@@ -29,7 +29,7 @@ namespace xll {
 		case xltypeMulti:
 			return x.val.array.rows;
 		case xltypeSRef:
-			return rows(SRef(x));
+			return rows(x.val.sref.ref);
 		case xltypeMissing:
 		case xltypeNil:
 			return 0;
@@ -43,7 +43,7 @@ namespace xll {
 		case xltypeMulti:
 			return x.val.array.columns;
 		case xltypeSRef:
-			return columns(SRef(x));
+			return columns(x.val.sref.ref);
 		case xltypeMissing:
 		case xltypeNil:
 			return 0;
@@ -101,7 +101,7 @@ namespace xll {
 		case xltypeInt:
 			return x.val.w <=> y.val.w;
 		case xltypeSRef:
-			return SRef(x) <=> SRef(y);
+			return x.val.sref.ref <=> y.val.sref.ref;
 		case xltypeRef:
 			return x.val.mref.idSheet != y.val.mref.idSheet ? x.val.mref.idSheet <=> y.val.mref.idSheet
 				: std::lexicographical_compare_three_way(ref(x).begin(), ref(x).end(), ref(y).begin(), ref(y).end());

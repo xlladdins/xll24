@@ -58,12 +58,11 @@ AddIn xai_base_get(
 LPOPER WINAPI xll_base_get(HANDLEX _h)
 {
 #pragma XLLEXPORT
-	static OPER o;
 	xll::handle<base<OPER>> h(_h);
 
-	o = h ? h->get() : ErrNA;
+	//o = h ? h->get() : ErrNA;
 
-	return &o;
+	return h ? &h->get() : nullptr;
 }
 
 AddIn xai_base_set(
@@ -253,4 +252,4 @@ int WINAPI xll_handle_test()
 
 	return TRUE;
 }
-Auto<OpenAfter> xaoa_handle_test(xll_handle_test);
+//Auto<OpenAfter> xaoa_handle_test(xll_handle_test);

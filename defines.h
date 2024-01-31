@@ -29,9 +29,7 @@ namespace xll {
     X(Num,  num,      double,  "IEEE 64-bit floating point") \
     X(Bool, xbool,    BOOL,    "Boolean value")              \
     X(Err,  err,      int,     "Error type")                 \
-    X(SRef, sref.ref, XLREF12, "Single reference")           \
     X(Int,  w,        int,     "32-bit signed integer")      \
-
 
 #define XLL_SCALAR(a, b, c, d)  | xltype##a
 	constexpr int xltypeScalar = 0 
@@ -101,6 +99,18 @@ namespace xll {
 		default:
 			return std::numeric_limits<double>::quiet_NaN();
 		}
+	}
+
+	// Must set count to 1.
+	constexpr XLOPER12 SRef(const XLREF12& ref) noexcept
+	{
+		XLOPER12 o;
+
+		o.xltype = xltypeSRef;
+		o.val.sref.count = 1;
+		o.val.sref.ref = ref;
+
+		return o;
 	}
 
 	// types requiring allocation where xX is pointer to data
