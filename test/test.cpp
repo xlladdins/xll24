@@ -340,7 +340,7 @@ int WINAPI xll_test()
 	try {
 		utf8::test();
 		num_test();
-		//str_test();
+		str_test();
 		err_test();
 		bool_test();
 		multi_test();

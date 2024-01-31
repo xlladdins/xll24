@@ -848,7 +848,7 @@
         "Product"
         {
         "Name" = "8:Microsoft Visual Studio"
-        "ProductName" = "8:xll library"
+        "ProductName" = "8:xll"
         "ProductCode" = "8:{B3AC81C5-8D8A-43C1-B69E-CFF76D1B794E}"
         "PackageCode" = "8:{493B2BB6-87CA-45AB-AB7E-6DDFE850A1AC}"
         "UpgradeCode" = "8:{D3821F0B-5C0F-4ACB-83B9-427A6A173B04}"
