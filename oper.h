@@ -394,6 +394,7 @@ namespace xll {
 		{
 			// xltype & xlbitDLLFree is freed when xlAutoFree12 is called.
 			if (xltype & xlbitXLFree) {
+				xltype &= ~xlbitXLFree;
 				::Excel12v(xlFree, 0, 1, (LPXLOPER12*)this);
 			}
 			else if (xltype == xltypeStr) {

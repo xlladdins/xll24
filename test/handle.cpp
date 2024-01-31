@@ -1,6 +1,6 @@
 // handle.cpp - Embed C++ objects in Excel using xll::handle<T>
 // https://xlladdins.com
-//#if 0
+#if 0
 #include <concepts>
 #include "../xll.h"
 
@@ -251,4 +251,4 @@ int WINAPI xll_handle_test()
 	return TRUE;
 }
 Auto<OpenAfter> xaoa_handle_test(xll_handle_test);
-//#endif // 0
+#endif // 0
