@@ -22,15 +22,15 @@ xlAutoOpen(void)
 	catch (const std::exception& ex) {
 		XLL_ERROR(ex.what());
 
-		return false;
+		return FALSE;
 	}
 	catch (...) {
 		XLL_ERROR(__FUNCTION__ ": unknown exception");
 
-		return false;
+		return FALSE;
 	}
 
-	return true;
+	return TRUE;
 }
 
 // https://learn.microsoft.com/en-us/office/client-developer/excel/xlautoclose
@@ -45,15 +45,15 @@ xlAutoClose(void)
 	catch (const std::exception& ex) {
 		XLL_ERROR(ex.what());
 
-		return false;
+		return FALSE;
 	}
 	catch (...) {
 		XLL_ERROR(__FUNCTION__ ": unknown exception");
 
-		return false;
+		return FALSE;
 	}
 
-	return true;
+	return TRUE;
 }
 
 // https://learn.microsoft.com/en-us/office/client-developer/excel/xlautoadd
@@ -69,15 +69,15 @@ xlAutoAdd(void)
 	catch (const std::exception& ex) {
 		XLL_ERROR(ex.what());
 
-		return false;
+		return FALSE;
 	}
 	catch (...) {
 		XLL_ERROR("Unknown exception in xlAutoAdd");
 
-		return false;
+		return FALSE;
 	}
 
-	return true;
+	return TRUE;
 }
 
 // https://learn.microsoft.com/en-us/office/client-developer/excel/xlautoremove
@@ -94,15 +94,15 @@ xlAutoRemove(void)
 	catch (const std::exception& ex) {
 		XLL_ERROR(ex.what());
 
-		return false;
+		return FALSE;
 	}
 	catch (...) {
 		XLL_ERROR("Unknown exception in xlAutoRemove");
 
-		return false;
+		return FALSE;
 	}
 
-	return true;
+	return TRUE;
 }
 
 // https://learn.microsoft.com/en-us/office/client-developer/excel/xlautofree-xlautofree12

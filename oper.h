@@ -40,16 +40,16 @@ namespace xll {
 		constexpr OPER(const XLOPER12& o)
 			: XLOPER12{ o }
 		{
-			int xtype = type(o);
+			int otype = type(o);
 
-			if (xtype == xltypeStr) {
-				alloc(val.str + 1, val.str[0]);
+			if (otype == xltypeStr) {
+				alloc(Str(*this), val.str[0]);
 			}
-			else if (xtype == xltypeMulti) {
+			else if (otype == xltypeMulti) {
 				alloc(rows(o), columns(o), Multi(o));
 			}
-			else if (xtype == xltypeBigData) {
-				alloc(val.bigdata.h.lpbData, val.bigdata.cbData);
+			else if (otype == xltypeBigData) {
+				alloc(BigData(*this), val.bigdata.cbData);
 			}
 		}
 		constexpr OPER(const OPER& o)
@@ -59,9 +59,7 @@ namespace xll {
 		OPER& operator=(const XLOPER12& x)
 		{
 			if (this != &x) {
-				XLOPER12 x_(x);
-				x_.xltype &= ~(xlbitFree); // force copy
-				*this = OPER(x_); // call OPER(OPER&&)
+				*this = OPER(x); 
 			}
 
 			return *this;
