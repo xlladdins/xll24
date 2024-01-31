@@ -57,6 +57,8 @@ The first argument is a _function number_ defined in C SDK header file
 specifying the Excel function or macro to call.
 Arguments for function numbers are documented in 
 [Excel4Macros](https://xlladdins.github.io/Excel4Macros/index.html).
+You can call it with any number of arguments that can be constructed
+by [`OPER`](oper.h) but you are responsible for freeing the memory they use.
 
 Function numbers for functions begin with `xlf` and for macros with `xlc`.
 Functions have no side effects. They return a value based only on their arguments.
