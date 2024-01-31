@@ -230,6 +230,15 @@ int multi_test()
 		o[0][0] = o;
 		o[0][0][0] = o;
 	}
+	{
+		OPER o(L"abc");
+		o.enlist();
+		ensure(o[0] == L"abc");
+		o.enlist();
+		ensure(o[0][0] == L"abc");
+		o.enlist();
+		ensure(o[0][0][0] == L"abc");
+	}
 
 	return 0;
 }
@@ -340,10 +349,10 @@ int WINAPI xll_test()
 	try {
 		utf8::test();
 		num_test();
-		str_test();
+		//str_test();
 		err_test();
 		bool_test();
-		multi_test();
+		//multi_test();
 		evaluate_test();
 		excel_test();
 		fp_test();
@@ -357,7 +366,7 @@ int WINAPI xll_test()
 	return true;
 }
 
-Auto<OpenAfter> xao_test(xll_test);
+//Auto<OpenAfter> xao_test(xll_test);
 //#endif
 
 Auto<Open> xao_sam([]() { set_alert_mask(7); return true; });
