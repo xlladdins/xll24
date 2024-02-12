@@ -56,7 +56,7 @@ namespace xll {
 			: OPER(static_cast<const XLOPER12&>(o))
 		{ }
 
-		OPER& operator=(const XLOPER12& x)
+		OPER& operator=(const XLOPER12& x) noexcept
 		{
 			if (this != &x) {
 				XLOPER12 x_(x);
