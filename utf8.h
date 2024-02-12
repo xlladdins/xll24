@@ -64,7 +64,7 @@ namespace utf8 {
 			if (wn != 0) {
 				ws.resize(wn);
 				if (wn == mbstowcs(s, n, ws.data(), wn)) {
-					ws.resize(wn - (n == -1)); // remove null terminator
+					ws.resize(static_cast<size_t>(wn) - (n == -1)); // remove null terminator
 				}
 			}
 		}
@@ -72,7 +72,7 @@ namespace utf8 {
 		return ws;
 	}
 
-#ifdef _DEBUG
+//#ifdef _DEBUG
 	inline int test()
 	{
 		using uptr = std::unique_ptr<wchar_t[]>;
@@ -117,6 +117,6 @@ namespace utf8 {
 
 		return 0;
 	}
-#endif // _DEBUG
+//#endif // _DEBUG
 
 } // namespace utf8

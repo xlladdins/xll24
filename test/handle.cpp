@@ -1,6 +1,6 @@
 // handle.cpp - Embed C++ objects in Excel using xll::handle<T>
 // https://xlladdins.com
-//#define XLOPERX XLOPER
+#if 0
 #include <concepts>
 #include "../xll.h"
 
@@ -59,8 +59,6 @@ LPOPER WINAPI xll_base_get(HANDLEX _h)
 {
 #pragma XLLEXPORT
 	xll::handle<base<OPER>> h(_h);
-
-	//o = h ? h->get() : ErrNA;
 
 	return h ? &h->get() : nullptr;
 }
@@ -252,4 +250,5 @@ int WINAPI xll_handle_test()
 
 	return TRUE;
 }
-//Auto<OpenAfter> xaoa_handle_test(xll_handle_test);
+Auto<OpenAfter> xaoa_handle_test(xll_handle_test);
+#endif // 0

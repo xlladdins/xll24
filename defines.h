@@ -14,6 +14,7 @@ extern "C" {
 
 namespace xll {
 
+	// Remove xlbit flags.
 	constexpr int xlbitFree = xlbitXLFree | xlbitDLLFree;
 	constexpr WORD type(const XLOPER& x) noexcept
 	{
@@ -25,13 +26,13 @@ namespace xll {
 	}
 
 	// xltypeX, XLOPER12::val.X, X, description
-#define XLL_TYPE_SCALAR(X) \
-    X(Num,  num,      double,  "IEEE 64-bit floating point") \
-    X(Bool, xbool,    BOOL,    "Boolean value")              \
-    X(Err,  err,      int,     "Error type")                 \
-    X(Int,  w,        int,     "32-bit signed integer")      \
+#define XLL_TYPE_SCALAR(X)                               \
+    X(Num,  num,   double, "IEEE 64-bit floating point") \
+    X(Bool, xbool, BOOL,   "Boolean value")              \
+    X(Err,  err,   int,    "Error type")                 \
+    X(Int,  w,     int,    "32-bit signed integer")      \
 
-#define XLL_SCALAR(a, b, c, d)  | xltype##a
+#define XLL_SCALAR(a, b, c, d) | xltype##a
 	constexpr int xltypeScalar = 0 
 		XLL_TYPE_SCALAR(XLL_SCALAR);
 #undef XLL_SCALAR
@@ -53,7 +54,6 @@ namespace xll {
 	static_assert(Bool(false).val.xbool == FALSE);
 	static_assert(Err(xlerrNA).xltype == xltypeErr);
 	static_assert(Err(xlerrNA).val.err == xlerrNA);
-	//static_assert(SRef(XLREF12{ 1,2,3,4 }).xltype == xltypeSRef);
 	static_assert(Int(123).xltype == xltypeInt);
 	static_assert(Int(123).val.w == 123);
 #endif // _DEBUG
@@ -144,7 +144,7 @@ namespace xll {
 #undef XLL_ALLOC
 
 	// Argument for std::span(ptr, count).
-	constexpr int count(const XLOPER12& x)
+	constexpr size_t count(const XLOPER12& x)
 	{
 		if (x.xltype & xltypeStr)
 			return x.val.str[0];

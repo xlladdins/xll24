@@ -5,7 +5,7 @@
 
 using namespace xll;
 
-#ifdef _DEBUG
+//#ifdef _DEBUG
 
 XLL_CONST(DOUBLE, XLL_PI, 3.14159265358979323846, "Return the constant pi.", "XLL", "");
 
@@ -358,7 +358,7 @@ int WINAPI xll_test()
 }
 
 Auto<OpenAfter> xao_test(xll_test);
-#endif
+//#endif
 
 Auto<Open> xao_sam([]() { set_alert_mask(7); return true; });
 
