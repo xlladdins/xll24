@@ -2,12 +2,12 @@
 // Copyright (c) KALX, LLC. All rights reserved. No warranty made.
 // https://learn.microsoft.com/en-us/office/client-developer/excel/xlfregister-form-1
 // Excel12(xlfRegister, LPXLOPER12 pxRes, int iCount,
-//	LPXLOPER12 pxModuleText, LPXLOPER12 pxProcedure,
-//	LPXLOPER12 pxTypeText, LPXLOPER12 pxFunctionText,
-//	LPXLOPER12 pxArgumentText, LPXLOPER12 pxMacroType,
-//	LPXLOPER12 pxCategory, LPXLOPER12 pxShortcutText,
-//	LPXLOPER12 pxHelpTopic, LPXLOPER12 pxFunctionHelp,
-//	LPXLOPER12 pxArgumentHelp1, LPXLOPER12 pxArgumentHelp2,
+//	                    LPXLOPER12 pxModuleText, LPXLOPER12 pxProcedure,
+//	                    LPXLOPER12 pxTypeText, LPXLOPER12 pxFunctionText,
+//	                    LPXLOPER12 pxArgumentText, LPXLOPER12 pxMacroType,
+//	                    LPXLOPER12 pxCategory, LPXLOPER12 pxShortcutText,
+//	                    LPXLOPER12 pxHelpTopic, LPXLOPER12 pxFunctionHelp,
+//	                    LPXLOPER12 pxArgumentHelp1, LPXLOPER12 pxArgumentHelp2,
 //	...);
 
 #pragma once

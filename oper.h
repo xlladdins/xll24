@@ -458,10 +458,8 @@ using LPOPER = xll::OPER*;
 
 static_assert(sizeof(xll::OPER) == sizeof(XLOPER12));
 
-inline xll::OPER operator&(const xll::OPER& x, const xll::OPER& y)
+// String concatenation like Excel.
+inline xll::OPER operator&(const XLOPER12& x, const XLOPER12& y)
 {
-	//xll::OPER z(x);
 	return xll::OPER(x) &= y;
-
-	//return z;
 }
