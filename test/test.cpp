@@ -248,7 +248,7 @@ int evaluate_test()
 	{
 		OPER o = Excel(xlfEvaluate, L"=1+2");
 		ensure(o != L"=1+2");
-		ensure(o == 3.)
+		ensure(o == 3.);
 		ensure(o == 3);
 		ensure(o != true);
 	}
@@ -349,10 +349,10 @@ int WINAPI xll_test()
 	try {
 		utf8::test();
 		num_test();
-		//str_test();
+		str_test();
 		err_test();
 		bool_test();
-		//multi_test();
+		multi_test();
 		evaluate_test();
 		excel_test();
 		fp_test();

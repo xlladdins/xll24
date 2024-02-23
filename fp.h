@@ -137,9 +137,17 @@ namespace xll {
 		}
 
 		// Return pointer to _FP12.
+		_FP12* get() noexcept
+		{
+			return reinterpret_cast<_FP12*>(fpx_);
+		}
 		const _FP12* get() const noexcept
 		{
 			return reinterpret_cast<const _FP12*>(fpx_);
+		}
+		operator _FP12& () noexcept
+		{
+			return reinterpret_cast<_FP12&>(*fpx_);
 		}
 		operator const _FP12&() const noexcept
 		{

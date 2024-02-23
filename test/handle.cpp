@@ -214,23 +214,23 @@ int WINAPI xll_handle_test()
 		// test base
 		Formula(0, 0, 1.23);
 		ensure(Contents(0, 0) == 1.23);
-		Formula(1, 0, "=\\XLL.BASE(R[-1]C[0])");
+		Excel(xlcFormula, "=\\XLL.BASE(R[-1]C[0])", REF(1, 0));
 		Formula(2, 0, "=XLL.BASE.GET(R[-1]C[0])");
 
 		ensure(Contents(2, 0) == 1.23);
 
-		Formula(0, 0, "foo");
-		ensure(Contents(2, 0) == "foo");
+		Formula(0, 0, "base");
+		ensure(Contents(2, 0) == "base");
 
 		// test derived
 		Formula(4, 0, 4.56);
-		Formula(5, 0, "bar");
+		Formula(5, 0, "derived");
 		Formula(6, 0, "=\\XLL.DERIVED(R[-2]C[0], R[-1]C[0])");
 		Formula(7, 0, "=XLL.BASE.GET(R[-1]C[0])");
 		Formula(8, 0, "=XLL.DERIVED.GET2(R[-2]C[0])");
 
 		ensure(Contents(7, 0) == 4.56); // derived isa base
-		ensure(Contents(8, 0) == "bar");
+		ensure(Contents(8, 0) == "derived");
 
 		// use pretty handles
 		Formula(10, 0, "=\\XLL.EBASE(R1C1)");

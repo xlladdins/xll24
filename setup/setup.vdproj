@@ -81,6 +81,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_5F23441796E146119058A7ACCDDA8FEB"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_5FFE21FD49054E3EA97C716831BDFFF2"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -438,6 +444,26 @@
             "TargetName" = "8:XLCALL.H"
             "Tag" = "8:"
             "Folder" = "8:_672000039C8F43BC87B783EE64B37E17"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_5F23441796E146119058A7ACCDDA8FEB"
+            {
+            "SourcePath" = "8:..\\xll.zip"
+            "TargetName" = "8:xll.zip"
+            "Tag" = "8:"
+            "Folder" = "8:_31374200706E4498B852F9DF3B9A6BB4"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -850,7 +876,7 @@
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:xll"
         "ProductCode" = "8:{B3AC81C5-8D8A-43C1-B69E-CFF76D1B794E}"
-        "PackageCode" = "8:{493B2BB6-87CA-45AB-AB7E-6DDFE850A1AC}"
+        "PackageCode" = "8:{412EE79B-EEA4-4835-AB75-6E19FE3A65CD}"
         "UpgradeCode" = "8:{D3821F0B-5C0F-4ACB-83B9-427A6A173B04}"
         "AspNetVersion" = "8:"
         "RestartWWWService" = "11:FALSE"
