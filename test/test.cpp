@@ -460,7 +460,7 @@ LPOPER WINAPI xll_get_workbook(LPOPER po)
 
 	return &o;
 }
-
+/*
 AddIn xai_evaluate(
 	Function(XLL_LPOPER, L"xll_evaluate", L"XLL.EVALUATE")
 	.Arguments({
@@ -479,4 +479,5 @@ LPOPER WINAPI xll_evaluate(LPOPER po)
 
 	return &o;
 }
+*/
 //#endif // 0
