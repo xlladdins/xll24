@@ -34,7 +34,6 @@ namespace xll {
 
 		const int ret = ::Excel12v(fn, &res, 0, nullptr);
 		ensure_ret(ret);
-		ensure_err(res);
 		if (res.xltype & xltypeAlloc) {
 			res.xltype |= xlbitXLFree;
 		}
