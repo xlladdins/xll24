@@ -17,7 +17,7 @@ namespace xll {
 	};
 
 	struct Function : public Args {
-		template<class T> requires xll::is_char<T>::value
+		template<class T> requires is_char<T>::value
 			Function(const wchar_t* type, const T* procedure, const T* functionText)
 			: Args{ .procedure = OPER(procedure),
 					.typeText = OPER(type),
@@ -33,7 +33,7 @@ namespace xll {
 
 			return *this;
 		}
-		template<class T> requires xll::is_char<T>::value
+		template<class T> requires is_char<T>::value
 			Function& Category(const T* category_)
 		{
 			category = OPER(category_);

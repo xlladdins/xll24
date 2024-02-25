@@ -223,6 +223,16 @@ int multi_test()
 			{ L"c", OPER(3) } ,
 			});
 		ensure(size(o) == 6);
+		ensure(o[L"b"] == 2);
+	}
+	{
+		OPER o({
+			{ "a", OPER(1) } ,
+			{ "b", OPER(2) } ,
+			{ "c", OPER(3) } ,
+			});
+		ensure(size(o) == 6);
+		ensure(o["c"] == 3);
 	}
 	{
 		OPER o({ OPER(L"a"),OPER(L"b") });

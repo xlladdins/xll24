@@ -6,7 +6,6 @@
 #define WIN32_LEAN_AND_MEAN
 #define NOMINMAX
 #include <Windows.h>
-//#include <minwindef.h>
 extern "C" {
 #include "XLCALL.H" // NOLINT
 }
@@ -24,6 +23,14 @@ namespace xll {
 	{
 		return x.xltype & (~xlbitFree);
 	}
+
+	// Either char or wchar_t.
+#define XLL_IS_CHAR(S,T) std::is_same<S, typename std::remove_cv<T>::type>::value
+	template<class T>
+	struct is_char
+		: std::integral_constant<bool, XLL_IS_CHAR(char, T) || XLL_IS_CHAR(XCHAR, T)>
+	{ };
+#undef XLL_IS_CHAR
 
 	// xltypeX, XLOPER12::val.X, X, description
 #define XLL_TYPE_SCALAR(X)                               \
