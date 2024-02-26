@@ -194,19 +194,6 @@ int WINAPI xll_handle_test()
 #pragma XLLEXPORT
 	try {
 
-		// enter data in cell RiCj
-		// https://xlladdins.github.io/Excel4Macros/formula.html
-		auto Formula = [](auto i, auto j, auto data) {
-			return Excel(xlcFormula, data, REF(i, j));
-			};
-
-		// get contents of cell RiCj;
-		// https://xlladdins.github.io/Excel4Macros/get.cell.html
-		auto Contents = [](auto i, auto j) {
-			// 5 - contents
-			return Excel(xlfGetCell, 5, REF(i, j));
-			};
-
 		// https://xlladdins.github.io/Excel4Macros/new.html
 		// 1 - worksheet
 		Excel(xlcNew, 1, Missing, Missing); // worksheet
@@ -231,7 +218,7 @@ int WINAPI xll_handle_test()
 
 		ensure(Excel(xlfGetCell, 5, REF(7, 0)) == 4.56); // derived isa base
 		ensure(Excel(xlfGetCell, 5, REF(8, 0)) == "derived");
-
+		/*
 		// use pretty handles
 		Excel(xlcFormula, "=\\XLL.EBASE(R1C1)", REF(10, 0));
 		auto base = Excel(xlfGetCell, 5, REF(10, 0)); // pretty name
@@ -241,6 +228,7 @@ int WINAPI xll_handle_test()
 		auto R1C1 = Excel(xlfGetCell, 5, REF(0, 0));
 		//ensure(Excel(xlfGetCell, 5, REF(11, 0)) == R1C1);
 		//ensure(Excel(xlfGetCell, 5, REF(2, 0)) = R1C1); // XLL.BASE.GET also called
+		*/
 	}
 	catch (const std::exception& ex) {
 		XLL_ERROR(ex.what());

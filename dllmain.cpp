@@ -4,11 +4,11 @@
 #include <Windows.h>
 
 extern "C" BOOL WINAPI
-DllMain(HINSTANCE hDLL, ULONG reason, [[maybe_unused]] LPVOID lpReserved)
+DllMain([[maybe_unused]] HINSTANCE hDLL, ULONG reason, [[maybe_unused]] LPVOID lpReserved)
 {
 	switch (reason) {
 	case DLL_PROCESS_ATTACH:
-		DisableThreadLibraryCalls(hDLL);
+		//DisableThreadLibraryCalls(hDLL);
 		break;
 	case DLL_THREAD_ATTACH:
 		break;

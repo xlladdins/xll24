@@ -157,6 +157,7 @@
     <ClCompile Include="xlauto.cpp" />
     <ClCompile Include="XLCALL.CPP">
       <DisableAnalyzeExternal Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</DisableAnalyzeExternal>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Default</CompileAs>
     </ClCompile>
     <ClCompile Include="debug.cpp" />
   </ItemGroup>
