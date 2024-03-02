@@ -10,13 +10,6 @@
 
 namespace xll {
 
-#define XLL_IS_CHAR(S,T) std::is_same<S, typename std::remove_cv<T>::type>::value
-	template<class T>
-	struct is_char
-		: std::integral_constant<bool, XLL_IS_CHAR(char,T) || XLL_IS_CHAR(XCHAR, T)>
-	{ };
-#undef XLL_IS_CHAR
-
 	// Length of null terminated wide string.
 	constexpr XCHAR len(const XCHAR* s, XCHAR n = 0)
 	{
@@ -249,16 +242,7 @@ namespace xll {
 		{ }
 		bool operator==(int w) const
 		{
-			switch (type(*this)) {
-				case xltypeInt:
-					return val.w == w;
-				case xltypeNum:
-					return val.num == w;
-				case xltypeBool:
-					return val.xbool == w;
-			}
-
-			return false;
+			return type(*this) == xltypeInt && val.w == w;
 		}
 
 		// Err
@@ -271,6 +255,7 @@ namespace xll {
 		{
 			alloc(r, c, a);
 		}
+		// One row multi.
 		constexpr OPER(std::initializer_list<XLOPER12> a)
 			: OPER(1, static_cast<int>(a.size()), a.begin())
 		{ }
@@ -283,29 +268,8 @@ namespace xll {
 
 			return *this;
 		}
-		// Convert to 1 x 1 multi.
-		OPER& enlist()
-		{
-			if (type(*this) != xltypeMulti) {
-				OPER o(*this);
-				dealloc();
-				alloc(1, 1, &o);
-			}
-
-			return *this;
-		}
-		// key-value pairs
-		OPER(std::initializer_list<std::pair<const XCHAR*, OPER>> o)
-		{
-			alloc(2, (int)o.size(), nullptr);
-			int i = 0;
-			for (auto [k, v] : o) {
-				operator()(0, i) = k;
-				operator()(1, i) = v;
-				++i;
-			}
-		}
-
+	
+		// One-dimensional index.
 		OPER& operator[](int i)
 		{
 			if (type(*this) == xltypeMulti) {
@@ -327,6 +291,7 @@ namespace xll {
 			}
 		}
 
+		// Two-dimensional index.
 		OPER& operator()(int i, int j)
 		{
 			if (type(*this) == xltypeMulti) {
@@ -347,18 +312,19 @@ namespace xll {
 				return *this;
 			}
 		}
-
-		// Find index of string in first row
-		constexpr int index(const XCHAR* str) const
+		
+		// Promote to 1 x 1 multi.
+		OPER& enlist()
 		{
-			int i = 0;
-
-			while (i < columns(*this) && view(operator()(0, i)) != str) {
-				++i;
+			if (type(*this) != xltypeMulti) {
+				OPER o(*this);
+				dealloc();
+				alloc(1, 1, &o);
 			}
 
-			return i;
+			return *this;
 		}
+
 		// JSON like object with keys in first row.
 		constexpr bool is_object() const
 		{
@@ -374,22 +340,59 @@ namespace xll {
 
 			return true;
 		}
-		OPER& operator[](const XCHAR* str)
+		// Find index of string in first row
+		template<class T> requires is_char<T>::value
+		constexpr int lookup(const T* str) const
+		{
+			int i = 0;
+
+			while (i < columns(*this) && operator()(0, i) != str) {
+				++i;
+			}
+
+			return i;
+		}
+		// Lookup key in first row.
+		template<class T> requires is_char<T>::value
+		OPER& operator[](const T* str)
 		{
 			//ensure(is_object());
-			int i = index(str);
+			int i = lookup(str);
 			//ensure(i < columns(*this));
 
 			return operator()(1, i);
 		}
-		const OPER& operator[](const XCHAR* str) const
+		template<class T> requires is_char<T>::value
+			const OPER& operator[](const T* str) const
 		{
 			//ensure(is_object());
-			int i = index(str);
+			int i = lookup(str);
 			//ensure(i < columns(*this));
 
 			return operator()(1, i);
 		}
+		// Two row range of key-value pairs
+		OPER(std::initializer_list<std::pair<const XCHAR*, OPER>> o)
+		{
+			alloc(2, (int)o.size(), nullptr);
+			int i = 0;
+			for (const auto& [k, v] : o) {
+				operator()(0, i) = k;
+				operator()(1, i) = v;
+				++i;
+			}
+		}
+		OPER(std::initializer_list<std::pair<const CHAR*, OPER>> o)
+		{
+			alloc(2, (int)o.size(), nullptr);
+			int i = 0;
+			for (const auto& [k, v] : o) {
+				operator()(0, i) = k;
+				operator()(1, i) = v;
+				++i;
+			}
+		}
+
 
 	private:
 		void dealloc()
@@ -460,10 +463,8 @@ using LPOPER = xll::OPER*;
 
 static_assert(sizeof(xll::OPER) == sizeof(XLOPER12));
 
-inline xll::OPER operator&(const xll::OPER& x, const xll::OPER& y)
+// String concatenation like Excel.
+inline xll::OPER operator&(const XLOPER12& x, const XLOPER12& y)
 {
-	//xll::OPER z(x);
 	return xll::OPER(x) &= y;
-
-	//return z;
 }

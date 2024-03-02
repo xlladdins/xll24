@@ -15,9 +15,9 @@ xlAutoOpen(void)
 {
 	XLL_TRACE;
 	try {
-		ensure(Call<xll::Open>());
-		ensure(Call<xll::Register>());
-		ensure(Call<xll::OpenAfter>());
+		ensure(Auto<xll::Open>::Call());
+		ensure(Auto<xll::Register>::Call());
+		ensure(Auto<xll::OpenAfter>::Call());
 	}
 	catch (const std::exception& ex) {
 		XLL_ERROR(ex.what());
@@ -40,7 +40,7 @@ xlAutoClose(void)
 {
 	XLL_TRACE;
 	try {
-		ensure(Call<Close>());
+		ensure(Auto<Close>::Call());
 	}
 	catch (const std::exception& ex) {
 		XLL_ERROR(ex.what());
@@ -64,7 +64,7 @@ xlAutoAdd(void)
 {
 	XLL_TRACE;
 	try {
-		ensure(Call<Add>());
+		ensure(Auto<Add>::Call());
 	}
 	catch (const std::exception& ex) {
 		XLL_ERROR(ex.what());
@@ -88,8 +88,8 @@ xlAutoRemove(void)
 {
 	XLL_TRACE;
 	try {
-		ensure(Call<Remove>());
-		ensure(Call<Unregister>());
+		ensure(Auto<Remove>::Call());
+		ensure(Auto<Unregister>::Call());
 	}
 	catch (const std::exception& ex) {
 		XLL_ERROR(ex.what());

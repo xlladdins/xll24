@@ -78,6 +78,7 @@
       </LinkTimeCodeGeneration>
       <Profile>true</Profile>
       <AdditionalOptions>/wholearchive:xll %(AdditionalOptions)</AdditionalOptions>
+      <CETCompat>true</CETCompat>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">

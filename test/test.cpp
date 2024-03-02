@@ -223,12 +223,31 @@ int multi_test()
 			{ L"c", OPER(3) } ,
 			});
 		ensure(size(o) == 6);
+		ensure(o[L"b"] == 2);
+	}
+	{
+		OPER o({
+			{ "a", OPER(1) } ,
+			{ "b", OPER(2) } ,
+			{ "c", OPER(3) } ,
+			});
+		ensure(size(o) == 6);
+		ensure(o["c"] == 3);
 	}
 	{
 		OPER o({ OPER(L"a"),OPER(L"b") });
 		o[0] = o;
 		o[0][0] = o;
 		o[0][0][0] = o;
+	}
+	{
+		OPER o(L"abc");
+		o.enlist();
+		ensure(o[0] == L"abc");
+		o.enlist();
+		ensure(o[0][0] == L"abc");
+		o.enlist();
+		ensure(o[0][0][0] == L"abc");
 	}
 
 	return 0;
@@ -239,7 +258,7 @@ int evaluate_test()
 	{
 		OPER o = Excel(xlfEvaluate, L"=1+2");
 		ensure(o != L"=1+2");
-		ensure(o == 3.)
+		ensure(o == 3.);
 		ensure(o == 3);
 		ensure(o != true);
 	}
@@ -357,7 +376,7 @@ int WINAPI xll_test()
 	return true;
 }
 
-Auto<OpenAfter> xao_test(xll_test);
+//Auto<OpenAfter> xao_test(xll_test);
 //#endif
 
 Auto<Open> xao_sam([]() { set_alert_mask(7); return true; });
@@ -451,7 +470,7 @@ LPOPER WINAPI xll_get_workbook(LPOPER po)
 
 	return &o;
 }
-
+/*
 AddIn xai_evaluate(
 	Function(XLL_LPOPER, L"xll_evaluate", L"XLL.EVALUATE")
 	.Arguments({
@@ -470,4 +489,5 @@ LPOPER WINAPI xll_evaluate(LPOPER po)
 
 	return &o;
 }
+*/
 //#endif // 0

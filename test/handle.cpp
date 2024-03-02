@@ -1,6 +1,6 @@
 // handle.cpp - Embed C++ objects in Excel using xll::handle<T>
 // https://xlladdins.com
-#if 0
+//#if 0
 #include <concepts>
 #include "../xll.h"
 
@@ -194,53 +194,41 @@ int WINAPI xll_handle_test()
 #pragma XLLEXPORT
 	try {
 
-		// enter data in cell RiCj
-		// https://xlladdins.github.io/Excel4Macros/formula.html
-		auto Formula = [](auto i, auto j, auto data) {
-			return Excel(xlcFormula, data, REF(i, j));
-			};
-
-		// get contents of cell RiCj;
-		// https://xlladdins.github.io/Excel4Macros/get.cell.html
-		auto Contents = [](auto i, auto j) {
-			// 5 - contents
-			return Excel(xlfGetCell, 5, REF(i, j));
-			};
-
 		// https://xlladdins.github.io/Excel4Macros/new.html
 		// 1 - worksheet
 		Excel(xlcNew, 1, Missing, Missing); // worksheet
 
 		// test base
-		Formula(0, 0, 1.23);
-		ensure(Contents(0, 0) == 1.23);
-		Formula(1, 0, "=\\XLL.BASE(R[-1]C[0])");
-		Formula(2, 0, "=XLL.BASE.GET(R[-1]C[0])");
+		Excel(xlcFormula, 1.23, REF(0, 0));
+		ensure(Excel(xlfGetCell, 5, REF(0, 0)) == 1.23);
+		Excel(xlcFormula, "=\\XLL.BASE(R[-1]C[0])", REF(1, 0));
+		Excel(xlcFormula, "=XLL.BASE.GET(R[-1]C[0])", REF(2, 0));
 
-		ensure(Contents(2, 0) == 1.23);
+		ensure(Excel(xlfGetCell, 5, REF(2, 0)) == 1.23);
 
-		Formula(0, 0, "foo");
-		ensure(Contents(2, 0) == "foo");
+		Excel(xlcFormula, "base", REF(0, 0));
+		ensure(Excel(xlfGetCell, 5, REF(2, 0)) == "base");
 
 		// test derived
-		Formula(4, 0, 4.56);
-		Formula(5, 0, "bar");
-		Formula(6, 0, "=\\XLL.DERIVED(R[-2]C[0], R[-1]C[0])");
-		Formula(7, 0, "=XLL.BASE.GET(R[-1]C[0])");
-		Formula(8, 0, "=XLL.DERIVED.GET2(R[-2]C[0])");
+		Excel(xlcFormula, 4.56, REF(4, 0));
+		Excel(xlcFormula, "derived", REF(5, 0));
+		Excel(xlcFormula, "=\\XLL.DERIVED(R[-2]C[0], R[-1]C[0])", REF(6, 0));
+		Excel(xlcFormula, "=XLL.BASE.GET(R[-1]C[0])", REF(7, 0));
+		Excel(xlcFormula, "=XLL.DERIVED.GET2(R[-2]C[0])", REF(8, 0));
 
-		ensure(Contents(7, 0) == 4.56); // derived isa base
-		ensure(Contents(8, 0) == "bar");
-
+		ensure(Excel(xlfGetCell, 5, REF(7, 0)) == 4.56); // derived isa base
+		ensure(Excel(xlfGetCell, 5, REF(8, 0)) == "derived");
+		/*
 		// use pretty handles
-		Formula(10, 0, "=\\XLL.EBASE(R1C1)");
-		auto base = Contents(10, 0); // pretty name
+		Excel(xlcFormula, "=\\XLL.EBASE(R1C1)", REF(10, 0));
+		auto base = Excel(xlfGetCell, 5, REF(10, 0)); // pretty name
 		//ensure(Excel(xlfLeft, base, OPER(8)) == "\\base[0x"); // check prefix
 
-		Formula(11, 0, "=XLL.EBASE.GET(R[-1]C[0])");
-		auto R1C1 = Contents(0, 0);
-		//ensure(Contents(11, 0) == R1C1);
-		//ensure(Contents(2, 0) = R1C1); // XLL.BASE.GET also called
+		Excel(xlcFormula, "=XLL.EBASE.GET(R[-1]C[0])", REF(11, 0));
+		auto R1C1 = Excel(xlfGetCell, 5, REF(0, 0));
+		//ensure(Excel(xlfGetCell, 5, REF(11, 0)) == R1C1);
+		//ensure(Excel(xlfGetCell, 5, REF(2, 0)) = R1C1); // XLL.BASE.GET also called
+		*/
 	}
 	catch (const std::exception& ex) {
 		XLL_ERROR(ex.what());
@@ -251,4 +239,4 @@ int WINAPI xll_handle_test()
 	return TRUE;
 }
 Auto<OpenAfter> xaoa_handle_test(xll_handle_test);
-#endif // 0
+//#endif // 0

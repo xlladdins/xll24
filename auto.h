@@ -26,17 +26,14 @@ namespace xll {
 		{
 			macros.emplace_back(m);
 		}
-	};
+		static int Call(void)
+		{
+			for (const auto& m : Auto<T>::macros) {
+				if (!m()) return 0;
+			}
 
-	// Call all macros registered for type T.
-	template<class T>
-	inline int Call(void)
-	{
-		for (const auto& m : Auto<T>::macros) {
-			if (!m()) return 0;
+			return 1;
 		}
-
-		return 1;
-	}
+	};
 
 } // namespace xll

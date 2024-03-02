@@ -12,7 +12,7 @@ namespace xll {
 	{
 		OPER res;
 
-		std::array os{ std::move(OPER(ts))... };
+		std::array os{std::move(OPER(ts))...};
 		LPXLOPER12 as[sizeof...(ts)];
 		for (size_t i = 0; i < os.size(); ++i) {
 			as[i] = &os[i];
@@ -34,7 +34,6 @@ namespace xll {
 
 		const int ret = ::Excel12v(fn, &res, 0, nullptr);
 		ensure_ret(ret);
-		ensure_err(res);
 		if (res.xltype & xltypeAlloc) {
 			res.xltype |= xlbitXLFree;
 		}
