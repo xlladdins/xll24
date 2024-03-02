@@ -40,16 +40,18 @@ namespace xll {
 		constexpr OPER(const XLOPER12& o)
 			: XLOPER12{ o }
 		{
-			int otype = type(o);
-
-			if (otype == xltypeStr) {
+			switch (type(o)) {
+			case xltypeStr:
 				alloc(Str(*this), val.str[0]);
-			}
-			else if (otype == xltypeMulti) {
+				break;
+			case xltypeMulti:
 				alloc(rows(o), columns(o), Multi(o));
-			}
-			else if (otype == xltypeBigData) {
+				break;
+			case xltypeBigData:
 				alloc(BigData(*this), val.bigdata.cbData);
+				break;
+			default:
+				; // nothing
 			}
 		}
 		constexpr OPER(const OPER& o)

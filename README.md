@@ -15,26 +15,22 @@ it is notoriously difficult to use.
 The xll library makes it easy to
 call native code from Excel and embed C++ in an object oriented way.
 
-A crucial ingredient of Python's success are modules that call native code.
-NumPy, Pandas, and SciPy call C and C++ that dilettantes use to leverage the performance of native code.
-This is also possible with Excel, that is used by several orders of magnitude more people than Python.
-
 ## Install
 
 The xll library requires 64-bit Excel on Windows and Visual Studio 2022.
 Run [`setup`](setup/Release/setup.msi) to install a template project called `xll` that will
 show up when you create a new project in Visual Studio.
 
-## Build
+## Use
 
 Create a new xll project in Visual Studio.
 
 ...video...
 
-## Use
+## Add-In
 
 An `xll` add-in is a dynamic link library, or DLL, 
-that exports well-known functions that Excel calls.
+that exports well-known functions.
 When an xll is opened in Excel it 
 [dynamically loads](https://learn.microsoft.com/en-us/windows/win32/api/libloaderapi/nf-libloaderapi-loadlibrarya) 
 the xll,
@@ -42,7 +38,7 @@ the xll,
 [`xlAutoOpen`](https://learn.microsoft.com/en-us/office/client-developer/excel/xlautoopen)
 and calls it. There are half a dozen 
 [`xlAuto` functions](https://learn.microsoft.com/en-us/office/client-developer/excel/add-in-manager-and-xll-interface-functions)
-that Excel calls. These are all implemented by the xll library.
+that Excel calls to manage the lifetime of the xll. These are all implemented by the xll library.
 
 To add a function to be called by when Excel calls `xlAutoXXX` create an
 object of type `Auto<XXX>` and specify a function to be called.
@@ -57,18 +53,16 @@ The first argument is a _function number_ defined in C SDK header file
 specifying the Excel function or macro to call.
 Arguments for function numbers are documented in 
 [Excel4Macros](https://xlladdins.github.io/Excel4Macros/index.html).
-You can call it with any number of arguments that can be constructed
-by [`OPER`](oper.h) but you are responsible for freeing the memory they use.
 
 Function numbers for functions begin with `xlf` and for macros with `xlc`.
 Functions have no side effects. They return a value based only on their arguments.
-Macros only have side effects. They can do anything a user can do and return 1 on success or 0 on failure.
+Macros take no arguments and only have side effects. 
+They can do anything a user can do and return 1 on success or 0 on failure.
 
 There are exceptions to this. The primary one is 
 [`xlfRegister`](https://learn.microsoft.com/en-us/office/client-developer/excel/xlfregister-form-1).
 It has the side effect of registering a function or macro with Excel.
-
-
+There is no need to call `xlfRegister` directly.
 The [`AddIn`](addin.h) class is used to register functions and macros with Excel.
 
 ### Function
@@ -144,12 +138,12 @@ Then implement it.
 int WINAPI xll_macro(void)
 {
 #pragma XLLEXPORT
-	Excel(xlcAlert, "你好 мир");
+	Excel(xlcAlert, "你好 мир"); // UTF-8 string
 
 	return 1;
 }
 ```
-The xll library converts utf-8 strings to wide character strings used by Excel.
+
 
 ## AddIn
 

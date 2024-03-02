@@ -258,6 +258,8 @@ namespace xll {
 	X(THREAD_SAFE,  "", "$", "declares function to be thread safe")              \
 	X(CLUSTER_SAFE, "", "&", "declares function to be cluster safe")             \
 	X(ASYNCHRONOUS, "", "X", "declares function to be asynchronous")             \
+	X(UINT,     "H", "H",  "unsigned 2 byte int")                                \
+	X(INT,      "J", "J",  "signed 4 byte int")                                  \
 
 #define XLL_L(s) L##s
 #define XLL_ARG(a,b,c,d) constexpr const wchar_t* XLL_##a##4 = XLL_L(b);

@@ -161,6 +161,7 @@
     <ClCompile Include="debug.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="cpp.hint" />
     <None Include="README.md" />
   </ItemGroup>
   <ItemGroup>
