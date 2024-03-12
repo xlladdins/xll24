@@ -1,6 +1,7 @@
 // test.cpp
 //#if 0
 #include <numeric>
+#include <random>
 #include "../xll.h"
 
 using namespace xll;
@@ -248,6 +249,29 @@ int multi_test()
 		ensure(o[0][0] == L"abc");
 		o.enlist();
 		ensure(o[0][0][0] == L"abc");
+	}
+	{
+		static std::mt19937 gen;
+		const auto rand_between = [](int a, int b) {
+			std::uniform_int_distribution<int> dis(a, b);
+
+			return dis(gen);
+		};
+		const auto rand_multi = [&](int a, int b) {
+			return OPER(rand_between(a, b), rand_between(a, b), nullptr);
+		};
+		const auto rand_assign = [&](OPER& o) {
+			auto r = rows(o);
+			auto c = columns(o);
+			OPER o_ = rand_multi(r, c);
+			auto i = rand_between(0, r - 1);
+			auto j = rand_between(0, c - 1);
+			o(i, j) = o_;
+		};
+		OPER o;
+		for (int i = 0; i < 100; ++i) {
+			rand_assign(o);
+		}
 	}
 
 	return 0;
