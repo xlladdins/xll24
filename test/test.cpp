@@ -19,7 +19,10 @@ int ref_test()
 		ensure(size(r12) == 4);
 		ensure(r12 == r12);
 		ensure(!(r12 != r12));
-		//REF r;
+		REF r{ r12 };
+		ensure(r == r12);
+		auto s = r;
+		ensure(!(s != r));
 	}
 
 	return 0;

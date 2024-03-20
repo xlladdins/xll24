@@ -8,7 +8,7 @@
 #include <crtdbg.h>
 
 struct CrtDbg {
-	CrtDbg(int flags = _CRTDBG_ALLOC_MEM_DF /**/ | _CRTDBG_LEAK_CHECK_DF | _CRTDBG_CHECK_ALWAYS_DF/**/) noexcept
+	CrtDbg(int flags = _CRTDBG_ALLOC_MEM_DF /* | _CRTDBG_LEAK_CHECK_DF | _CRTDBG_CHECK_ALWAYS_DF*/) noexcept
 	{
 		_CrtSetDbgFlag(_CrtSetDbgFlag(_CRTDBG_REPORT_FLAG) | flags);
 		//_crtBreakAlloc = 419;
