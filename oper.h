@@ -25,27 +25,14 @@ namespace xll {
 	static_assert(len("abc") == 3);
 
 	struct OPER : public XLOPER12 {
-		// Nil is the default.
+		// xltypeNil
 		constexpr OPER() noexcept
 			: XLOPER12{ Nil }
 		{ }
 
-		constexpr OPER(const XLOPER12& o)
-			: XLOPER12{ o }
+		constexpr OPER(const XLOPER12& x)
 		{
-			switch (type(o)) {
-			case xltypeStr:
-				alloc(Str(*this), val.str[0]);
-				break;
-			case xltypeMulti:
-				alloc(rows(o), columns(o), Multi(o));
-				break;
-			case xltypeBigData:
-				alloc(BigData(*this), val.bigdata.cbData);
-				break;
-			default:
-				; // nothing
-			}
+			alloc(x);
 		}
 		constexpr OPER(const OPER& o)
 			: OPER(static_cast<const XLOPER12&>(o))
@@ -54,7 +41,9 @@ namespace xll {
 		OPER& operator=(const XLOPER12& x) noexcept
 		{
 			if (this != &x) {
-				*this = OPER(x); 
+				OPER o(x);
+				dealloc();
+				*this = std::move(o);
 			}
 
 			return *this;
@@ -69,9 +58,8 @@ namespace xll {
 		OPER& operator=(OPER&& o) noexcept
 		{
 			if (this != &o) {
-				dealloc();
-				val = o.val;
-				xltype = std::exchange(o.xltype, xltypeNil);
+				std::swap(xltype, o.xltype);
+				std::swap(val, o.val);
 			}
 
 			return *this;
@@ -93,7 +81,7 @@ namespace xll {
 		}
 		constexpr bool operator==(double num) const noexcept
 		{
-			return type(*this) == xltypeNum && asNum(*this) == num;
+			return asNum(*this) == num;
 		}
 
 		// Str - Counted wide character string.
@@ -167,6 +155,7 @@ namespace xll {
 			return str[i] == 0;
 		}
 
+		// Excel string concatenation.
 		OPER& operator&=(const XLOPER12& o)
 		{
 			if (size(*this) == 0) {
@@ -242,7 +231,7 @@ namespace xll {
 		{ }
 		bool operator==(int w) const
 		{
-			return type(*this) == xltypeInt && val.w == w;
+			return operator==(static_cast<double>(w));
 		}
 
 		// Err
@@ -448,12 +437,32 @@ namespace xll {
 			}
 		}
 		// BigData
-		constexpr void alloc(const BYTE* data, int len)
+		constexpr void alloc(const BYTE* data, long len)
 		{
 			xltype = xltypeBigData;
 			val.bigdata.cbData = len;
 			val.bigdata.h.lpbData = new BYTE[len];
 			std::copy_n(data, len, val.bigdata.h.lpbData);
+		}
+		constexpr void alloc(const XLOPER12& x)
+		{
+			xltype = type(x);
+			switch (xltype) {
+			case xltypeStr:
+				alloc(Str(x), x.val.str[0]);
+				break;
+			case xltypeMulti:
+				alloc(x.val.array.rows, x.val.array.columns, Multi(x));
+				break;
+			case xltypeBigData:
+				alloc(BigData(x), x.val.bigdata.cbData);
+				break;
+			default:
+				val = x.val;
+			}
+			if (x.xltype & xlbitXLFree) {
+				::Excel12(xlFree, 0, 1, &x);
+			}
 		}
 	};
 

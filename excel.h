@@ -10,7 +10,7 @@ namespace xll {
 	template<class... Ts>
 	inline OPER Excel(int fn, Ts&&... ts)
 	{
-		OPER res;
+		XLOPER12 res = { .xltype = xltypeNil };
 
 		std::array os{std::move(OPER(ts))...};
 		LPXLOPER12 as[sizeof...(ts)];
@@ -30,7 +30,7 @@ namespace xll {
 	
 	inline OPER Excel(int fn)
 	{
-		OPER res;
+		XLOPER12 res = { .xltype = xltypeNil };
 
 		const int ret = ::Excel12v(fn, &res, 0, nullptr);
 		ensure_ret(ret);

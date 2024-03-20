@@ -10,6 +10,21 @@ using namespace xll;
 
 XLL_CONST(DOUBLE, XLL_PI, 3.14159265358979323846, "Return the constant pi.", "XLL", "");
 
+int ref_test()
+{
+	XLREF12 r12 = { .rwFirst = 1, .rwLast = 2, .colFirst = 3, .colLast = 4 };
+	{
+		ensure(rows(r12) == 2);
+		ensure(columns(r12) == 2);
+		ensure(size(r12) == 4);
+		ensure(r12 == r12);
+		ensure(!(r12 != r12));
+		//REF r;
+	}
+
+	return 0;
+}
+
 int num_test()
 {
 	{
@@ -252,7 +267,7 @@ int multi_test()
 	}
 	{
 		static std::mt19937 gen;
-		const auto rand_between = [](int a, int b) {
+		const auto rand_between = [](int a, int b) { // uniform int in [a, b]
 			std::uniform_int_distribution<int> dis(a, b);
 
 			return dis(gen);
@@ -268,7 +283,7 @@ int multi_test()
 			auto j = rand_between(0, c - 1);
 			o(i, j) = o_;
 		};
-		OPER o;
+		OPER o = rand_multi(100, 200);
 		for (int i = 0; i < 100; ++i) {
 			rand_assign(o);
 		}
@@ -382,6 +397,7 @@ int WINAPI xll_test()
 
 	try {
 		utf8::test();
+		ref_test();
 		num_test();
 		str_test();
 		err_test();
@@ -400,7 +416,7 @@ int WINAPI xll_test()
 	return true;
 }
 
-//Auto<OpenAfter> xao_test(xll_test);
+Auto<OpenAfter> xao_test(xll_test);
 //#endif
 
 Auto<Open> xao_sam([]() { set_alert_mask(7); return true; });

@@ -151,7 +151,7 @@ namespace xll {
 #undef XLL_ALLOC
 
 	// Argument for std::span(ptr, count).
-	constexpr size_t count(const XLOPER12& x)
+	constexpr size_t count(const XLOPER12& x) noexcept
 	{
 		if (x.xltype & xltypeStr)
 			return x.val.str[0];

@@ -125,7 +125,7 @@ namespace xll {
 	// https://learn.microsoft.com/en-us/office/client-developer/excel/xlfregister-form-1
 	inline OPER XlfRegister(Args&& args)
 	{
-		OPER res;
+		XLOPER12 res = { .xltype = xltypeNil };
 
 		constexpr size_t n = sizeof(Args)/ sizeof(OPER);
 		LPXLOPER12 as[n]; // array of pointers to arguments

@@ -1,6 +1,6 @@
 // handle.cpp - Embed C++ objects in Excel using xll::handle<T>
 // https://xlladdins.com
-#if 0
+//#if 0
 #include <concepts>
 #include "../xll.h"
 
@@ -194,9 +194,9 @@ int WINAPI xll_handle_test()
 #pragma XLLEXPORT
 	try {
 
-		// https://xlladdins.github.io/Excel4Macros/new.html
-		// 1 - worksheet
-		Excel(xlcNew, 1, Missing, Missing); // worksheet
+		// https://xlladdins.github.io/Excel4Macros/new.html	
+		Excel(xlcNew, 1, Missing, Missing); // 1 - worksheet
+		Excel(xlcOptionsCalculation, 1);    // 1 - automatic calculation
 
 		// test base
 		Excel(xlcFormula, 1.23, REF(0, 0));
@@ -238,5 +238,5 @@ int WINAPI xll_handle_test()
 
 	return TRUE;
 }
-Auto<OpenAfter> xaoa_handle_test(xll_handle_test);
-#endif // 0
+//Auto<OpenAfter> xaoa_handle_test(xll_handle_test);
+//#endif // 0
