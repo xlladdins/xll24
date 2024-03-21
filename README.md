@@ -38,7 +38,7 @@ the xll,
 [`xlAutoOpen`](https://learn.microsoft.com/en-us/office/client-developer/excel/xlautoopen)
 and calls it. There are half a dozen 
 [`xlAuto` functions](https://learn.microsoft.com/en-us/office/client-developer/excel/add-in-manager-and-xll-interface-functions)
-that Excel calls to manage the lifetime of the xll. These are all implemented by the xll library.
+that Excel calls to manage the lifetime of the xll. The xll library implements those for you.
 
 To add a function to be called by when Excel calls `xlAutoXXX` create an
 object of type `Auto<XXX>` and specify a function to be called.
@@ -74,8 +74,7 @@ the [`AddIn`](addin.h) class to instantiate an object
 that specifies the information Excel needs.
 
 Here is how to register `xll_hypot` as `STD.HYPOT` in Excel.
-If `x` and `y` are doubles then `xll_hypot(x, y)` returns the length of 
-the hypotenuse of a right triangle with sides `x` and `y` as a double.
+It returns a `double` and takes two `double` arguments.
 ```C++
 AddIn xai_hypot(
     Function(XLL_DOUBLE, "xll_hypot", "STD.HYPOT")
@@ -88,11 +87,10 @@ AddIn xai_hypot(
 	.HelpTopic("https://learn.microsoft.com/en-us/cpp/c-runtime-library/reference/hypot-hypotf-hypotl-hypot-hypotf-hypotl?view=msvc-170")
 );
 ```
-C++ does not have named arguments so the `Function` class uses the 
+The `Function` class uses the 
 [named parameter idiom](https://isocpp.org/wiki/faq/ctors#named-parameter-idiom).
-
 The member functions `Category`, `FunctionHelp`, and `HelpTopic` are optional but people using your
-handiwork will appreciate it if you supply them. 
+handiwork will appreciate it if you supply them.
 
 You can specify a URL in `HelpTopic` that will be opened when 
 [Help on this function](https://support.microsoft.com/en-us/office/excel-functions-by-category-5f91f4e9-7b42-46d2-9bd1-63f26a86c0eb)
@@ -100,7 +98,8 @@ is clicked in the in the
 [Insert Function](https://support.microsoft.com/en-us/office/insert-function-74474114-7c7f-43f5-bec3-096c56e2fb13)
 dialog. If you don't then it defaults to `https://google.com/search?q=xll_hypot`.
 
-Implement `xll_hypot` by calling `std::hypot` from the C++ standard library.
+Implement `xll_hypot` by calling [`std::hypot`](https://en.cppreference.com/w/cpp/numeric/math/hypot)
+from the C++ standard library.
 ```C++
 double WINAPI xll_hypot(double x, double y)
 {
@@ -124,7 +123,7 @@ to get the same results displayed in Excel.
 
 ### Macro
 
-An Excel macro only has side effects. It can do anything a user can do. 
+An Excel macro only has side effects and can do anything a user can do. 
 It takes no arguments and returns 1 on success or 0 on failure.
 
 To register a macro specify the name of the C++ function and the name Excel will use to call it.
@@ -144,8 +143,6 @@ int WINAPI xll_macro(void)
 }
 ```
 
-
 ## AddIn
 
-The [`AddIn`](addin.h) class stores [`Args`] that are used to register functions and macros with Excel.
-The constructor 
+The [`AddIn`](addin.h) class is constructed from [`Args`](args.h).

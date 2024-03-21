@@ -123,6 +123,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="addin.h" />
+    <ClInclude Include="args.h" />
     <ClInclude Include="auto.h" />
     <ClInclude Include="defines.h" />
     <ClInclude Include="ensure.h" />
