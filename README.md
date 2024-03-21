@@ -10,10 +10,14 @@ Microsoft's [Python in Excel](https://www.microsoft.com/en-us/microsoft-365/pyth
 actually calls over the network to do every calculation, 
 as if Python isn't slow enough already.
 
-There is a reason why many companies don't use the ancient Microsoft Excel C SDK: 
-it is notoriously difficult to use. 
-The xll library makes it easy to
-call native code from Excel and embed C++ in an object oriented way.
+There is a reason why many companies don't use the ancient Microsoft Excel C SDK.
+The example code and documentation are difficult to use and understand.
+The xll library makes it easy to call native code from Excel.
+
+One reason for Python's popularity is that someone who knows how to call
+C, C++, and even Fortran from Python has already written a library to do that.
+
+
 
 ## Install
 
