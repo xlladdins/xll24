@@ -94,7 +94,7 @@ namespace xll {
 					}
 
 					// Unpack typeText, argumentText, argumentHelp
-					OPER comma = OPER(L"");
+					OPER comma(L"");
 					for (int i = 0; i < n; ++i) {
 						typeText = typeText & argumentHelp[i][Arg::Type::typeText];
 						argumentText &= comma & argumentHelp[i][Arg::Type::argumentText];

@@ -21,7 +21,7 @@ namespace xll {
 				addins[args.functionText] = &args;
 				const Auto<xll::Register> xao_reg([&]() -> int {
 					try {
-						OPER regId = XlfRegister(std::move(args));
+						OPER regId = XlfRegister(&args);
 
 						return regId.xltype == xltypeNum;
 					}

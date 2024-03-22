@@ -31,12 +31,16 @@ namespace xll {
 		{ }
 
 		constexpr OPER(const XLOPER12& x)
+			: XLOPER12{x}
 		{
-			alloc(x);
+			if (isAlloc(x)) {
+				alloc(x);
+			}
 		}
 		constexpr OPER(const OPER& o)
-			: OPER(static_cast<const XLOPER12&>(o))
-		{ }
+		{
+			alloc(o);
+		}
 
 		OPER& operator=(const XLOPER12& x) noexcept
 		{
@@ -58,8 +62,8 @@ namespace xll {
 		OPER& operator=(OPER&& o) noexcept
 		{
 			if (this != &o) {
-				std::swap(xltype, o.xltype);
-				std::swap(val, o.val);
+				xltype = std::exchange(o.xltype, xltypeNil);
+				val = o.val;
 			}
 
 			return *this;
@@ -159,7 +163,7 @@ namespace xll {
 		OPER& operator&=(const XLOPER12& o)
 		{
 			if (size(*this) == 0) {
-				operator=(o);
+				*this = o;
 			}
 			else {
 				ensure(type(*this) == xltypeStr);
@@ -167,11 +171,11 @@ namespace xll {
 
 				XCHAR len = val.str[0];
 				XCHAR olen = o.val.str[0];
-				OPER res = OPER(nullptr, len + olen);
+				OPER res(nullptr, len + olen);
 				//res.val.str[0] = len + olen;
 				std::copy_n(val.str + 1, len, res.val.str + 1);
 				std::copy_n(o.val.str + 1, olen, res.val.str + 1 + len);
-				std::swap(val.str, res.val.str);
+				*this = res;
 			}
 
 			return *this;
@@ -412,9 +416,15 @@ namespace xll {
 		{
 			xltype = xltypeStr;
 			val.str = new XCHAR[1 + static_cast<size_t>(len)];
-			val.str[0] = len;
-			if (str && len) {
-				std::copy_n(str, len, val.str + 1);
+			if (!val.str) {
+				xltype = xltypeErr;
+				val.err = xlerrNA;
+			}
+			else {
+				val.str[0] = len;
+				if (str && len) {
+					std::copy_n(str, len, val.str + 1);
+				}
 			}
 		}
 		// Multi
@@ -424,8 +434,8 @@ namespace xll {
 			val.array.rows = r;
 			val.array.columns = c;
 			val.array.lparray = nullptr;
-			if (r && c) {
-				val.array.lparray = new OPER[static_cast<size_t>(r) * c];
+			if (size(*this)) {
+				val.array.lparray = new OPER[size(*this)];
 				if (a) {
 					for (int i = 0; i < r * c; ++i) {
 						new (val.array.lparray + i) OPER(a[i]);
@@ -433,7 +443,8 @@ namespace xll {
 				}
 			}
 			else {
-				xltype = xltypeNil;
+				xltype = xltypeErr;
+				val.err = xlerrNA;
 			}
 		}
 		// BigData
@@ -460,8 +471,9 @@ namespace xll {
 			default:
 				val = x.val;
 			}
+
 			if (x.xltype & xlbitXLFree) {
-				::Excel12(xlFree, 0, 1, &x);
+				::Excel12v(xlFree, 0, 1, (LPXLOPER12*)&x);
 			}
 		}
 	};

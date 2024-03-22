@@ -396,7 +396,8 @@ int WINAPI xll_test()
 	set_alert_mask(xal);
 
 	AddInManagerInfo(OPER("The xll_test add-in"));
-	XlfRegister(Macro(L"?xll_test", L"XLL.TEST"));
+	Macro m(L"?xll_test", L"XLL.TEST");
+	XlfRegister(&m);
 
 	try {
 		utf8::test();

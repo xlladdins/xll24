@@ -17,16 +17,16 @@ namespace xll {
 
 	// Register a function or macro to be called by Excel.
 	// https://learn.microsoft.com/en-us/office/client-developer/excel/xlfregister-form-1
-	inline OPER XlfRegister(Args&& args)
+	inline OPER XlfRegister(Args* pargs)
 	{
 		XLOPER12 res = { .xltype = xltypeNil };
 
 		constexpr size_t n = sizeof(Args)/ sizeof(OPER);
 		LPXLOPER12 as[n]; // array of pointers to arguments
 		
-		const int count = args.prepare();
+		const int count = pargs->prepare();
 		for (int i = 0; i < n && i < count; ++i) {
-			as[i] = (LPXLOPER12)&args + i;
+			as[i] = (LPXLOPER12)pargs + i;
 		}
 
 		const int ret = ::Excel12v(xlfRegister, &res, count, &as[0]);
