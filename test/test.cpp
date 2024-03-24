@@ -8,8 +8,20 @@ using namespace xll;
 
 //#ifdef _DEBUG
 
+// _crtBreakAlloc = 0;
+AddIn xai_id(
+	Function(XLL_LPOPER, L"xll_id", L"XLL.ID")
+	.Arguments({
+		Arg(XLL_LPOPER, L"ref", L"is a reference to a cell."),
+		})
+);
+LPOPER WINAPI xll_id(LPOPER pref)
+{
+#pragma XLLEXPORT
+	return pref;
+}
+#if 0
 XLL_CONST(DOUBLE, XLL_PI, 3.14159265358979323846, "Return the constant pi.", "XLL", "");
-
 int ref_test()
 {
 	XLREF12 r12 = { .rwFirst = 1, .rwLast = 2, .colFirst = 3, .colLast = 4 };
@@ -535,3 +547,4 @@ LPOPER WINAPI xll_evaluate(LPOPER po)
 }
 */
 //#endif // 0
+#endif // 0

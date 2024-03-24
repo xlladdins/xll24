@@ -14,7 +14,7 @@ namespace xll {
 		template<class T>
 			requires xll::is_char<T>::value
 		Arg(const wchar_t* type, const T* name, const T* help)
-			: type(OPER(type)), name(OPER(name)), help(OPER(help))
+			: type(type), name(name), help(help)
 		{ }
 	};
 
@@ -32,7 +32,14 @@ namespace xll {
 		OPER shortcutText;
 		OPER helpTopic;
 		OPER functionHelp;
-		OPER argumentHelp[max_help];
+		OPER argumentHelp[max_help]; // individual argument help
+		/*
+		Args(const Args&) = default;
+		Args& operator=(const Args&) = default;
+		~Args()
+		{ }
+		*/
+	
 
 		bool is_hidden() const
 		{
@@ -53,7 +60,7 @@ namespace xll {
 			int i = 0;
 
 			if (is_function()) {
-				while (i < max_help && argumentHelp[i] != Nil && argumentHelp[i] != L"") {
+				while (i < max_help && argumentHelp[i] != OPER{}) {
 					++i;
 				}
 			}
@@ -102,13 +109,13 @@ namespace xll {
 						comma = OPER(L", ");
 					}
 					// https://docs.microsoft.com/en-us/office/client-developer/excel/known-issues-in-excel-xll-development#argument-description-string-truncation-in-the-function-wizard
-					argumentHelp[n] = OPER(L"");
+					//argumentHelp[n] = OPER(L"");
 				}
 			}
 
 			constexpr size_t off = offsetof(Args, Args::argumentHelp) / sizeof(OPER);
 
-			return static_cast<int>(off + n + 1);
+			return static_cast<int>(off + n);
 		}
 	};
 
@@ -124,7 +131,7 @@ namespace xll {
 
 	struct Function : public Args {
 		template<class T> requires is_char<T>::value
-			Function(const wchar_t* type, const T* procedure, const T* functionText)
+		Function(const wchar_t* type, const T* procedure, const T* functionText)
 			: Args{ .procedure = OPER(procedure),
 					.typeText = OPER(type),
 					.functionText = OPER(functionText),
@@ -140,21 +147,21 @@ namespace xll {
 			return *this;
 		}
 		template<class T> requires is_char<T>::value
-			Function& Category(const T* category_)
+		Function& Category(const T* category_)
 		{
 			category = category_;
 
 			return *this;
 		}
 		template<class T> requires xll::is_char<T>::value
-			Function& FunctionHelp(const T* functionHelp_)
+		Function& FunctionHelp(const T* functionHelp_)
 		{
 			functionHelp = functionHelp_;
 
 			return *this;
 		}
 		template<class T> requires xll::is_char<T>::value
-			Function& HelpTopic(const T* helpTopic_)
+		Function& HelpTopic(const T* helpTopic_)
 		{
 			helpTopic = helpTopic_;
 
