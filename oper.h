@@ -158,7 +158,7 @@ namespace xll {
 
 			return str[i] == 0;
 		}
-		/*
+		
 		// Excel string concatenation.
 		OPER& operator&=(const XLOPER12& o)
 		{
@@ -177,13 +177,14 @@ namespace xll {
 					//res.val.str[0] = len + olen;
 					std::copy_n(val.str + 1, len, res.val.str + 1);
 					std::copy_n(o.val.str + 1, olen, res.val.str + 1 + len);
-					operator=(res);
+					dealloc();
+					operator=(std::move(res));
 				}
 			}
 
 			return *this;
 		}
-		*/
+		
 		/*
 		OPER& operator&=(const XCHAR* str)
 		{
@@ -490,3 +491,9 @@ namespace xll {
 using LPOPER = xll::OPER*;
 
 static_assert(sizeof(xll::OPER) == sizeof(XLOPER12));
+
+// String concatenation like Excel.
+inline xll::OPER operator&(const XLOPER12& x, const XLOPER12& y)
+{
+	return xll::OPER(x) &= y;
+}

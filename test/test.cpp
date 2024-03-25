@@ -20,8 +20,10 @@ LPOPER WINAPI xll_id(LPOPER pref)
 #pragma XLLEXPORT
 	return pref;
 }
-#if 0
+
 XLL_CONST(DOUBLE, XLL_PI, 3.14159265358979323846, "Return the constant pi.", "XLL", "");
+
+//#if 0
 int ref_test()
 {
 	XLREF12 r12 = { .rwFirst = 1, .rwLast = 2, .colFirst = 3, .colLast = 4 };
@@ -112,7 +114,7 @@ int str_test()
 	{
 		OPER o("abc");
 		ensure(o == L"abc");
-		o &= OPER(L"def");
+		o = o & OPER(L"def");
 		ensure(o == L"abcdef");
 		ensure((OPER(L"abc") & OPER(L"xyz")) == OPER(L"abcxyz"));
 	}
@@ -547,4 +549,4 @@ LPOPER WINAPI xll_evaluate(LPOPER po)
 }
 */
 //#endif // 0
-#endif // 0
+//#endif // 0

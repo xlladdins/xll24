@@ -47,9 +47,3 @@ namespace xll {
 	}
 	
 } // namespace xll
-
-// String concatenation like Excel.
-inline xll::OPER operator&(const XLOPER12& x, const XLOPER12& y)
-{
-	return xll::Excel(xlfConcatenate, x, y);
-}
