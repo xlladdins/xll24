@@ -17,15 +17,16 @@ namespace xll {
 		for (size_t i = 0; i < os.size(); ++i) {
 			as[i] = &os[i];
 		}
-
+		// Heap corruption if OPER address passed for res.
 		int ret = ::Excel12v(fn, &res, sizeof...(ts), &as[0]);
 		ensure_ret(ret);
 		// ensure_err(res); // allow xltypeErr to be returned
+		OPER o(res);
 		if (res.xltype & xltypeAlloc) {
-			res.xltype |= xlbitXLFree;
+			::Excel12(xlFree, 0, 1, &res);
 		}
 
-		return res;
+		return o;
 	}
 	
 	inline OPER Excel(int fn)
@@ -37,8 +38,18 @@ namespace xll {
 		if (res.xltype & xltypeAlloc) {
 			res.xltype |= xlbitXLFree;
 		}
+		OPER o(res);
+		if (res.xltype & xltypeAlloc) {
+			::Excel12(xlFree, 0, 1, &res);
+		}
 
-		return res;
+		return o;
 	}
 	
 } // namespace xll
+
+// String concatenation like Excel.
+inline xll::OPER operator&(const XLOPER12& x, const XLOPER12& y)
+{
+	return xll::Excel(xlfConcatenate, x, y);
+}

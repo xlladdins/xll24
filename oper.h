@@ -38,9 +38,8 @@ namespace xll {
 			}
 		}
 		constexpr OPER(const OPER& o)
-		{
-			alloc(o);
-		}
+			: OPER(static_cast<const XLOPER12&>(o))
+		{ }
 
 		OPER& operator=(const XLOPER12& x) noexcept
 		{
@@ -62,6 +61,7 @@ namespace xll {
 		OPER& operator=(OPER&& o) noexcept
 		{
 			if (this != &o) {
+				dealloc();
 				xltype = std::exchange(o.xltype, xltypeNil);
 				val = o.val;
 			}
@@ -113,7 +113,7 @@ namespace xll {
 		OPER(const std::string_view& str)
 			: OPER(str.data())
 		{ }
-		
+
 		OPER& operator=(const XCHAR* str)
 		{
 			dealloc();
@@ -123,7 +123,7 @@ namespace xll {
 		OPER& operator=(const char* str)
 		{
 			dealloc();
-			
+
 			return *this = OPER(str);
 		}
 		OPER& operator=(const std::wstring_view& str)
@@ -135,7 +135,7 @@ namespace xll {
 		OPER& operator=(const std::string_view& str)
 		{
 			dealloc();
-			
+
 			return *this = OPER(str.data());
 		}
 		constexpr bool operator==(const XCHAR* str) const
@@ -147,7 +147,7 @@ namespace xll {
 			if (type(*this) != xltypeStr) {
 				return false;
 			}
-			
+
 			int i = 0;
 			while (str[i] && i < val.str[0]) {
 				if (val.str[i + 1] != str[i]) {
@@ -155,31 +155,35 @@ namespace xll {
 				}
 				++i;
 			}
-			
+
 			return str[i] == 0;
 		}
-
+		/*
 		// Excel string concatenation.
 		OPER& operator&=(const XLOPER12& o)
 		{
 			if (size(*this) == 0) {
-				*this = o;
+				operator=(o);
 			}
 			else {
-				ensure(type(*this) == xltypeStr);
-				ensure(type(o) == xltypeStr);
-
-				XCHAR len = val.str[0];
-				XCHAR olen = o.val.str[0];
-				OPER res(nullptr, len + olen);
-				//res.val.str[0] = len + olen;
-				std::copy_n(val.str + 1, len, res.val.str + 1);
-				std::copy_n(o.val.str + 1, olen, res.val.str + 1 + len);
-				*this = res;
+				if (type(*this) != xltypeStr || type(o) != xltypeStr) {
+					dealloc();
+					*this = ErrNA;
+				}
+				else {
+					XCHAR len = val.str[0];
+					XCHAR olen = o.val.str[0];
+					OPER res(nullptr, len + olen);
+					//res.val.str[0] = len + olen;
+					std::copy_n(val.str + 1, len, res.val.str + 1);
+					std::copy_n(o.val.str + 1, olen, res.val.str + 1 + len);
+					operator=(res);
+				}
 			}
 
 			return *this;
 		}
+		*/
 		/*
 		OPER& operator&=(const XCHAR* str)
 		{
@@ -255,9 +259,15 @@ namespace xll {
 
 		OPER& reshape(int r, int c)
 		{
-			ensure(r * c == size(*this));
-			val.array.rows = r;
-			val.array.columns = c;
+			if (r * c != size(*this)) {
+				dealloc();
+				xltype = xltypeErr;
+				val.err = xlerrNA;
+			}
+			else {
+				val.array.rows = r;
+				val.array.columns = c;
+			}
 
 			return *this;
 		}
@@ -269,7 +279,7 @@ namespace xll {
 				return static_cast<OPER&>(Multi(*this)[i]);
 			}
 			else {
-				ensure(i == 0);
+				//ensure(i == 0);
 				return *this;
 			}
 		}
@@ -279,7 +289,7 @@ namespace xll {
 				return static_cast<OPER&>(Multi(*this)[i]);
 			}
 			else {
-				ensure(i == 0);
+				//ensure(i == 0);
 				return *this;
 			}
 		}
@@ -291,7 +301,7 @@ namespace xll {
 				return static_cast<OPER&>(Multi(*this)[i * columns(*this) + j]);
 			}
 			else {
-				ensure(i == 0 && j == 0);
+				//ensure(i == 0 && j == 0);
 				return *this;
 			}
 		}
@@ -301,7 +311,7 @@ namespace xll {
 				return static_cast<OPER&>(Multi(*this)[i * columns(*this) + j]);
 			}
 			else {
-				ensure(i == 0 && j == 0);
+				//ensure(i == 0 && j == 0);
 				return *this;
 			}
 		}
@@ -472,9 +482,6 @@ namespace xll {
 				val = x.val;
 			}
 
-			if (x.xltype & xlbitXLFree) {
-				::Excel12v(xlFree, 0, 1, (LPXLOPER12*)&x);
-			}
 		}
 	};
 
@@ -483,9 +490,3 @@ namespace xll {
 using LPOPER = xll::OPER*;
 
 static_assert(sizeof(xll::OPER) == sizeof(XLOPER12));
-
-// String concatenation like Excel.
-inline xll::OPER operator&(const XLOPER12& x, const XLOPER12& y)
-{
-	return xll::OPER(x) &= y;
-}
