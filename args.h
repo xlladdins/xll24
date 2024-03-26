@@ -33,13 +33,6 @@ namespace xll {
 		OPER helpTopic;
 		OPER functionHelp;
 		OPER argumentHelp[max_help]; // individual argument help
-		/*
-		Args(const Args&) = default;
-		Args& operator=(const Args&) = default;
-		*/
-		~Args()
-		{ }
-	
 
 		bool is_hidden() const
 		{
@@ -92,19 +85,19 @@ namespace xll {
 				if (is_function()) {
 					if (helpTopic == Nil || helpTopic == L"") {
 						helpTopic = OPER(L"https://google.com/search?q="); // github???
-						helpTopic = helpTopic & procedure;
+						helpTopic &= procedure;
 					}
 
 					const auto help = view(helpTopic);
 					if (help.starts_with(L"http") && !help.ends_with(L"!0")) {
-						helpTopic = helpTopic & OPER(L"!0");
+						helpTopic &= OPER(L"!0");
 					}
 
 					// Unpack typeText, argumentText, argumentHelp
 					OPER comma(L"");
 					for (int i = 0; i < n; ++i) {
-						typeText = typeText & argumentHelp[i][Arg::Type::typeText];
-						argumentText = argumentText & comma & argumentHelp[i][Arg::Type::argumentText];
+						typeText &= argumentHelp[i][Arg::Type::typeText];
+						argumentText &= comma & argumentHelp[i][Arg::Type::argumentText];
 						argumentHelp[i] = argumentHelp[i][Arg::Type::argumentHelp];
 						comma = OPER(L", ");
 					}
@@ -177,25 +170,25 @@ namespace xll {
 		}
 		Function& Uncalced()
 		{
-			typeText = typeText & OPER(XLL_UNCALCED);
+			typeText &= OPER(XLL_UNCALCED);
 
 			return *this;
 		}
 		Function& Volatile()
 		{
-			typeText = typeText & OPER(XLL_VOLATILE);
+			typeText &= OPER(XLL_VOLATILE);
 
 			return *this;
 		}
 		Function& ThreadSafe()
 		{
-			typeText = typeText & OPER(XLL_THREAD_SAFE);
+			typeText &= OPER(XLL_THREAD_SAFE);
 
 			return *this;
 		}
 		Function& Asynchronous()
 		{
-			typeText = typeText & OPER(XLL_ASYNCHRONOUS);
+			typeText &= OPER(XLL_ASYNCHRONOUS);
 
 			return *this;
 		}

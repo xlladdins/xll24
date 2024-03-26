@@ -16,10 +16,9 @@
 	<TemplateContent>
 		<Project TargetFileName="template.vcxproj" File="template.vcxproj" ReplaceParameters="true">
 			<ProjectItem ReplaceParameters="false" TargetFileName="$projectname$.vcxproj.filters">template.vcxproj.filters</ProjectItem>
-			<ProjectItem ReplaceParameters="false" TargetFileName="template.cpp">template.cpp</ProjectItem>
-			<ProjectItem ReplaceParameters="false" TargetFileName="template.h">template.h</ProjectItem>
-			<ProjectItem ReplaceParameters="false" TargetFileName="template.props">template.props</ProjectItem>
-			<ProjectItem ReplaceParameters="false" TargetFileName="hermite.xlsx">hermite.xlsx</ProjectItem>
+			<ProjectItem ReplaceParameters="false" TargetFileName="$projectname$.cpp">template.cpp</ProjectItem>
+			<ProjectItem ReplaceParameters="false" TargetFileName="$projectname$.h">template.h</ProjectItem>
+			<ProjectItem ReplaceParameters="false" TargetFileName="$projectname$.txt">template.props</ProjectItem>
 		</Project>
 	</TemplateContent>
 </VSTemplate>

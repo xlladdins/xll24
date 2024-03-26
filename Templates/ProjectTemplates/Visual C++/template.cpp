@@ -1,4 +1,4 @@
-// template.cpp
+// $(ProjectName).cpp
 #include <cmath>
 #include "template.h"
 
