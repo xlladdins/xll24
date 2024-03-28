@@ -1,4 +1,4 @@
-// addin.h - Create Excel add-ins for xlAutoXXX functions.
+// addin.h - Store data Excel needs to register add-ins.
 // Copyright (c) KALX, LLC. All rights reserved. No warranty made.
 #pragma once
 #include <map>
