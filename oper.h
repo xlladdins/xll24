@@ -263,7 +263,7 @@ namespace xll {
 			if (r * c != size(*this)) {
 				dealloc();
 				xltype = xltypeErr;
-				val.err = xlerrNA;
+				val.err = xlerrValue;
 			}
 			else {
 				val.array.rows = r;
@@ -272,7 +272,7 @@ namespace xll {
 
 			return *this;
 		}
-	
+
 		// One-dimensional index.
 		OPER& operator[](int i)
 		{
@@ -329,6 +329,39 @@ namespace xll {
 			return *this;
 		}
 
+		OPER& push_bottom(const XLOPER12& x)
+		{
+			if (size(x) == 0) {
+				return *this;
+			}
+			if (size(*this) == 0) {
+				return operator=(x);
+			}
+			if (columns(*this) != columns(x)) {
+				return operator=(ErrValue);
+			}
+			if (type(*this) != xltypeMulti) {
+				enlist();
+			}
+
+			OPER o(rows(*this) + rows(x), columns(*this), nullptr);
+			for (int i = 0; i < size(*this); ++i) {
+				o[i] = operator[](i);
+			}
+			if (type(x) != xltypeMulti) {
+				o[size(*this)] = x;
+			}
+			else {
+				for (int i = 0; i < size(x); ++i) {
+					o[size(*this) + i] = x.val.array.lparray[i];
+				}
+			}
+			std::swap(*this, o);
+
+			return *this;
+		}
+
+		// TODO: move to stand alone function.
 		// JSON like object with keys in first row.
 		constexpr bool is_object() const
 		{

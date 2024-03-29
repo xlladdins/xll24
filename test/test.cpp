@@ -305,6 +305,38 @@ int multi_test()
 			rand_assign(o);
 		}
 	}
+	{
+		OPER o({ OPER(1.23), OPER(L"abc"), OPER(true) });
+		ensure(o == OPER().push_bottom(o));
+		ensure(o == o.push_bottom(OPER()));
+		ensure(OPER(L"abc") == OPER(L"abc").push_bottom(OPER()));
+		ensure(OPER(L"abc") == OPER().push_bottom(OPER(L"abc")));
+	}
+	{
+		OPER o({ OPER(1.23), OPER(L"abc"), OPER(true) });
+		OPER o2 = o.push_bottom(o);
+		ensure(rows(o2) == 2);
+		ensure(columns(o2) == 3);
+		ensure(o2[0] == o[0]);
+		ensure(o2[1] == o[1]);
+		ensure(o2[2] == o[2]);
+		ensure(o2[3] == o[0]);
+		ensure(o2[4] == o[1]);
+		ensure(o2[5] == o[2]);
+	}
+	{
+		OPER o({ OPER(1.23), OPER(L"abc"), OPER(true) });
+		o[2] = o;
+		OPER o2 = o.push_bottom(o);
+		ensure(rows(o2) == 2);
+		ensure(columns(o2) == 3);
+		ensure(o2[0] == o[0]);
+		ensure(o2[1] == o[1]);
+		ensure(o2[2] == o[2]);
+		ensure(o2[3] == o[0]);
+		ensure(o2[4] == o[1]);
+		ensure(o2[5] == o[2]);
+	}
 
 	return 0;
 }
@@ -333,6 +365,19 @@ int evaluate_test()
 		OPER o = Excel(xlfEvaluate, "SUM(1,2)");
 		ensure(o == 3);
 	}
+	{
+		OPER o = Excel(xlfEvaluate, OPER(1.23));
+		ensure(o == 1.23);
+	}
+	{
+		OPER o = Excel(xlfEvaluate, OPER(L"abc"));
+		ensure(o == ErrName);
+	}
+	{
+		OPER o = Excel(xlfEvaluate, OPER(true));
+		ensure(o == true);
+	}
+
 
 	return 0;
 }
