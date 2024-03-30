@@ -131,6 +131,7 @@
     <ClInclude Include="fp.h" />
     <ClInclude Include="fpx.h" />
     <ClInclude Include="handle.h" />
+    <ClInclude Include="on.h" />
     <ClInclude Include="utf8.h" />
     <ClInclude Include="XLCALL.H" />
     <ClInclude Include="alert.h" />
