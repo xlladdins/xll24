@@ -39,6 +39,7 @@ namespace xll {
     X(Err,  err,   int,    "Error type")                 \
     X(Int,  w,     int,    "32-bit signed integer")      \
 
+
 #define XLL_SCALAR(a, b, c, d) | xltype##a
 	constexpr int xltypeScalar = 0 
 		XLL_TYPE_SCALAR(XLL_SCALAR);
@@ -65,10 +66,17 @@ namespace xll {
 	static_assert(Int(123).val.w == 123);
 #endif // _DEBUG
 
+	constexpr XLOPER12 True = Bool(true);
+	constexpr XLOPER12 False = Bool(false);
+
 	// Return scalar from XLOPER12.
-	// constexpr double Num(const XLOPER12& x) { return x.val.num; }
+	// inline double Num(const XLOPER12& x) { return x.val.num; }
 #define XLL_SCALAR(a, b, c, d) constexpr c a(const XLOPER12& x) { return x.val.b; }
 	XLL_TYPE_SCALAR(XLL_SCALAR)
+#undef XLL_SCALAR
+		// inline double& Num(XLOPER12& x) { return x.val.num; }
+#define XLL_SCALAR(a, b, c, d) constexpr c& a(XLOPER12& x) { return x.val.b; }
+		XLL_TYPE_SCALAR(XLL_SCALAR)
 #undef XLL_SCALAR
 #ifdef _DEBUG
 	static_assert(Num(Num(1.23)) == 1.23);
