@@ -263,7 +263,7 @@ namespace xll {
 			if (r * c != size(*this)) {
 				dealloc();
 				xltype = xltypeErr;
-				val.err = xlerrNA;
+				val.err = xlerrValue;
 			}
 			else {
 				val.array.rows = r;
@@ -272,7 +272,7 @@ namespace xll {
 
 			return *this;
 		}
-	
+
 		// One-dimensional index.
 		OPER& operator[](int i)
 		{
@@ -329,74 +329,37 @@ namespace xll {
 			return *this;
 		}
 
-		// JSON like object with keys in first row.
-		constexpr bool is_object() const
+		OPER& push_bottom(const XLOPER12& x)
 		{
-			if (type(*this) != xltypeMulti || rows(*this) != 2) {
-				return false;
+			if (size(x) == 0) {
+				return *this;
+			}
+			if (size(*this) == 0) {
+				return operator=(x);
+			}
+			if (columns(*this) != columns(x)) {
+				return operator=(ErrValue);
+			}
+			if (type(*this) != xltypeMulti) {
+				enlist();
 			}
 
-			for (int i = 0; i < columns(*this); ++i) {
-				if (type(operator()(0, i)) != xltypeStr) {
-					return false;
+			OPER o(rows(*this) + rows(x), columns(*this), nullptr);
+			for (int i = 0; i < size(*this); ++i) {
+				o[i] = operator[](i);
+			}
+			if (type(x) != xltypeMulti) {
+				o[size(*this)] = x;
+			}
+			else {
+				for (int i = 0; i < size(x); ++i) {
+					o[size(*this) + i] = x.val.array.lparray[i];
 				}
 			}
+			std::swap(*this, o);
 
-			return true;
+			return *this;
 		}
-		// Find index of string in first row
-		template<class T> requires is_char<T>::value
-		constexpr int lookup(const T* str) const
-		{
-			int i = 0;
-
-			while (i < columns(*this) && operator()(0, i) != str) {
-				++i;
-			}
-
-			return i;
-		}
-		// Lookup key in first row.
-		template<class T> requires is_char<T>::value
-		OPER& operator[](const T* str)
-		{
-			//ensure(is_object());
-			int i = lookup(str);
-			//ensure(i < columns(*this));
-
-			return operator()(1, i);
-		}
-		template<class T> requires is_char<T>::value
-			const OPER& operator[](const T* str) const
-		{
-			//ensure(is_object());
-			int i = lookup(str);
-			//ensure(i < columns(*this));
-
-			return operator()(1, i);
-		}
-		// Two row range of key-value pairs
-		OPER(std::initializer_list<std::pair<const XCHAR*, OPER>> o)
-		{
-			alloc(2, (int)o.size(), nullptr);
-			int i = 0;
-			for (const auto& [k, v] : o) {
-				operator()(0, i) = k;
-				operator()(1, i) = v;
-				++i;
-			}
-		}
-		OPER(std::initializer_list<std::pair<const CHAR*, OPER>> o)
-		{
-			alloc(2, (int)o.size(), nullptr);
-			int i = 0;
-			for (const auto& [k, v] : o) {
-				operator()(0, i) = k;
-				operator()(1, i) = v;
-				++i;
-			}
-		}
-
 
 	private:
 		void dealloc()

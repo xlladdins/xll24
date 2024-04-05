@@ -4,7 +4,7 @@
 #include "export.h"
 #include "alert.h"
 #include "fp.h"
-#include "auto.h"
+#include "on.h"
 #include "handle.h"
 #include "addin.h"
 

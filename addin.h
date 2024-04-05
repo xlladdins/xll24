@@ -6,6 +6,7 @@
 
 namespace xll {
 
+	// Create add-in to be registered with Excel.
 	class AddIn {
 		Args args;
 
@@ -74,6 +75,7 @@ namespace xll {
 			Register();
 			Unregister();
 		}
+		AddIn(const AddIn&) = delete;
 		AddIn& operator=(const AddIn&) = delete;
 		~AddIn()
 		{ }
