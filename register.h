@@ -1,14 +1,5 @@
 // register.h - Excel function and macro registration.
 // Copyright (c) KALX, LLC. All rights reserved. No warranty made.
-// https://learn.microsoft.com/en-us/office/client-developer/excel/xlfregister-form-1
-// Excel12(xlfRegister, LPXLOPER12 pxRes, int iCount,
-//	                    LPXLOPER12 pxModuleText, LPXLOPER12 pxProcedure,
-//	                    LPXLOPER12 pxTypeText, LPXLOPER12 pxFunctionText,
-//	                    LPXLOPER12 pxArgumentText, LPXLOPER12 pxMacroType,
-//	                    LPXLOPER12 pxCategory, LPXLOPER12 pxShortcutText,
-//	                    LPXLOPER12 pxHelpTopic, LPXLOPER12 pxFunctionHelp,
-//	                    LPXLOPER12 pxArgumentHelp1, LPXLOPER12 pxArgumentHelp2,
-//	...);
 
 #pragma once
 #include "args.h"
@@ -31,8 +22,8 @@ namespace xll {
 
 		const int ret = ::Excel12v(xlfRegister, &res, count, &as[0]);
 
-		ensure_ret(ret);
-		ensure_err(res);
+		ensure_ret(ret); // call to Excel12v succeeded
+		ensure_err(res); // call to xlfRegister succeeded
 		ensure_message(type(res) == xltypeNum, "return type of xlfRegister must be the numeric RegisterId");
 
 		return res;
