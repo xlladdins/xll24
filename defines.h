@@ -158,6 +158,16 @@ namespace xll {
 	XLL_TYPE_ALLOC(XLL_ALLOC)
 #undef XLL_ALLOC
 
+	// From counted string.
+	constexpr XLOPER Str(const char* s)
+	{
+		return XLOPER{ .val = {.str = const_cast<char*>(s)}, .xltype = xltypeStr };
+	}
+	constexpr XLOPER12 Str(const wchar_t* s)
+	{
+		return XLOPER12{.val = {.str = const_cast<XCHAR*>(s)}, .xltype = xltypeStr};
+	}
+
 	// Argument for std::span(ptr, count).
 	constexpr size_t count(const XLOPER12& x) noexcept
 	{

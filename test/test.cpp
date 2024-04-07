@@ -72,6 +72,16 @@ int num_test()
 
 int str_test()
 {
+	{
+		constexpr XLOPER s = Str("\03abc");
+		static_assert(s.xltype == xltypeStr);
+		static_assert(s.val.str[0] == 3);
+	}
+	{
+		constexpr XLOPER12 s = Str(L"\03abc");
+		static_assert(s.xltype == xltypeStr);
+		static_assert(s.val.str[0] == 3);
+	}
 	OPER General(L"General");
 	{
 		OPER o(L"");
@@ -318,6 +328,9 @@ int multi_test()
 		ensure(o2[3] == o[0]);
 		ensure(o2[4] == o[1]);
 		ensure(o2[5] == o[2]);
+
+		ensure(o2[1] == index(o2, 1));
+		ensure(o2(1, 1) == index(o2, 1, 1));
 	}
 
 	return 0;
