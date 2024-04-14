@@ -56,6 +56,15 @@ namespace xll {
 		return rows(x) * columns(x);
 	}
 
+	constexpr XLOPER12& index(XLOPER12& x, int i) noexcept
+	{
+		return type(x) != xltypeMulti ? x : x.val.array.lparray[i];
+	}
+	constexpr XLOPER12& index(XLOPER12& x, int i, int j) noexcept
+	{
+		return index(x, i * columns(x) + j);
+	}
+
 	constexpr std::wstring_view view(const XLOPER12& x)
 	{
 		return std::wstring_view(Str(x), count(x));

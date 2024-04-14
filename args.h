@@ -69,7 +69,7 @@ namespace xll {
 
 			// idempotent
 			if (moduleText == Nil) {
-				moduleText = Excel(xlGetName);
+				moduleText = Excel(xlGetName); // Can only be called after xlAutoOpen.
 
 				ensure(type(procedure) == xltypeStr);
 				ensure(procedure.val.str[0] > 0);
@@ -93,7 +93,7 @@ namespace xll {
 						helpTopic &= OPER(L"!0");
 					}
 
-					// Unpack typeText, argumentText, argumentHelp
+					// Unpack typeText, argumentText, argumentHelp from Arg
 					OPER comma(L"");
 					for (int i = 0; i < n; ++i) {
 						typeText &= argumentHelp[i][Arg::Type::typeText];
