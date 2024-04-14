@@ -39,7 +39,6 @@ namespace xll {
     X(Err,  err,   int,    "Error type")                 \
     X(Int,  w,     int,    "32-bit signed integer")      \
 
-
 #define XLL_SCALAR(a, b, c, d) | xltype##a
 	constexpr int xltypeScalar = 0 
 		XLL_TYPE_SCALAR(XLL_SCALAR);

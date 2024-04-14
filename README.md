@@ -16,6 +16,8 @@ The xll library makes it easy to call native code from Excel.
 
 One reason for Python's popularity is that someone who knows how to call
 C, C++, and even Fortran from Python has already written a library to do that.
+The xll library allows you to do that directly from the most popular language
+in the world, Excel.
 
 
 
