@@ -33,6 +33,15 @@ namespace xll {
 		~REF() noexcept = default;
 	};
 
+	constexpr REF reshape(const XLREF12& r, int h, int w)
+	{
+		return REF(r.rwFirst, r.colFirst, h, w);
+	}
+	constexpr REF translate(const XLREF12& r, int dr, int dc)
+	{
+		return REF(r.rwFirst + dr, r.colFirst + dc, rows(r), columns(r));
+	}
+
 } // namespace xll
 
 constexpr bool operator==(const XLREF12& r, const XLREF12& s)
