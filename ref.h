@@ -41,10 +41,6 @@ namespace xll {
 	{
 		return REF(r.rwFirst + dr, r.colFirst + dc, rows(r), columns(r));
 	}
-#ifdef _DEBUG
-	static_assert(reshape(REF(1, 2, 3, 4), 2, 3) == REF(1, 2, 2, 3));
-	static_assert(translate(REF(1, 2, 3, 4), 1, 1) == REF(2, 3, 3, 4));
-#endif // _DEBUG
 
 } // namespace xll
 
@@ -76,4 +72,6 @@ static_assert(xll::REF(1, 2, 3, 4) != xll::REF(1, 2, 3, 5));
 static_assert(rows(xll::REF(1, 2, 2, 3)) == 2);
 static_assert(columns(xll::REF(1, 2, 2, 3)) == 3);
 static_assert(size(xll::REF(1, 2, 2, 3)) == 6);
+static_assert(reshape(xll::REF(1, 2, 3, 4), 2, 3) == xll::REF(1, 2, 2, 3));
+static_assert(translate(xll::REF(1, 2, 3, 4), 1, 1) == xll::REF(2, 3, 3, 4));
 #endif // _DEBUG
