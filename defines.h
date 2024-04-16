@@ -157,7 +157,40 @@ namespace xll {
 		{ return x.xltype & xltype##a ? x.val.b : nullptr; }
 	XLL_TYPE_ALLOC(XLL_ALLOC)
 #undef XLL_ALLOC
+		/*
+		template <char... Str>
+	struct compile_time_string {
+		static constexpr size_t size = sizeof...(Str);
 
+		// Convert the compile-time string to a regular string
+		static constexpr const char* c_str() {
+			static constexpr char str[size + 1] = { Str..., '\0' };
+			return str;
+		}
+	};
+
+	// User-defined literal for creating compile_time_string
+	constexpr compile_time_string operator"" _cts(const char* str, size_t) {
+		return compile_time_string{ str };
+	}
+
+	// Example usage
+	constexpr auto myString = "Hello, world!"_cts;
+	static_assert(myString.size == 13, "Incorrect string size");
+	static_assert(myString.c_str()[0] == 'H', "Incorrect first character");
+	
+template<char... cs>
+	struct pstring {
+		static constexpr char n = static_cast<char>(sizeof...(cs));
+		static const char* str() { static const char s[n + 1] = { n, cs...}; return s; }
+	};
+	constexpr pstring operator"" _p(const char* str, size_t) {
+		return pstring{ str };
+	}
+#ifdef _DEBUG
+	static_assert("abc"_p.str()[0] == 3));
+#endif // _DEBUG
+*/
 	// From counted string.
 	constexpr XLOPER Str(const char* s)
 	{
