@@ -127,6 +127,10 @@ namespace xll {
 
 		return o;
 	}
+	constexpr XLREF12 SRef(const XLOPER12& ref) noexcept
+	{
+		return ref.val.sref.ref;
+	}
 
 	// types requiring allocation where xX is pointer to data
 	// xltypeX, XLOPERX::val.X, xX, description

@@ -41,6 +41,10 @@ namespace xll {
 	{
 		return REF(r.rwFirst + dr, r.colFirst + dc, rows(r), columns(r));
 	}
+#ifdef _DEBUG
+	static_assert(reshape(REF(1, 2, 3, 4), 2, 3) == REF(1, 2, 2, 3));
+	static_assert(translate(REF(1, 2, 3, 4), 1, 1) == REF(2, 3, 3, 4));
+#endif // _DEBUG
 
 } // namespace xll
 
