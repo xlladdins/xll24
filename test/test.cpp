@@ -424,17 +424,47 @@ int fp_test()
 		ensure(a == a2);
 		a = a2;
 		ensure(!(a != a2));
-		a2 = std::move(a);
-#pragma warning(push)
-#pragma warning(disable: 26800)
-		ensure(!a); // use after move 
-		ensure(a2);
+	}
+	{
+		FPX a;
+		ensure(size(a) == 0);
+		ensure(rows(a) == 0);
+		ensure(columns(a) == 0);
+		a.push_back(1.1);
+		ensure(size(a) == 1);
+		ensure(rows(a) == 1);
+		ensure(columns(a) == 1);
+		ensure(a[0] == 1.1);
 
-		FPX a3(std::move(a2));
-		ensure(!a2); // use after move 
-#pragma warning(pop)
-		ensure(a3);
-		ensure(a3);
+		a.resize(0, 0);
+		ensure(size(a) == 0);
+		ensure(rows(a) == 0);
+		ensure(columns(a) == 0);
+
+		a.resize(2, 3);
+		ensure(size(a) == 6);
+		ensure(rows(a) == 2);
+		ensure(columns(a) == 3);
+		double x[] = { 7,8,9,10 };
+		a.push_back(x, 3);
+		ensure(rows(a) == 3);
+		ensure(columns(a) == 3);
+		ensure(a[6] == 7);
+		ensure(a[7] == 8);
+		ensure(a[8] == 9);
+
+		a.push_back(x, 1);
+		ensure(rows(a) == 4);
+		ensure(columns(a) == 3);
+		ensure(a[9] == 7);
+
+		a.push_back(x, 4);
+		ensure(rows(a) == 6);
+		ensure(columns(a) == 3);
+		ensure(a[12] == 7);
+		ensure(a[13] == 8);
+		ensure(a[14] == 9);
+		ensure(a[15] == 10);
 	}
 
 	return 0;
