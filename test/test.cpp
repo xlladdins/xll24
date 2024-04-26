@@ -440,6 +440,17 @@ int fp_test()
 	return 0;
 }
 
+int int_test()
+{
+	{
+		OPER o;
+		o = 1;
+		ensure(o == 1);
+		ensure(type(o) == xltypeInt);
+	}
+	return 0;
+}
+
 int WINAPI xll_test()
 {
 #pragma XLLEXPORT
@@ -458,6 +469,7 @@ int WINAPI xll_test()
 		ref_test();
 		num_test();
 		str_test();
+		int_test();
 		err_test();
 		bool_test();
 		multi_test();

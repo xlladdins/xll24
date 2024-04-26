@@ -157,6 +157,36 @@ namespace xll {
 	XLL_TYPE_ALLOC(XLL_ALLOC)
 #undef XLL_ALLOC
 
+	/*
+	template<char ...cs>
+	struct cstring {
+		static constexpr char s[sizeof...(cs) + 1] = { static_cast<char>(sizeof...(cs), cs... };
+	};
+	constexpr const char* ps = cstring<'a', 'b', 'c'>::s;
+
+    template<std::size_t N>
+	struct pstring {
+		std::array<wchar_t, N + 1> str{};
+		constexpr pstring(const wchar_t(&s)[N])
+		{
+			str[0] = static_cast<wchar_t>(N - 1);
+			for (std::size_t i = 0; i < N; ++i) {
+				str[i + 1] = s[i];
+			}
+		}
+	};
+	static_assert(pstring{ L"abc" }.str[0] == 3);
+
+	template<pstring s>
+	constexpr const wchar_t* operator""_p()
+	{
+		//static constexpr pstring s_{ s };
+
+		return s.str.data();
+	}
+	static_assert(L"abc"_p[0] == 3);
+	*/
+
 	// From counted string.
 	constexpr XLOPER Str(const char* s)
 	{
