@@ -81,10 +81,7 @@ namespace xll {
 	class FPX {
 		struct fpx* fpx_;
 	public:
-		FPX() noexcept
-			: fpx_(nullptr)
-		{ }
-		FPX(int r, int c)
+		FPX(int r = 0, int c = 0)
 			: fpx_(fpx_malloc(r, c))
 		{
 			if (!fpx_) {
@@ -153,11 +150,6 @@ namespace xll {
 			return fpx_ ? fpx_->array : nullptr;
 		}
 
-		explicit operator bool() const noexcept
-		{
-			return fpx_ != nullptr;
-		}
-
 		// Return pointer to _FP12.
 		_FP12* get() noexcept
 		{
@@ -193,6 +185,39 @@ namespace xll {
 			}
 
 			return *this;
+		}
+
+		FPX& push_back(const double* a, int n = 1)
+		{
+			if (a == nullptr) {
+				throw std::runtime_error(__FUNCTION__ ": a is nullptr");
+			}
+			if (n < 1) {
+				throw std::runtime_error(__FUNCTION__ ": n < 1");
+			}
+			int r = rows(), r_ = r;
+			int c = columns(), c_ = c;
+			if (c == 0) {
+				r_ = n;
+				c_ = 1;
+			}
+			else {
+				r_ = r + 1 + (n - 1) / c;
+			}
+			auto _fpx = fpx_realloc(fpx_, r_, c ? c : 1);
+			if (_fpx) {
+				fpx_ = _fpx;
+				std::copy_n(a, n, fpx_->array + r * c);
+			}
+			else {
+				throw std::runtime_error(__FUNCTION__ ": fpx_realloc failed");
+			}
+
+			return *this;
+		}
+		FPX& push_back(double x)
+		{
+			return push_back(&x);
 		}
 
 		double operator[](int i) const noexcept

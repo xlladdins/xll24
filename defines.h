@@ -126,6 +126,10 @@ namespace xll {
 
 		return o;
 	}
+	constexpr XLREF12 SRef(const XLOPER12& ref) noexcept
+	{
+		return ref.val.sref.ref;
+	}
 
 	// types requiring allocation where xX is pointer to data
 	// xltypeX, XLOPERX::val.X, xX, description
@@ -156,6 +160,10 @@ namespace xll {
 		{ return x.xltype & xltype##a ? x.val.b : nullptr; }
 	XLL_TYPE_ALLOC(XLL_ALLOC)
 #undef XLL_ALLOC
+		/*
+		template <char... Str>
+	struct compile_time_string {
+		static constexpr size_t size = sizeof...(Str);
 
 	/*
 	template<char ...cs>
