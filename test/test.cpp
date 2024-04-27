@@ -231,7 +231,6 @@ int multi_test()
 		OPER m0 = m;
 		m[0] = m;
 		ensure(m[0] == m0);
-		ensure(m[1] == L"abc");
 
 		m[1] = m;
 		ensure(m[0] == m0);
@@ -245,6 +244,19 @@ int multi_test()
 
 		m[0][0] = m;
 		m[0][0][0] = m;
+	}
+	{
+		OPER m;
+		m.reshape(2, 3);
+		m[0] = 0;
+		ensure(m[0] == 0);
+		m(0, 0) = 0;
+		ensure(m[0] == 0);
+		m(0, 0) = 0;
+		ensure(m[0] == 0);
+
+		m(0, 1) = 2;
+		ensure(m[1] == 2);
 	}
 	{
 		OPER o(L"abc");
@@ -402,6 +414,10 @@ int fp_test()
 		ensure(columns(a) == 3);
 		ensure(a == a);
 		ensure(!(a != a));
+		a[0] = 0;
+		ensure(a[0] == 0);
+		a(0, 1) = 0;
+		ensure(a[1] == 0);
 	}
 	{
 		FPX a({ 1,2,3 });
@@ -476,6 +492,9 @@ int int_test()
 		OPER o;
 		o = 1;
 		ensure(o == 1);
+		ensure(type(o) == xltypeInt);
+		o = 0;
+		ensure(o == 0);
 		ensure(type(o) == xltypeInt);
 	}
 	return 0;
