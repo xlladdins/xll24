@@ -50,11 +50,21 @@ namespace xll {
 		return excel_time{ excel_clock::duration{d} };
 	}
 
-	// Use ymd{to_days(d)} to convert to std::chrono::year_month_day.
 	inline std::chrono::sys_days to_days(double d)
 	{
 		using namespace std::chrono;
 
 		return time_point_cast<days>(excel_clock::to_sys(to_time(d)));
 	}
+
+	inline std::chrono::year_month_day to_ymd(double d)
+	{
+		return std::chrono::year_month_day{ to_days(d) };
+	}
+
+	inline double from_ymd(const std::chrono::year_month_day& d)
+	{
+		return excel_clock::from_sys(std::chrono::sys_days{ d }).time_since_epoch().count();
+	}
+
 }
