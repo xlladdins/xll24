@@ -3,8 +3,22 @@
 #include <numeric>
 #include <random>
 #include "../xll.h"
+#include "../excel_time.h"
 
 using namespace xll;
+
+int excel_clock_test()
+{
+	{
+		long bias = timezone_bias();
+		OPER now = Excel(xlfNow);
+		double utc = Num(now) + bias / 86400.;
+		double bias_ = Num(Excel(xlfHour, utc)) - Num(Excel(xlfHour, now));
+		ensure(bias == bias_*3600);
+	}
+
+	return 0;
+}
 
 //#ifdef _DEBUG
 
@@ -494,6 +508,8 @@ int WINAPI xll_test()
 		evaluate_test();
 		excel_test();
 		fp_test();
+		excel_clock_test();
+
 	}
 	catch (const std::exception& ex) {
 		XLL_ERROR(ex.what());
