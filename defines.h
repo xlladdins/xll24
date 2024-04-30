@@ -39,7 +39,6 @@ namespace xll {
     X(Err,  err,   int,    "Error type")                 \
     X(Int,  w,     int,    "32-bit signed integer")      \
 
-
 #define XLL_SCALAR(a, b, c, d) | xltype##a
 	constexpr int xltypeScalar = 0 
 		XLL_TYPE_SCALAR(XLL_SCALAR);
@@ -166,35 +165,36 @@ namespace xll {
 	struct compile_time_string {
 		static constexpr size_t size = sizeof...(Str);
 
-		// Convert the compile-time string to a regular string
-		static constexpr const char* c_str() {
-			static constexpr char str[size + 1] = { Str..., '\0' };
-			return str;
+	/*
+	template<char ...cs>
+	struct cstring {
+		static constexpr char s[sizeof...(cs) + 1] = { static_cast<char>(sizeof...(cs), cs... };
+	};
+	constexpr const char* ps = cstring<'a', 'b', 'c'>::s;
+
+    template<std::size_t N>
+	struct pstring {
+		std::array<wchar_t, N + 1> str{};
+		constexpr pstring(const wchar_t(&s)[N])
+		{
+			str[0] = static_cast<wchar_t>(N - 1);
+			for (std::size_t i = 0; i < N; ++i) {
+				str[i + 1] = s[i];
+			}
 		}
 	};
+	static_assert(pstring{ L"abc" }.str[0] == 3);
 
-	// User-defined literal for creating compile_time_string
-	constexpr compile_time_string operator"" _cts(const char* str, size_t) {
-		return compile_time_string{ str };
-	}
+	template<pstring s>
+	constexpr const wchar_t* operator""_p()
+	{
+		//static constexpr pstring s_{ s };
 
-	// Example usage
-	constexpr auto myString = "Hello, world!"_cts;
-	static_assert(myString.size == 13, "Incorrect string size");
-	static_assert(myString.c_str()[0] == 'H', "Incorrect first character");
-	
-template<char... cs>
-	struct pstring {
-		static constexpr char n = static_cast<char>(sizeof...(cs));
-		static const char* str() { static const char s[n + 1] = { n, cs...}; return s; }
-	};
-	constexpr pstring operator"" _p(const char* str, size_t) {
-		return pstring{ str };
+		return s.str.data();
 	}
-#ifdef _DEBUG
-	static_assert("abc"_p.str()[0] == 3));
-#endif // _DEBUG
-*/
+	static_assert(L"abc"_p[0] == 3);
+	*/
+
 	// From counted string.
 	constexpr XLOPER Str(const char* s)
 	{

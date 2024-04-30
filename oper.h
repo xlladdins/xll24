@@ -238,10 +238,17 @@ namespace xll {
 		constexpr explicit OPER(int w) noexcept
 			: XLOPER12{ Int(w) }
 		{ }
+		OPER& operator=(int w) noexcept
+		{
+			dealloc();
+
+			return *this = Int(w);
+		}
 		bool operator==(int w) const
 		{
 			return operator==(static_cast<double>(w));
 		}
+
 
 		// Err
 		constexpr explicit OPER(xll::xlerr err) noexcept
