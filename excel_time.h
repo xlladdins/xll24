@@ -5,7 +5,7 @@
 namespace xll {
 
 	// Convert Excel Julian date to local time time_t
-	constexpr time_t excel_time(double jd)
+	constexpr time_t excel_time_t(double jd)
 	{
 		// Excel Julian date is days since 1900-01-00
 		// time_t is seconds since 1970-01-01
@@ -14,7 +14,7 @@ namespace xll {
 	}
 
 	// Convert local time time_t to Excel Julian date
-	constexpr double excel_time(time_t t)
+	constexpr double time_t_excel(time_t t)
 	{
 		// Excel Julian date is days since 1900-01-00
 		// time_t is seconds since 1970-01-01

@@ -4,17 +4,26 @@
 #include <random>
 #include "../xll.h"
 #include "../excel_time.h"
+#include "../excel_clock.h"
 
 using namespace xll;
 
 int excel_clock_test()
 {
+	using namespace std::chrono;
 	{
 		long bias = timezone_bias();
 		OPER now = Excel(xlfNow);
 		double utc = Num(now) + bias / 86400.;
 		double bias_ = Num(Excel(xlfHour, utc)) - Num(Excel(xlfHour, now));
 		ensure(bias == bias_*3600);
+	}
+	{
+		OPER today = Excel(xlfToday);
+		auto ymd = year_month_day{ to_days(Num(today)) };
+		ensure(ymd.year() == year((int)Num(Excel(xlfYear, today))));
+		ensure(ymd.month() == month((unsigned)Num(Excel(xlfMonth, today))));
+		ensure(ymd.day() == day((unsigned)Num(Excel(xlfDay, today))));
 	}
 
 	return 0;
