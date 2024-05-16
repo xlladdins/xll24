@@ -13,12 +13,12 @@ namespace xll {
 		XLOPER12 res = { .xltype = xltypeNil };
 
 		std::array os{std::move(OPER(ts))...};
-		LPXLOPER12 as[sizeof...(ts)];
+		LPXLOPER12 pos[sizeof...(ts)]; // must be native XLOPER12
 		for (size_t i = 0; i < os.size(); ++i) {
-			as[i] = &os[i];
+			pos[i] = &os[i];
 		}
 		// Heap corruption if OPER address passed for res.
-		int ret = ::Excel12v(fn, &res, sizeof...(ts), &as[0]);
+		int ret = ::Excel12v(fn, &res, sizeof...(ts), &pos[0]);
 		ensure_ret(ret);
 		// ensure_err(res); // allow xltypeErr to be returned
 		OPER o(res);

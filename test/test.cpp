@@ -12,14 +12,13 @@ int excel_clock_test()
 {
 	using namespace std::chrono;
 	{
-		long bias = timezone_bias();
+		const auto [bias,ret] = timezone_bias();
 		OPER now = Excel(xlfNow);
 		double utc = Num(now) + bias / 86400.;
 		double bias_ = Num(Excel(xlfHour, utc)) - Num(Excel(xlfHour, now));
 		ensure(bias == bias_*3600);
 	}
 	{
-		/*
 		OPER today = Excel(xlfToday);
 		// TODO: off by 1???
 		//today.val.num -= 1;
@@ -27,7 +26,13 @@ int excel_clock_test()
 		ensure(ymd.year() == year((int)Num(Excel(xlfYear, today))));
 		ensure(ymd.month() == month((unsigned)Num(Excel(xlfMonth, today))));
 		ensure(ymd.day() == day((unsigned)Num(Excel(xlfDay, today))));
-		*/
+	}
+	{
+		auto d = to_excel(2024y / 1 / 1);
+		auto y = to_days(d);
+		ensure(y == 2024y / 1 / 1);
+		y = to_days(d + .9);
+		ensure(y == 2024y / 1 / 1);
 	}
 
 	return 0;
