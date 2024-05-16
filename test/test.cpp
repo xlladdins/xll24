@@ -22,7 +22,7 @@ int excel_clock_test()
 		OPER today = Excel(xlfToday);
 		// TODO: off by 1???
 		//today.val.num -= 1;
-		auto ymd = year_month_day{ to_days(Num(today)) };
+		auto ymd = to_ymd(Num(today));
 		ensure(ymd.year() == year((int)Num(Excel(xlfYear, today))));
 		ensure(ymd.month() == month((unsigned)Num(Excel(xlfMonth, today))));
 		ensure(ymd.day() == day((unsigned)Num(Excel(xlfDay, today))));

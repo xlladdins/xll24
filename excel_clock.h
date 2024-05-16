@@ -17,11 +17,10 @@ namespace xll {
 #if 0
 	// https://stackoverflow.com/questions/33964461/handling-julian-days-in-c11-14
 	struct excel_clock;
+    template <class Dur>
+    using excel_time = std::chrono::time_point<excel_clock, Dur>;
 
-	template <class Dur>
-	using excel_time = std::chrono::time_point<excel_clock, Dur>;
-
-	// Excel clock represented as days since 1900-01-00.
+	// Excel clock represented as days since 1900-01-01.
 	struct excel_clock
 	{
 		using rep = double;
@@ -58,7 +57,7 @@ namespace xll {
 
 	inline auto to_time(double d)
 	{
-		return excel_time{ excel_clock::duration{d} };
+            return /*std::chrono::floor<std::chrono::days>*/(excel_time { excel_clock::duration { d } });
 	}
 
 	inline std::chrono::sys_days to_days(double d)
