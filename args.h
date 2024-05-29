@@ -110,6 +110,36 @@ namespace xll {
 
 			return static_cast<int>(off + n);
 		}
+		// key-value pairs
+		// call after prepare()
+		OPER markup() const
+		{
+			OPER o({
+				OPER(L"moduleText"), moduleText,
+				OPER(L"procedure"), procedure,
+				OPER(L"typeText"), typeText,
+				OPER(L"functionText"), functionText,
+				OPER(L"argumentText"), argumentText,
+				OPER(L"macroType"), macroType,
+				OPER(L"category"), category,
+				OPER(L"shortcutText"), shortcutText,
+				OPER(L"helpTopic"), helpTopic,
+				OPER(L"functionHelp"), functionHelp 
+			});
+			OPER ah;
+			for (int i = 0; i < max_help; ++i) {
+				if (argumentHelp[i] != OPER{}) {
+					ah.push_bottom(argumentHelp[i]);
+				}
+				else {
+					break;
+				}
+			}
+			o.reshape(size(o) / 2, 2);
+			o.push_bottom(OPER({ OPER(L"argumentHelp"), ah }));
+
+			return o;
+		}
 	};
 
 	struct Macro : public Args {
