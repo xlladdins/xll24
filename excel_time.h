@@ -1,6 +1,6 @@
 // excel_time.h - Excel Julian date to time_t conversion
 #pragma once
-#include <utility>
+#include <expected>
 #include <timezoneapi.h>
 
 namespace xll {
@@ -24,12 +24,15 @@ namespace xll {
 	}
 
 	// UTC = local time + bias
-	inline std::pair<LONG,DWORD> timezone_bias()
+	inline std::expected<LONG,DWORD> timezone_bias()
 	{
 		DYNAMIC_TIME_ZONE_INFORMATION dtzi;
 		DWORD ret = GetDynamicTimeZoneInformation(&dtzi);
+		if (TIME_ZONE_ID_INVALID == ret) {
+			return std::unexpected<DWORD>(ret);
+		}
 
-		return { dtzi.Bias * 60, ret }; // in seconds
+		return dtzi.Bias * 60; // in seconds
 	}
 
 } // namespace xll

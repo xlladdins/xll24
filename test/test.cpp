@@ -12,11 +12,12 @@ int excel_clock_test()
 {
 	using namespace std::chrono;
 	{
-		const auto [bias,ret] = timezone_bias();
+		const auto bias = timezone_bias();
+		ensure(bias);
 		OPER now = Excel(xlfNow);
-		double utc = Num(now) + bias / 86400.;
+		double utc = Num(now) + *bias / 86400.;
 		double bias_ = Num(Excel(xlfHour, utc)) - Num(Excel(xlfHour, now));
-		ensure(bias == bias_*3600);
+		ensure(*bias == bias_*3600);
 	}
 	{
 		OPER today = Excel(xlfToday);
