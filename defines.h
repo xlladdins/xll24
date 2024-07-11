@@ -126,9 +126,9 @@ namespace xll {
 
 		return o;
 	}
-	constexpr XLREF12 SRef(const XLOPER12& ref) noexcept
+	constexpr XLREF12 SRef(const XLOPER12& sref) noexcept
 	{
-		return ref.val.sref.ref;
+		return sref.val.sref.ref;
 	}
 
 	// types requiring allocation where xX is pointer to data
@@ -361,7 +361,7 @@ namespace xll {
 } // namespace xll
 
 // Function returning a constant value.
-#define XLL_CONST(type, name, value, help, cat, topic) \
+#define XLL_CONST(type, name, value, help, category, topic) \
 const xll::AddIn xai_ ## name (xll::Function(XLL_##type, "_xll_" #name, #name) \
-.Arguments({}).FunctionHelp(help).Category(cat).HelpTopic(topic)); \
+.Arguments({}).FunctionHelp(help).Category(category).HelpTopic(topic)); \
 extern "C" __declspec(dllexport) type WINAPI xll_ ## name () { return value; }
