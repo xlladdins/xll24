@@ -110,6 +110,7 @@
   <ItemGroup>
     <ClCompile Include="handle.cpp" />
     <ClCompile Include="test.cpp" />
+    <ClCompile Include="web.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\xll.vcxproj">

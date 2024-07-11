@@ -238,5 +238,5 @@ int WINAPI xll_handle_test()
 
 	return TRUE;
 }
-Auto<OpenAfter> xaoa_handle_test(xll_handle_test);
+//Auto<OpenAfter> xaoa_handle_test(xll_handle_test);
 //#endif // 0

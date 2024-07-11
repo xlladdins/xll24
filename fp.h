@@ -238,6 +238,35 @@ namespace xll {
 			return fpx_->array[fpx_index(fpx_, i, j)];
 		}
 	};
+
+	// Fixed size array.
+	template<size_t N, size_t M>
+	struct fp12 {
+		int rows = static_cast<int>(N);
+		int columns = static_cast<int>(M);
+		double array[N * M];
+		fp12& reshape(int r, int c)
+		{
+			if (r * c != rows * columns) {
+				rows = 0;
+				columns = 0;
+				array[0] = std::numeric_limits<double>::quiet_NaN();
+			}
+			rows = r;
+			columns = c;
+
+			return *this;
+		}	
+		// For use with stand-alone functions.
+		_FP12* get() noexcept
+		{
+			return reinterpret_cast<_FP12*>(this);
+		}
+		const _FP12* get() const noexcept
+		{
+			return reinterpret_cast<const _FP12*>(this);
+		}
+	};
 }
 
 constexpr bool operator==(const _FP12& a, const _FP12& b)

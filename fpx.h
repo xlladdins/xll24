@@ -3,14 +3,11 @@
 #pragma once
 
 #pragma warning(push)
-// nonstandard extension used: zero-sized array in struct/union
-#pragma warning(disable: 4200) 
 struct fpx {
 	int rows;
 	int columns;
-	double array[];
+	double array[1];
 };
-#pragma warning(pop)
 
 // Row-major order
 extern int fpx_index(struct fpx* fpx, int i, int j);
