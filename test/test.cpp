@@ -508,26 +508,42 @@ int fp_test()
 		ensure(size(a) == 6);
 		ensure(rows(a) == 2);
 		ensure(columns(a) == 3);
-		double x[] = { 7,8,9,10 };
-		a.push_back(x, 3);
+		double x[] = { 7,8,9 };
+		a.vstack(FPX(x));
 		ensure(rows(a) == 3);
 		ensure(columns(a) == 3);
 		ensure(a[6] == 7);
 		ensure(a[7] == 8);
 		ensure(a[8] == 9);
+	}
+	{
+		FPX a({ 1,2,3 });
+		FPX b({ 4,5,6 });
+		auto c = a.hstack(b);
+		ensure(rows(c) == 1);
+		ensure(columns(c) == 6);
+		ensure(c[0] == 1);
+		ensure(c[1] == 2);
+		ensure(c[2] == 3);
+		ensure(c[3] == 4);
+		ensure(c[4] == 5);
+		ensure(c[5] == 6);
 
-		a.push_back(x, 1);
-		ensure(rows(a) == 4);
-		ensure(columns(a) == 3);
-		ensure(a[9] == 7);
-
-		a.push_back(x, 4);
-		ensure(rows(a) == 6);
-		ensure(columns(a) == 3);
-		ensure(a[12] == 7);
-		ensure(a[13] == 8);
-		ensure(a[14] == 9);
-		ensure(a[15] == 10);
+		c.hstack(c);
+		ensure(rows(c) == 1);
+		ensure(columns(c) == 12);
+		ensure(c[0] == 1);
+		ensure(c[1] == 2);
+		ensure(c[2] == 3);
+		ensure(c[3] == 4);
+		ensure(c[4] == 5);
+		ensure(c[5] == 6);
+		ensure(c[6] == 1);
+		ensure(c[7] == 2);
+		ensure(c[8] == 3);
+		ensure(c[9] == 4);
+		ensure(c[10] == 5);
+		ensure(c[11] == 6);
 	}
 
 	return 0;

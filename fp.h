@@ -1,14 +1,15 @@
 // fp.h - FP12 data type
 // Copyright (c) KALX, LLC. All rights reserved. No warranty made.
 #pragma once
-extern "C" {
-#include "fpx.h"
-}
 #include <algorithm>
 #include <initializer_list>
 //#include <mdspan>
 #include <span>
 #include <stdexcept>
+#include "ensure.h"
+extern "C" {
+#include "fpx.h"
+}
 
 namespace xll {
 
@@ -84,9 +85,7 @@ namespace xll {
 		FPX(int r = 0, int c = 0)
 			: fpx_(fpx_malloc(r, c))
 		{
-			if (!fpx_) {
-				throw std::runtime_error(__FUNCTION__ ": fpx_malloc failed");
-			}
+			ensure(fpx_);
 		}
 		// Copy from array having at least r*c elements.
 		FPX(int r, int c, const double* a)
@@ -94,12 +93,31 @@ namespace xll {
 		{
 			std::copy_n(a, r * c, fpx_->array);
 		}
+		// One row array.
 		FPX(std::initializer_list<double> a)
 			: FPX(1, static_cast<int>(a.size()), a.begin())
+		{ }
+		template<size_t N>
+		FPX(const double(&a)[N])
+			: FPX(1, static_cast<int>(N), a)
+		{ }
+		explicit FPX(const _FP12& a)
+			: FPX(a.rows, a.columns, a.array)
 		{ }
 		FPX(const FPX& a)
 			: FPX(a.rows(), a.columns(), a.array())
 		{ }
+		// Construct from iterable
+		template<class I>
+			requires std::is_same_v<double, std::iter_value_t<I>>
+		FPX(I i)
+		{
+			while (i) {
+				push_back(*i);
+				++i;
+
+			}
+		}
 		FPX(FPX&& a) noexcept
 			: fpx_(a.fpx_)
 		{
@@ -172,12 +190,8 @@ namespace xll {
 		{
 			if (r * c != size()) {
 				auto _fpx = fpx_realloc(fpx_, r, c);
-				if (_fpx) {
-					fpx_ = _fpx;
-				}
-				else {
-					throw std::runtime_error(__FUNCTION__ ": fpx_realloc failed");
-				}
+				ensure(_fpx);
+				fpx_ = _fpx;
 			}
 			else {
 				fpx_->rows = r;
@@ -187,37 +201,79 @@ namespace xll {
 			return *this;
 		}
 
-		FPX& push_back(const double* a, int n = 1)
+		FPX& swap(FPX& a)
 		{
-			if (a == nullptr) {
-				throw std::runtime_error(__FUNCTION__ ": a is nullptr");
-			}
-			if (n < 1) {
-				throw std::runtime_error(__FUNCTION__ ": n < 1");
-			}
-			int r = rows(), r_ = r;
-			int c = columns(), c_ = c;
-			if (c == 0) {
-				r_ = n;
-				c_ = 1;
-			}
-			else {
-				r_ = r + 1 + (n - 1) / c;
-			}
-			auto _fpx = fpx_realloc(fpx_, r_, c ? c : 1);
-			if (_fpx) {
-				fpx_ = _fpx;
-				std::copy_n(a, n, fpx_->array + r * c);
-			}
-			else {
-				throw std::runtime_error(__FUNCTION__ ": fpx_realloc failed");
-			}
+			std::swap(fpx_, a.fpx_);
 
 			return *this;
 		}
+
+		FPX& transpose()
+		{
+			FPX a(columns(), rows());
+			for (int i = 0; i < rows(); ++i) {
+				for (int j = 0; j < columns(); ++j) {
+					a(j, i) = operator()(i, j);
+				}
+			}
+			swap(a);
+
+			return *this;
+		}
+
+		FPX& vstack(const _FP12& a)
+		{
+			ensure(columns() == a.columns);
+
+			int n = size();
+			resize(rows() + a.rows, columns());
+			std::copy_n(a.array, a.rows * a.columns, fpx_->array + n);
+
+			return *this;
+		}
+		FPX& vstack(const FPX& a)
+		{
+			return vstack(*a.get());
+		}
+
+		FPX& hstack(const _FP12& a)
+		{
+			// !!! not efficient
+			FPX a_(*this);
+			a_.transpose();
+			FPX _a(a);
+			_a.transpose();
+			a_.vstack(_a);
+			a_.transpose();
+			swap(a_);
+
+			return *this;
+		}
+		FPX& hstack(const FPX& a)
+		{
+			return hstack(*a.get());
+		}
+
+		// Only works for vector arrays
 		FPX& push_back(double x)
 		{
-			return push_back(&x);
+			auto n = size();
+			ensure(n == 0 || rows() == 1 || columns() == 1);
+
+			if (n == 0) {
+				resize(1, 1);
+				operator[](0) = x;
+			}
+			else if (rows() == 1) {
+				resize(1, n + 1);
+				operator[](n) = x;
+			}
+			else {
+				resize(n + 1, 1);
+				operator[](n) = x;
+			}
+
+			return *this;
 		}
 
 		double operator[](int i) const noexcept
