@@ -115,7 +115,6 @@ namespace xll {
 			while (i) {
 				push_back(*i);
 				++i;
-
 			}
 		}
 		FPX(FPX&& a) noexcept
@@ -210,13 +209,20 @@ namespace xll {
 
 		FPX& transpose()
 		{
-			FPX a(columns(), rows());
-			for (int i = 0; i < rows(); ++i) {
-				for (int j = 0; j < columns(); ++j) {
-					a(j, i) = operator()(i, j);
+			int r = rows();
+			int c = columns();
+
+			if (r * c != 0) {
+				if (r == 1 || c == 1) {
+					std::swap(fpx_->rows, fpx_->columns);
+				}
+				else {
+					for (int i = 1; i < size() - 1; ++i) {
+						int j = (c * i) % (r * c - 1);
+						std::swap(fpx_->array[i], fpx_->array[j]);
+					}
 				}
 			}
-			swap(a);
 
 			return *this;
 		}
