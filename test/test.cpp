@@ -37,7 +37,7 @@ int excel_clock_test()
 		ensure(y == 2024y / 1 / 1);
 	}*/
 	{
-		time_t t = time(nullptr); // UTD time
+		time_t t = time(nullptr); // UTC time
 		ensure(t != -1);
 		auto now = Excel(xlfNow); // local time
 		OPER d(from_time_t(t));
