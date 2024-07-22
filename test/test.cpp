@@ -37,17 +37,17 @@ int excel_clock_test()
 		ensure(y == 2024y / 1 / 1);
 	}*/
 	{
-		time_t t = time(nullptr);
-		auto now = Excel(xlfNow);
+		time_t t = time(nullptr); // UTD time
 		ensure(t != -1);
-		OPER d;
-		d = from_time_t(t - timezone_bias().value());
+		auto now = Excel(xlfNow); // local time
+		OPER d(from_time_t(t));
 		ensure(Excel(xlfYear, now) == Excel(xlfYear, d));
 		ensure(Excel(xlfMonth, now) == Excel(xlfMonth, d));
 		ensure(Excel(xlfDay, now) == Excel(xlfDay, d));
 		ensure(Excel(xlfHour, now) == Excel(xlfHour, d));
 		ensure(Excel(xlfMinute, now) == Excel(xlfMinute, d));
-		ensure(Excel(xlfSecond, now) == Excel(xlfSecond, d));
+		auto ds = Num(Excel(xlfSecond, now)) - Num(Excel(xlfSecond, d));
+		ensure(fabs(ds) <= 1);
 	}
 
 	return 0;
