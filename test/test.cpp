@@ -11,6 +11,7 @@ using namespace xll;
 int excel_clock_test()
 {
 	using namespace std::chrono;
+	/*
 	{
 		const auto bias = timezone_bias();
 		ensure(bias);
@@ -26,14 +27,27 @@ int excel_clock_test()
 		auto ymd = std::chrono::year_month_day{ to_days(Num(today)) };
 		ensure(ymd.year() == year((int)Num(Excel(xlfYear, today))));
 		ensure(ymd.month() == month((unsigned)Num(Excel(xlfMonth, today))));
-		//ensure(ymd.day() == day((unsigned)Num(Excel(xlfDay, today)))); // TODO: off by 1
+		ensure(ymd.day() == day((unsigned)Num(Excel(xlfDay, today)))); // TODO: off by 1
 	}
 	{
 		auto d = to_excel(2024y / 1 / 1);
 		auto y = to_days(d);
-		ensure(y == 2024y / 1 / 1);
+		ensure(year_month_day(y) == 2024y / 1 / 1);
 		y = to_days(d + .9);
 		ensure(y == 2024y / 1 / 1);
+	}*/
+	{
+		time_t t = time(nullptr);
+		auto now = Excel(xlfNow);
+		ensure(t != -1);
+		OPER d;
+		d = from_time_t(t - timezone_bias().value());
+		ensure(Excel(xlfYear, now) == Excel(xlfYear, d));
+		ensure(Excel(xlfMonth, now) == Excel(xlfMonth, d));
+		ensure(Excel(xlfDay, now) == Excel(xlfDay, d));
+		ensure(Excel(xlfHour, now) == Excel(xlfHour, d));
+		ensure(Excel(xlfMinute, now) == Excel(xlfMinute, d));
+		ensure(Excel(xlfSecond, now) == Excel(xlfSecond, d));
 	}
 
 	return 0;

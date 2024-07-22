@@ -5,11 +5,25 @@
 namespace xll {
 
 	constexpr auto excel_epoch = std::chrono::sys_days{ std::chrono::year{1900} / std::chrono::January / 0 };
+
+	constexpr time_t to_time_t(double d)
+	{
+		return static_cast<time_t>((d - 25569) * 86400);
+	}
+	constexpr double from_time_t(time_t t)
+	{
+		return t / 86400. + 25569;
+	}
 	
 	constexpr auto to_days(double d)
 	{
-		return std::chrono::sys_days{ excel_epoch + std::chrono::days{static_cast<int>(d)} };
+		return std::chrono::sys_days{ excel_epoch + std::chrono::days{static_cast<int>(d - 1)} };
 	}
+#ifdef _DEBUG
+	//constexpr auto d0 = to_days(45495);
+	//constexpr auto d1 = std::chrono::sys_days{ std::chrono::year{2024} / std::chrono::July / 24 };
+	//static_assert(d0 == d1);
+#endif // _DEBUG
 	constexpr auto to_excel(const std::chrono::sys_days& sys)
 	{
 		return std::chrono::duration_cast<std::chrono::days>(sys - excel_epoch).count();

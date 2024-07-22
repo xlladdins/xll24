@@ -32,7 +32,7 @@ namespace xll {
 			return std::unexpected<DWORD>(ret);
 		}
 
-		return dtzi.Bias * 60; // in seconds
+		return (dtzi.Bias + dtzi.DaylightBias) * 60; // in seconds
 	}
 
 } // namespace xll
