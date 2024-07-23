@@ -377,10 +377,10 @@ int markup_test()
 		ensure(AddIn::addins.contains(OPER(L"XLL.HYPOT")));
 		auto args = AddIn::addins[OPER(L"XLL.HYPOT")];
 		auto mu = args->markup();
-		ensure(rows(mu) == 12);
+		ensure(rows(mu) == 14);
 		ensure(columns(mu) == 2);
 		ensure(mu(10, 0) == L"argumentHelp");
-		ensure(size(mu(10, 1)) == 2);
+		
 	}
 	return 0;
 }

@@ -7,19 +7,16 @@ namespace xll {
 
 	// Individual argument for an add-in function.
 	struct Arg {
-		enum Type {
-			typeText, argumentText, argumentHelp, argumentDefault
-		};
 		OPER type, name, help, init;
 
 		template<class T>
 			requires xll::is_char<T>::value
 		Arg(const wchar_t* type, const T* name, const T* help)
-			: type(type), name(name), help(help), init(init)
+			: type(type), name(name), help(help), init(OPER(L""))
 		{ }
 		template<class T, class U>
 			requires xll::is_char<T>::value
-		Arg(const wchar_t* type, const T* name, const T* help, U init = OPER{})
+		Arg(const wchar_t* type, const T* name, const T* help, U init)
 			: type(type), name(name), help(help), init(init)
 		{ }
 	};
@@ -38,8 +35,10 @@ namespace xll {
 		OPER shortcutText;
 		OPER helpTopic;
 		OPER functionHelp;
-		OPER argumentHelp[max_help]; // individual argument help
-		OPER argumentDefault[max_help]; // individual argument default values
+		OPER argumentHelp[max_help]; // array of individual argument help
+		OPER argumentType; // array of individual argument types
+		OPER argumentName; // array of individual argument names	
+		OPER argumentInit; // array individual argument default values
 
 		bool is_hidden() const
 		{
@@ -60,7 +59,7 @@ namespace xll {
 			int i = 0;
 
 			if (is_function()) {
-				while (i < max_help && argumentHelp[i] != OPER{}) {
+				while (i < max_help && !isNil(argumentHelp[i])) {
 					++i;
 				}
 			}
@@ -100,15 +99,14 @@ namespace xll {
 						helpTopic &= OPER(L"!0");
 					}
 
-					// Unpack typeText, argumentText, argumentHelp from Arg
+					// Unpack typeText, argumentText
 					OPER comma(L"");
 					for (int i = 0; i < n; ++i) {
-						typeText &= argumentHelp[i][Arg::Type::typeText];
-						argumentText &= comma & argumentHelp[i][Arg::Type::argumentText];
-						argumentHelp[i] = argumentHelp[i][Arg::Type::argumentHelp];
-						argumentDefault[i] = argumentDefault[i][Arg::Type::argumentDefault];
+						typeText &= argumentType[i];
+						argumentText &= (comma & argumentName[i]);
 						comma = OPER(L", ");
 					}
+
 					// https://docs.microsoft.com/en-us/office/client-developer/excel/known-issues-in-excel-xll-development#argument-description-string-truncation-in-the-function-wizard
 					//argumentHelp[n] = OPER(L"");
 				}
@@ -134,19 +132,11 @@ namespace xll {
 				OPER(L"helpTopic"), helpTopic,
 				OPER(L"functionHelp"), functionHelp 
 			});
-			OPER ah, ad;
-			for (int i = 0; i < max_help; ++i) {
-				if (argumentHelp[i] != OPER{}) {
-					ah.push_bottom(argumentHelp[i]);
-					ad.push_bottom(argumentDefault[i]);
-				}
-				else {
-					break;
-				}
-			}
 			o.reshape(size(o) / 2, 2);
-			o.push_bottom(OPER({ OPER(L"argumentHelp"), ah }));
-			o.push_bottom(OPER({ OPER(L"argumentDefault"), ad }));
+			o.push_bottom(OPER({ OPER(L"argumentHelp"), OPER(L"TODO:")}));
+			o.push_bottom(OPER({ OPER(L"argumentType"), argumentType }));
+			o.push_bottom(OPER({ OPER(L"argumentName"), argumentName }));
+			o.push_bottom(OPER({ OPER(L"argumentInit"), argumentInit }));
 
 			return o;
 		}
@@ -180,11 +170,13 @@ namespace xll {
 		{ }
 		Function& Arguments(const std::initializer_list<Arg>& args)
 		{
-			OPER* ah = &argumentHelp[0];
-			OPER* ad = &argumentDefault[0];
+			int i = 0;
 			for (const auto& arg : args) {
-				*ah++ = OPER({ arg.type, arg.name, arg.help });
-				*ad++ = arg.init;
+				ensure(i < max_help);
+				argumentHelp[i++] = arg.help;
+				argumentType.push_bottom(arg.type);
+				argumentName.push_bottom(arg.name);
+				argumentInit.push_bottom(arg.init);
 			}
 
 			return *this;
