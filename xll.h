@@ -7,6 +7,7 @@
 #include "on.h"
 #include "handle.h"
 #include "addin.h"
+#include "excel_time.h"
 
 // Set or return value of xlAddInManagerInfo.
 inline LPXLOPER12 AddInManagerInfo(const XLOPER12& info = xll::Nil)

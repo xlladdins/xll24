@@ -8,13 +8,19 @@ namespace xll {
 	// Individual argument for an add-in function.
 	struct Arg {
 		enum Type {
-			typeText, argumentText, argumentHelp
+			typeText, argumentText, argumentHelp, argumentDefault
 		};
-		OPER type, name, help;
+		OPER type, name, help, init;
+
 		template<class T>
 			requires xll::is_char<T>::value
 		Arg(const wchar_t* type, const T* name, const T* help)
-			: type(type), name(name), help(help)
+			: type(type), name(name), help(help), init(init)
+		{ }
+		template<class T, class U>
+			requires xll::is_char<T>::value
+		Arg(const wchar_t* type, const T* name, const T* help, U init = OPER{})
+			: type(type), name(name), help(help), init(init)
 		{ }
 	};
 
@@ -33,6 +39,7 @@ namespace xll {
 		OPER helpTopic;
 		OPER functionHelp;
 		OPER argumentHelp[max_help]; // individual argument help
+		OPER argumentDefault[max_help]; // individual argument default values
 
 		bool is_hidden() const
 		{
@@ -99,6 +106,7 @@ namespace xll {
 						typeText &= argumentHelp[i][Arg::Type::typeText];
 						argumentText &= comma & argumentHelp[i][Arg::Type::argumentText];
 						argumentHelp[i] = argumentHelp[i][Arg::Type::argumentHelp];
+						argumentDefault[i] = argumentDefault[i][Arg::Type::argumentDefault];
 						comma = OPER(L", ");
 					}
 					// https://docs.microsoft.com/en-us/office/client-developer/excel/known-issues-in-excel-xll-development#argument-description-string-truncation-in-the-function-wizard
@@ -126,10 +134,11 @@ namespace xll {
 				OPER(L"helpTopic"), helpTopic,
 				OPER(L"functionHelp"), functionHelp 
 			});
-			OPER ah;
+			OPER ah, ad;
 			for (int i = 0; i < max_help; ++i) {
 				if (argumentHelp[i] != OPER{}) {
 					ah.push_bottom(argumentHelp[i]);
+					ad.push_bottom(argumentDefault[i]);
 				}
 				else {
 					break;
@@ -137,6 +146,7 @@ namespace xll {
 			}
 			o.reshape(size(o) / 2, 2);
 			o.push_bottom(OPER({ OPER(L"argumentHelp"), ah }));
+			o.push_bottom(OPER({ OPER(L"argumentDefault"), ad }));
 
 			return o;
 		}
@@ -171,8 +181,10 @@ namespace xll {
 		Function& Arguments(const std::initializer_list<Arg>& args)
 		{
 			OPER* ah = &argumentHelp[0];
+			OPER* ad = &argumentDefault[0];
 			for (const auto& arg : args) {
 				*ah++ = OPER({ arg.type, arg.name, arg.help });
+				*ad++ = arg.init;
 			}
 
 			return *this;

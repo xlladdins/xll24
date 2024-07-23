@@ -157,6 +157,7 @@
       <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
       </AdditionalOptions>
     </ClCompile>
+    <ClCompile Include="paste.cpp" />
     <ClCompile Include="xlauto.cpp" />
     <ClCompile Include="XLCALL.CPP">
       <DisableAnalyzeExternal Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</DisableAnalyzeExternal>

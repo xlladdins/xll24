@@ -377,7 +377,7 @@ int markup_test()
 		ensure(AddIn::addins.contains(OPER(L"XLL.HYPOT")));
 		auto args = AddIn::addins[OPER(L"XLL.HYPOT")];
 		auto mu = args->markup();
-		ensure(rows(mu) == 11);
+		ensure(rows(mu) == 12);
 		ensure(columns(mu) == 2);
 		ensure(mu(10, 0) == L"argumentHelp");
 		ensure(size(mu(10, 1)) == 2);
@@ -606,8 +606,8 @@ double WINAPI xll_const()
 ///*
 const AddIn xai_hypot(Function(XLL_DOUBLE, L"xll_hypot", L"XLL.HYPOT")
 	.Arguments({
-		Arg(XLL_DOUBLE, L"x", L"is a number."),
-		Arg(XLL_DOUBLE, L"y", L"is a number."),
+		Arg(XLL_DOUBLE, L"x", L"is a number.", 3),
+		Arg(XLL_DOUBLE, L"y", L"is a number.", 4),
 		})
 	.Category(L"XLL")
 	.FunctionHelp("Return the length of the hypotenuse of a right triangle with sides x and y.")
