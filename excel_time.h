@@ -1,6 +1,7 @@
 // excel_time.h - Excel Julian date to time_t conversion
 #pragma once
 #include <expected>
+#include <limits>
 #include <timezoneapi.h>
 
 namespace xll {
@@ -18,21 +19,31 @@ namespace xll {
 	}
 
 	// Convert Excel Julian local date to UTC time time_t
-	constexpr time_t to_time_t(double jd)
+	inline time_t to_time_t(double jd)
 	{
 		// Excel Julian date is days since 1900-01-00
 		// time_t is seconds since 1970-01-01
 		// 70 years, 17 leap years, 1 day
-		return static_cast<time_t>((jd - 25569) * 86400 + timezone_bias().value());
+		const auto bias = timezone_bias();
+		if (!timezone_bias()) {
+			return -1;
+		}
+
+		return static_cast<time_t>((jd - 25569) * 86400 + *bias);
 	}
 
 	// Convert UTC time time_t to Excel local Julian date
-	constexpr double from_time_t(time_t t)
+	inline double from_time_t(time_t t)
 	{
 		// Excel Julian date is days since 1900-01-00
 		// time_t is seconds since 1970-01-01
 		// 70 years, 17 leap years, 1 day
-		return static_cast<double>(t - timezone_bias().value()) / 86400 + 25569;
+		const auto bias = timezone_bias();
+		if (!bias) {
+			return std::numeric_limits<double>::quiet_NaN();
+		}
+
+		return static_cast<double>(t - *bias) / 86400 + 25569;
 	}
 
 } // namespace xll

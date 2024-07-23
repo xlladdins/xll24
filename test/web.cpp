@@ -6,7 +6,7 @@
 using namespace xll;
 
 
-int my_async(WORD ms, XLOPER12 handle)
+int my_async(WORD ms, OPER handle)
 {
 	std::this_thread::sleep_for(std::chrono::milliseconds(ms));
 	XLOPER12 arg = { .val = {.w = ms }, .xltype = xltypeInt };
@@ -27,8 +27,8 @@ AddIn xai_async(
 void WINAPI xll_async(WORD ms, LPXLOPER12 handle)
 {
 #pragma XLLEXPORT
-	{
-		std::jthread t(my_async, ms, *handle);
+	{ // TODO: args not passed in correctly
+		std::jthread t(my_async, ms, OPER(*handle));
 		t.detach();
 	}
 

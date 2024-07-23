@@ -4,41 +4,17 @@
 #include <random>
 #include "../xll.h"
 #include "../excel_time.h"
-#include "../excel_clock.h"
 
 using namespace xll;
 
-int excel_clock_test()
+int excel_time_test()
 {
-	using namespace std::chrono;
-	/*
-	{
-		const auto bias = timezone_bias();
-		ensure(bias);
-		OPER now = Excel(xlfNow);
-		double utc = Num(now) + *bias / 86400.;
-		double bias_ = Num(Excel(xlfHour, utc)) - Num(Excel(xlfHour, now));
-		ensure(*bias == bias_*3600);
-	}
-	{
-		OPER today = Excel(xlfToday);
-		// TODO: off by 1???
-		//today.val.num -= 1;
-		auto ymd = std::chrono::year_month_day{ to_days(Num(today)) };
-		ensure(ymd.year() == year((int)Num(Excel(xlfYear, today))));
-		ensure(ymd.month() == month((unsigned)Num(Excel(xlfMonth, today))));
-		ensure(ymd.day() == day((unsigned)Num(Excel(xlfDay, today)))); // TODO: off by 1
-	}
-	{
-		auto d = to_excel(2024y / 1 / 1);
-		auto y = to_days(d);
-		ensure(year_month_day(y) == 2024y / 1 / 1);
-		y = to_days(d + .9);
-		ensure(y == 2024y / 1 / 1);
-	}*/
 	{
 		time_t t = time(nullptr); // UTC time
 		ensure(t != -1);
+		const auto t_ = to_time_t(from_time_t(t));
+		ensure(fabs(t - t_) <= 1);
+		
 		auto now = Excel(xlfNow); // local time
 		OPER d(from_time_t(t));
 		ensure(Excel(xlfYear, now) == Excel(xlfYear, d));
@@ -603,8 +579,7 @@ int WINAPI xll_test()
 		evaluate_test();
 		excel_test();
 		fp_test();
-		excel_clock_test();
-
+		excel_time_test();
 	}
 	catch (const std::exception& ex) {
 		XLL_ERROR(ex.what());

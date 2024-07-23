@@ -127,7 +127,6 @@
     <ClInclude Include="auto.h" />
     <ClInclude Include="defines.h" />
     <ClInclude Include="ensure.h" />
-    <ClInclude Include="excel_clock.h" />
     <ClInclude Include="excel_time.h" />
     <ClInclude Include="export.h" />
     <ClInclude Include="fp.h" />
