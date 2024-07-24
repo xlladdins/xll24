@@ -607,7 +607,7 @@ double WINAPI xll_const()
 const AddIn xai_hypot(Function(XLL_DOUBLE, L"xll_hypot", L"XLL.HYPOT")
 	.Arguments({
 		Arg(XLL_DOUBLE, L"x", L"is a number.", 3),
-		Arg(XLL_DOUBLE, L"y", L"is a number.", 4),
+		Arg(XLL_DOUBLE, L"y", L"is a number.", "=2 + 2"),
 		})
 	.Category(L"XLL")
 	.FunctionHelp("Return the length of the hypotenuse of a right triangle with sides x and y.")
