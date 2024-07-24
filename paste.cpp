@@ -44,6 +44,9 @@ int WINAPI xll_pasteb()
 			OPER initi = pargs->argumentInit[i];
 			if (isStr(initi) && view(initi).starts_with(L'=')) {
 				initi = Excel(xlfEvaluate, initi);
+				if (isErr(initi)) {
+					initi = OPER(view(initi).substr(1));
+				}
 			}
 			text &= Excel(xlfText, initi, L"General");
 			
