@@ -1,6 +1,7 @@
 // addin.h - Store data Excel needs to register add-ins.
 // Copyright (c) KALX, LLC. All rights reserved. No warranty made.
 #pragma once
+#include <algorithm>
 #include <map>
 #include "register.h"
 
@@ -22,9 +23,16 @@ namespace xll {
 				addins[args.functionText] = &args;
 				const Auto<xll::Register> xao_reg([&]() -> int {
 					try {
-						OPER regId = XlfRegister(&args);
+						OPER regid = XlfRegister(&args);
+						if (regid.xltype == xltypeNum) {
+							regids[regid.val.num] = &args;
+						}
+						else {
+							const auto err = OPER(L"AddIn: failed to register: ") & args.functionText;
+							XLL_WARNING(view(err));
+						}
 
-						return regId.xltype == xltypeNum;
+						return regid.xltype == xltypeNum;
 					}
 					catch (const std::exception& ex) {
 						XLL_ERROR(ex.what());
@@ -51,6 +59,8 @@ namespace xll {
 
 						return FALSE;
 					}
+					addins.erase(text);
+					regids.erase(Num(Excel(xlfEvaluate, text)));
 				}
 				catch (const std::exception& ex) {
 					XLL_ERROR(ex.what());
@@ -68,6 +78,27 @@ namespace xll {
 		}
 	public:
 		static inline std::map<OPER, Args*> addins;
+		static inline std::map<double, Args*> regids;
+		// Lookup using function text or register id.
+		static inline const Args* find(const OPER& text)
+		{
+			const Args* pargs = nullptr;
+
+			if (isNum(text)) {
+				const auto i = regids.find(Num(text));
+				if (i != regids.end()) {
+					pargs = i->second;
+				}
+			}
+			else {
+				const auto i = addins.find(text);
+				if (i != addins.end()) {
+					pargs = i->second;
+				}
+			}
+
+			return pargs;
+		}
 		
 		AddIn(const Args& args_)
 			: args(args_)

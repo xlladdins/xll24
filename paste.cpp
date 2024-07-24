@@ -3,23 +3,98 @@
 
 using namespace xll;
 
-// Arg pointer from function text in cell.
-const Args* args(const OPER& text)
+bool isFormula(const OPER& val)
 {
-	const auto c = AddIn::addins.find(text);
-
-	return c == AddIn::addins.end() ? nullptr : c->second;
+	return isStr(val) && view(val).starts_with(L'=');
 }
 
-// Set value unless it is a string starting with '='. Then it is a formula.
-void Set(const OPER& ref, const OPER& val)
+// Strip off leading '=' if it is a formula.
+OPER Uneval(const OPER& val)
 {
-	if (isStr(val) && view(val).starts_with(L'=')) {
+	return isFormula(val) ? OPER(view(val).substr(1)) : val;
+}
+
+OPER Argb(const Args* p, int i)
+{
+	return Excel(xlfText, Uneval(p->argumentInit[i]), L"General");
+}
+OPER Argc(const Args* p, int i)
+{
+	return p->argumentName[i];
+}
+OPER Argd(const Args* , int i)
+{
+	return OPER(L"R[") & OPER(i) & OPER(L"]C[0]");
+}
+
+// Construct formula from Args.
+template<class Arg>
+OPER Formula(const Args* pargs)
+{
+	OPER formula = OPER(L"=") & pargs->functionText & OPER(L"(");
+	OPER comma(L"");
+	for (int i = 0; i < pargs->count(); ++i) {
+		formula &= comma;
+		formula &= Arg(p, i);
+
+		comma = L", ";
+	}
+	formula &= OPER(L")");
+
+	return formula;
+}
+
+OPER Move(const OPER& o, int r, int c)
+{
+	OPER sel = Excel(xlfOffset, o, r, c);
+	OPER s = Excel(xlcSelect, sel);
+	return sel;
+}
+
+// Set value and return selection.
+OPER Set(OPER ref, const OPER& val)
+{
+	if (isFormula(val)) {
 		Excel(xlcFormula, val, ref);
+		const auto e = Excel(xlfEvaluate, val);
+		ref = OPER(reshape(SRef(ref), rows(e), columns(e)));
 	}
 	else {
 		Excel(xlSet, ref, val);
 	}
+
+	return ref;
+}
+
+auto AlignRight(const OPER& ref)
+{
+	OPER ac = Excel(xlfActiveCell);
+
+	Excel(xlcSelect, ref);
+	Excel(xlcAlignment, OPER(4));
+	Excel(xlcSelect, ac);
+
+	return ac;
+}
+auto Property(const OPER& ref, const OPER& style)
+{
+	OPER ac = Excel(xlfActiveCell);
+
+	Excel(xlcSelect, ref);
+	Excel(xlcFontProperties, OPER(), style); // E.g., "Bold", "Italic", "Underline"
+	Excel(xlcSelect, ac);
+
+	return ac;
+}
+auto Style(const OPER& ref, const OPER& style)
+{
+	OPER ac = Excel(xlfActiveCell);
+
+	Excel(xlcSelect, ref);
+	Excel(xlcApplyStyle, style);
+	Excel(xlcSelect, ac);
+
+	return ac;
 }
 
 // Paste function with default arguments.
@@ -32,34 +107,24 @@ int WINAPI xll_pasteb()
 	int result = TRUE;
 
 	try {
-		OPER caller = Excel(xlfActiveCell);
-		OPER text = Excel(xlCoerce, caller);
-		const Args* pargs = args(text);
+		OPER active = Excel(xlfActiveCell);
+		OPER text = Excel(xlCoerce, active);
+		const Args* pargs = AddIn::find(text);
 		ensure(pargs || !"xll_pasteb: add-in not found");
 
-		text &= OPER(L"(");
+		OPER formula = OPER(L"=") & pargs->functionText & OPER(L"(");
 		OPER comma(L"");
 		for (int i = 0; i < pargs->count(); ++i) {
-			text &= comma;
-			OPER initi = pargs->argumentInit[i];
-			if (isStr(initi) && view(initi).starts_with(L'=')) {
-				const auto evali = Excel(xlfEvaluate, initi);
-				if (isErr(evali)) {
-					// remove leading '='
-					initi = OPER(view(initi).substr(1));
-				}
-				else {
-					initi = evali;
-				}
-			}
-			text &= Excel(xlfText, initi, L"General");
+			formula &= comma;
+			// Strip off leading '=' if it is a formula.
+			OPER initi = Uneval(pargs->argumentInit[i]);
+			formula &= Excel(xlfText, initi, L"General"); // as string
 			
 			comma = L", ";
 		}
-		text &= OPER(L")");
-		text = OPER("=") & text;
+		formula &= OPER(L")");
 
-		Excel(xlcFormula, text, caller);
+		Excel(xlcFormula, formula, active);
 	}
 	catch (const std::exception& ex) {
 		result = FALSE;
@@ -86,23 +151,23 @@ int WINAPI xll_pastec()
 	try {
 		OPER caller = Excel(xlfActiveCell);
 		OPER text = Excel(xlCoerce, caller);
-		const Args* pargs = args(text);
+		const Args* pargs = AddIn::find(text);
 		ensure(pargs || !"xll_pastec: add-in not found");
 
-		text &= OPER(L"(");
+		OPER formula = OPER(L"=") & pargs->functionText & OPER(L"(");
 		OPER comma(L"");
+		OPER active = Move(caller, 1, 0);
 		for (int i = 0; i < pargs->count(); ++i) {
-			text &= comma;
-			OPER calleri = Excel(xlfOffset, caller, i + 1, 0);
-			text &= Excel(xlfRelref, calleri, caller);
-			Set(calleri, pargs->argumentInit[i]);
+			formula &= comma;
+			formula &= Excel(xlfRelref, active, caller);
+			const auto ref = Set(active, pargs->argumentInit[i]);
+			active = Move(active, rows(ref), 0);
 
 			comma = L", ";
 		}
-		text &= OPER(L")");
-		text = OPER("=") & text;
+		formula &= OPER(L")");
 
-		Excel(xlcFormula, text, caller);
+		Excel(xlcFormula, formula, caller);
 	}
 	catch (const std::exception& ex) {
 		result = FALSE;
@@ -116,38 +181,6 @@ int WINAPI xll_pastec()
 	return result;
 }
 On<xlcOnKey> xok_pastec(ON_CTRL ON_SHIFT "C", "XLL.PASTEC");
-
-auto AlignRight(const OPER& ref)
-{
-	OPER ac = Excel(xlfActiveCell);
-
-	Excel(xlcSelect, ref);
-	Excel(xlcAlignment, OPER(4));
-	Excel(xlcSelect, ac);
-
-	return ac;
-}
-auto Property(const OPER& ref, const OPER& prop)
-{
-	OPER ac = Excel(xlfActiveCell);
-
-	Excel(xlcSelect, ref);
-	Excel(xlcFontProperties, OPER(), prop);
-	Excel(xlcSelect, ac);
-
-	return ac;
-}
-auto Style(const OPER& ref, const OPER& style)
-{
-	OPER ac = Excel(xlfActiveCell);
-
-	Excel(xlcSelect, ref);
-	Excel(xlcApplyStyle, style);
-	Excel(xlcSelect, ac);
-
-	return ac;
-}
-
 // Paste function and define names.
 AddIn xai_pasted(
 	Macro("xll_pasted", "XLL.PASTED")
@@ -160,27 +193,31 @@ int WINAPI xll_pasted()
 	try {
 		OPER caller = Excel(xlfActiveCell);
 		OPER text = Excel(xlCoerce, caller);
-		const Args* pargs = args(text);
+		const Args* pargs = AddIn::find(text);
 		ensure(pargs || !"xll_pasted: add-in not found");
+		text = pargs->functionText;
 
+		Excel(xlSet, caller, text);
 		AlignRight(caller);
 		Property(caller, OPER(L"Italic"));
 
 		OPER formula = OPER(L"=") & text & OPER(L"(");
 		OPER comma(L"");
+		OPER active = Move(caller, 1, 0);
 		for (int i = 0; i < pargs->count(); ++i) {
 			formula &= comma;
-			OPER texti = Excel(xlfOffset, caller, i + 1, 0);
 			const OPER& name = pargs->argumentName[i];
 			formula &= name;
-			Excel(xlSet, texti, name);
-			AlignRight(texti);
-			Property(texti, OPER(L"Bold"));
-			OPER calleri = Excel(xlfOffset, caller, i + 1, 1);
+			Set(active, name);
+			AlignRight(active);
+			Property(active, OPER(L"Bold"));
+			active = Move(active, 0, 1);
 			OPER initi = pargs->argumentInit[i];
-			Set(calleri, initi);
-			Excel(xlcDefineName, name, calleri);
-			Style(calleri, OPER(L"Input"));
+			const auto ref = Set(active, initi);
+			Excel(xlcDefineName, name, ref);
+			Style(ref, OPER(L"Input"));
+
+			active = Move(active, rows(ref), -1);
 
 			comma = L", ";
 		}

@@ -629,6 +629,22 @@ double WINAPI xll_hypot(double x, double y)
 	return h;
 }
 //*/
+AddIn xai_array(
+	Function(XLL_FP, L"xll_array", L"XLL.ARRAY")
+	.Arguments({
+		Arg(XLL_FP, L"array", L"is an array of numbers.", "={1,2,3;4,5,6}"), // row default value
+		Arg(XLL_DOUBLE, L"scalar", L"is a scalar.", 2.71828), // scalar default value
+		})
+	.Category(L"XLL")
+	.FunctionHelp("Return the sum of all the numbers passed in.")
+	.HelpTopic("https://docs.microsoft.com/en-us/cpp/standard-library/accumulate?view=msvc-170")
+);
+_FP12* WINAPI xll_array(_FP12* pa, double s)
+{
+#pragma XLLEXPORT
+	pa->array[0] = s;
+	return pa;
+}
 
 AddIn xai_accumulate(
 	Function(XLL_DOUBLE, L"xll_accumulate", L"XLL.ACCUMULATE")
