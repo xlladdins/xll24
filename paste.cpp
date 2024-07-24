@@ -43,9 +43,13 @@ int WINAPI xll_pasteb()
 			text &= comma;
 			OPER initi = pargs->argumentInit[i];
 			if (isStr(initi) && view(initi).starts_with(L'=')) {
-				initi = Excel(xlfEvaluate, initi);
-				if (isErr(initi)) {
+				const auto evali = Excel(xlfEvaluate, initi);
+				if (isErr(evali)) {
+					// remove leading '='
 					initi = OPER(view(initi).substr(1));
+				}
+				else {
+					initi = evali;
 				}
 			}
 			text &= Excel(xlfText, initi, L"General");
