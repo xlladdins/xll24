@@ -646,6 +646,35 @@ _FP12* WINAPI xll_array(_FP12* pa, double s)
 	return pa;
 }
 
+AddIn xai_relref(
+	Function(XLL_LPOPER, L"xll_relref", L"XLL.RELREF")
+	.Arguments({
+		Arg(XLL_LPXLOPER, L"ref", L"is the cell or cells to which you want to create a relative reference.."),
+		Arg(XLL_LPXLOPER, L"rel", L"is the cell from which you want to create the relative reference."),
+		})
+	.Uncalced()
+	.Category(L"XLL")
+	.FunctionHelp(L"Returns the reference of a cell or cells relative to the upper-left cell of rel_to_ref. "
+		L"The reference is given as an R1C1-style relative reference in the form of text, such as \"R[1]C[1]\".")
+);
+LPOPER WINAPI xll_relref(LPXLOPER12 pref, LPXLOPER12 prel)
+{
+#pragma XLLEXPORT
+	static OPER o;
+
+	try {
+		ensure(isSRef(*pref) || isRef(*pref));
+		ensure(isSRef(*prel) || isRef(*prel));
+
+		o = Excel(xlfRelref, *pref, *prel);
+	}
+	catch (const std::exception& ex) {
+		XLL_ERROR(ex.what());
+	}
+
+	return &o;
+}
+
 AddIn xai_accumulate(
 	Function(XLL_DOUBLE, L"xll_accumulate", L"XLL.ACCUMULATE")
 	.Arguments({

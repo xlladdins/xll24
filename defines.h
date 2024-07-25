@@ -130,6 +130,10 @@ namespace xll {
 	{
 		return sref.val.sref.ref;
 	}
+	constexpr bool isSRef(const XLOPER12& x) noexcept
+	{
+		return type(x) == xltypeSRef;
+	}
 
 	// types requiring allocation where xX is pointer to data
 	// xltypeX, XLOPERX::val.X, xX, description

@@ -14,28 +14,14 @@ OPER Uneval(const OPER& val)
 	return isFormula(val) ? OPER(view(val).substr(1)) : val;
 }
 
-OPER Argb(const Args* p, int i)
-{
-	return Excel(xlfText, Uneval(p->argumentInit[i]), L"General");
-}
-OPER Argc(const Args* p, int i)
-{
-	return p->argumentName[i];
-}
-OPER Argd(const Args* , int i)
-{
-	return OPER(L"R[") & OPER(i) & OPER(L"]C[0]");
-}
-
-// Construct formula from Args.
-template<class Arg>
+// Construct formula from Args default values.
 OPER Formula(const Args* pargs)
 {
 	OPER formula = OPER(L"=") & pargs->functionText & OPER(L"(");
 	OPER comma(L"");
 	for (int i = 0; i < pargs->count(); ++i) {
 		formula &= comma;
-		formula &= Arg(p, i);
+		formula &= Excel(xlfText, Uneval(pargs->argumentInit[i]), L"General");
 
 		comma = L", ";
 	}
@@ -51,13 +37,19 @@ OPER Move(const OPER& o, int r, int c)
 	return sel;
 }
 
+// Expand active to size of ref.
+OPER Reshape(const OPER& active, const OPER& ref)
+{
+	return OPER(reshape(SRef(active), rows(ref), columns(ref)));
+}
+
 // Set value and return selection.
 OPER Set(OPER ref, const OPER& val)
 {
 	if (isFormula(val)) {
 		Excel(xlcFormula, val, ref);
 		const auto e = Excel(xlfEvaluate, val);
-		ref = OPER(reshape(SRef(ref), rows(e), columns(e)));
+		ref = Reshape(ref, e);
 	}
 	else {
 		Excel(xlSet, ref, val);
@@ -76,7 +68,7 @@ auto AlignRight(const OPER& ref)
 
 	return ac;
 }
-auto Property(const OPER& ref, const OPER& style)
+auto Font(const OPER& ref, const OPER& style)
 {
 	OPER ac = Excel(xlfActiveCell);
 
@@ -112,19 +104,7 @@ int WINAPI xll_pasteb()
 		const Args* pargs = AddIn::find(text);
 		ensure(pargs || !"xll_pasteb: add-in not found");
 
-		OPER formula = OPER(L"=") & pargs->functionText & OPER(L"(");
-		OPER comma(L"");
-		for (int i = 0; i < pargs->count(); ++i) {
-			formula &= comma;
-			// Strip off leading '=' if it is a formula.
-			OPER initi = Uneval(pargs->argumentInit[i]);
-			formula &= Excel(xlfText, initi, L"General"); // as string
-			
-			comma = L", ";
-		}
-		formula &= OPER(L")");
-
-		Excel(xlcFormula, formula, active);
+		Excel(xlcFormula, Formula(pargs), active);
 	}
 	catch (const std::exception& ex) {
 		result = FALSE;
@@ -152,22 +132,28 @@ int WINAPI xll_pastec()
 		OPER caller = Excel(xlfActiveCell);
 		OPER text = Excel(xlCoerce, caller);
 		const Args* pargs = AddIn::find(text);
-		ensure(pargs || !"xll_pastec: add-in not found");
+		ensure (pargs || !"xll_pastec: add-in not found");
+		text = pargs->functionText;
 
-		OPER formula = OPER(L"=") & pargs->functionText & OPER(L"(");
+		// Expand caller to size of formula output.
+		OPER output = Reshape(caller, Excel(xlfEvaluate, Formula(pargs)));
+		OPER active = Move(caller, rows(output), 0);
+
+		OPER formula = OPER(L"=") & text & OPER(L"(");
 		OPER comma(L"");
-		OPER active = Move(caller, 1, 0);
 		for (int i = 0; i < pargs->count(); ++i) {
 			formula &= comma;
-			formula &= Excel(xlfRelref, active, caller);
-			const auto ref = Set(active, pargs->argumentInit[i]);
+
+			const OPER ref = Set(active, pargs->argumentInit[i]);
+			formula &= Excel(xlfRelref, Reshape(active, ref), caller);
 			active = Move(active, rows(ref), 0);
 
 			comma = L", ";
 		}
 		formula &= OPER(L")");
 
-		Excel(xlcFormula, formula, caller);
+		Excel(xlcFormula, formula, output);
+		Excel(xlcSelect, caller);
 	}
 	catch (const std::exception& ex) {
 		result = FALSE;
@@ -199,21 +185,24 @@ int WINAPI xll_pasted()
 
 		Excel(xlSet, caller, text);
 		AlignRight(caller);
-		Property(caller, OPER(L"Italic"));
+		Font(caller, OPER(L"Italic"));
+
+		// Expand caller to size of formula output.
+		OPER output = Reshape(Move(caller, 0, 1), Excel(xlfEvaluate, Formula(pargs)));
+		OPER active = Move(caller, rows(output), 0);
 
 		OPER formula = OPER(L"=") & text & OPER(L"(");
 		OPER comma(L"");
-		OPER active = Move(caller, 1, 0);
 		for (int i = 0; i < pargs->count(); ++i) {
 			formula &= comma;
 			const OPER& name = pargs->argumentName[i];
 			formula &= name;
 			Set(active, name);
 			AlignRight(active);
-			Property(active, OPER(L"Bold"));
+			Font(active, OPER(L"Bold"));
+
 			active = Move(active, 0, 1);
-			OPER initi = pargs->argumentInit[i];
-			const auto ref = Set(active, initi);
+			const auto ref = Set(active, pargs->argumentInit[i]);
 			Excel(xlcDefineName, name, ref);
 			Style(ref, OPER(L"Input"));
 
@@ -223,11 +212,9 @@ int WINAPI xll_pasted()
 		}
 		formula &= OPER(L")");
 
-		const OPER caller01 = Excel(xlfOffset, caller, 0, 1);
-		Excel(xlcFormula, formula, caller01);
-		Excel(xlcDefineName, text, caller01);
-		Style(caller01, OPER(L"Output"));
-		Excel(xlcSelect, caller01);
+		Excel(xlcFormula, formula, output);
+		Style(output, OPER(L"Output"));
+		Excel(xlcSelect, caller);
 	}
 	catch (const std::exception& ex) {
 		result = FALSE;
