@@ -144,9 +144,15 @@ int WINAPI xll_pastec()
 		for (int i = 0; i < pargs->count(); ++i) {
 			formula &= comma;
 
-			const OPER ref = Set(active, pargs->argumentInit[i]);
-			formula &= Excel(xlfRelref, Reshape(active, ref), caller);
-			active = Move(active, rows(ref), 0);
+			if (isNil(pargs->argumentInit[i])) {
+				formula &= Excel(xlfRelref, active, caller);
+				active = Move(active, 1, 0);
+			}
+			else {
+				const OPER ref = Set(active, pargs->argumentInit[i]);
+				formula &= Excel(xlfRelref, Reshape(active, ref), caller);
+				active = Move(active, rows(ref), 0);
+			}
 
 			comma = L", ";
 		}
@@ -202,11 +208,17 @@ int WINAPI xll_pasted()
 			Font(active, OPER(L"Bold"));
 
 			active = Move(active, 0, 1);
-			const auto ref = Set(active, pargs->argumentInit[i]);
-			Excel(xlcDefineName, name, ref);
-			Style(ref, OPER(L"Input"));
-
-			active = Move(active, rows(ref), -1);
+			if (isNil(pargs->argumentInit[i])) {
+				Excel(xlcDefineName, name, active);
+				Style(active, OPER(L"Input"));
+				active = Move(active, 1, -1);
+			}
+			else {
+				const auto ref = Set(active, pargs->argumentInit[i]);
+				Excel(xlcDefineName, name, ref);
+				Style(ref, OPER(L"Input"));
+				active = Move(active, rows(ref), -1);
+			}
 
 			comma = L", ";
 		}
