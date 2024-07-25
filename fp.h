@@ -78,6 +78,23 @@ namespace xll {
 	{
 		return array(a) + size(a);
 	}
+	// inplace transpose
+	constexpr FP12& transpose(FP12& x) noexcept
+	{
+		int r = rows(x);
+		int c = columns(x);
+
+		if (r > 1 && c > 1) {
+			for (int i = 1; i < size(x) - 1; ++i) {
+				int j = (c * i) % (r * c - 1);
+				std::swap(x.array[i], x.array[j]);
+			}
+		}
+		std::swap(x.rows, x.columns);
+
+		return x;
+	}
+
 
 	class FPX {
 		struct fpx* fpx_;
@@ -209,20 +226,7 @@ namespace xll {
 
 		FPX& transpose()
 		{
-			int r = rows();
-			int c = columns();
-
-			if (r * c != 0) {
-				if (r == 1 || c == 1) {
-					std::swap(fpx_->rows, fpx_->columns);
-				}
-				else {
-					for (int i = 1; i < size() - 1; ++i) {
-						int j = (c * i) % (r * c - 1);
-						std::swap(fpx_->array[i], fpx_->array[j]);
-					}
-				}
-			}
+			xll::transpose(*get());
 
 			return *this;
 		}

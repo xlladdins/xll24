@@ -256,7 +256,7 @@ namespace xll {
 		{ }
 
 		// Multi
-		constexpr OPER(int r, int c, const XLOPER12* a)
+		constexpr OPER(int r, int c, const XLOPER12* a = nullptr)
 		{
 			alloc(r, c, a);
 		}
@@ -347,16 +347,17 @@ namespace xll {
 			if (columns(*this) != columns(x)) {
 				return operator=(ErrValue);
 			}
-			if (type(*this) != xltypeMulti) {
+			if (!isMulti(*this)) {
 				enlist();
 			}
 
+			int n = size(*this);
 			OPER o(rows(*this) + rows(x), columns(*this), nullptr);
-			for (int i = 0; i < size(*this); ++i) {
+			for (int i = 0; i < n; ++i) {
 				o[i] = operator[](i);
 			}
 			if (type(x) != xltypeMulti) {
-				o[size(*this)] = x;
+				o[n] = x;
 			}
 			else {
 				for (int i = 0; i < size(x); ++i) {
@@ -364,6 +365,64 @@ namespace xll {
 				}
 			}
 			std::swap(*this, o);
+
+			return *this;
+		}
+		OPER& transpose()
+		{
+			int r = rows(*this);
+			int c = columns(*this);
+
+			if (r > 1 && c > 1) {
+				for (int i = 1; i < size(*this) - 1; ++i) {
+					int j = (c * i) % (r * c - 1);
+					std::swap(val.array.lparray[i], val.array.lparray[j]);
+				}
+			}
+			std::swap(val.array.rows, val.array.columns);
+
+			return *this;
+		}
+		OPER& push_right(const XLOPER12& x)
+		{
+			// Not efficient.
+			OPER x_(*this);
+			x_.transpose();
+			OPER _x(x);
+			_x.transpose();
+			push_bottom(_x);
+			x_.transpose();
+			std::swap(*this, x_);
+
+			return *this;
+		}
+
+		// Append single item to row or column vector
+		OPER& append(const XLOPER12& x)
+		{
+			if (size(*this) == 0) {
+				operator=(x);
+
+				return enlist();
+			}
+			if (!isMulti(*this)) {
+				enlist();
+			}
+			if (rows(*this) != 1 && columns(*this) != 1) {
+				return operator=(ErrValue);
+			}
+
+			int n = size(*this);
+			OPER o(1, n + 1);
+			for (int i = 0; i < n; ++i) {
+				o[i] = operator[](i);
+			}
+			o[n] = x;
+
+			std::swap(*this, o);	
+			if (rows(*this) != 1) {
+				std::swap(val.array.rows, val.array.columns);
+			}
 
 			return *this;
 		}

@@ -367,6 +367,16 @@ int multi_test()
 		ensure(o2[1] == index(o2, 1));
 		ensure(o2(1, 1) == index(o2, 1, 1));
 	}
+	{
+		OPER o({ OPER(1),OPER(2) });
+		o.append(OPER(3));
+		ensure(o == OPER({ OPER(1),OPER(2), OPER(3)}));
+	}
+	{
+		OPER o({ OPER(1),OPER(2) });
+		o.append(OPER());
+		ensure(o == OPER({ OPER(1),OPER(2), OPER() }));
+	}
 
 	return 0;
 }
@@ -606,7 +616,7 @@ double WINAPI xll_const()
 ///*
 const AddIn xai_hypot(Function(XLL_DOUBLE, L"xll_hypot", L"XLL.HYPOT")
 	.Arguments({
-		Arg(XLL_DOUBLE, L"x", L"is a number.", 3),
+		Arg(XLL_DOUBLE, L"x", L"is a number."),
 		Arg(XLL_DOUBLE, L"y", L"is a number.", "=2 + 2"),
 		})
 	.Category(L"XLL")

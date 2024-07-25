@@ -12,7 +12,7 @@ namespace xll {
 		template<class T>
 			requires xll::is_char<T>::value
 		Arg(const wchar_t* type, const T* name, const T* help)
-			: type(type), name(name), help(help), init(OPER(L""))
+			: type(type), name(name), help(help), init(OPER())
 		{ }
 		template<class T, class U>
 			requires xll::is_char<T>::value
@@ -174,9 +174,9 @@ namespace xll {
 			for (const auto& arg : args) {
 				ensure(i < max_help);
 				argumentHelp[i++] = arg.help;
-				argumentType.push_bottom(arg.type);
-				argumentName.push_bottom(arg.name);
-				argumentInit.push_bottom(arg.init);
+				argumentType.append(arg.type);
+				argumentName.append(arg.name);
+				argumentInit.append(arg.init);
 			}
 
 			return *this;
