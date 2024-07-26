@@ -30,6 +30,7 @@ OPER Formula(const Args* pargs)
 	return formula;
 }
 
+// Translate by r rows and c columns.
 OPER Move(const OPER& o, int r, int c)
 {
 	OPER sel = Excel(xlfOffset, o, r, c);
@@ -58,32 +59,30 @@ OPER Set(OPER ref, const OPER& val)
 	return ref;
 }
 
-auto AlignRight(const OPER& ref)
+void AlignRight(const OPER& ref)
 {
 	OPER ac = Excel(xlfActiveCell);
 
 	Excel(xlcSelect, ref);
 	Excel(xlcAlignment, OPER(4));
-	Excel(xlcSelect, ac);
 
-	return ac;
+	Excel(xlcSelect, ac);
 }
-auto Font(const OPER& ref, const OPER& style)
+void Font(const OPER& ref, const OPER& style)
 {
 	OPER ac = Excel(xlfActiveCell);
 
 	Excel(xlcSelect, ref);
 	Excel(xlcFontProperties, OPER(), style); // E.g., "Bold", "Italic", "Underline"
+	
 	Excel(xlcSelect, ac);
-
-	return ac;
 }
 auto Style(const OPER& ref, const OPER& style)
 {
 	OPER ac = Excel(xlfActiveCell);
 
 	Excel(xlcSelect, ref);
-	Excel(xlcApplyStyle, style);
+	Excel(xlcApplyStyle, style); // E.g., "Input", "Output"
 	Excel(xlcSelect, ac);
 
 	return ac;
@@ -119,7 +118,7 @@ int WINAPI xll_pasteb()
 }
 On<xlcOnKey> xok_pasteb(ON_CTRL ON_SHIFT "B", "XLL.PASTEB");
 
-// Paste function above default arguments.
+// Paste function with default arguments below.
 AddIn xai_pastec(
 	Macro("xll_pastec", "XLL.PASTEC")
 );
@@ -234,7 +233,7 @@ int WINAPI xll_pasted()
 	}
 	catch (...) {
 		result = FALSE;
-		XLL_ERROR("xll_pasteb: unknown exception");
+		XLL_ERROR("xll_pasted: unknown exception");
 	}
 
 	return result;
