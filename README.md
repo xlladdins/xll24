@@ -185,12 +185,12 @@ The [`XlfRegister`](register.h) function is used to register macros and function
 with Excel.
 `AddIn` objects are created when the add-in is loaded,
 but there are some things that can only be done after Excel calls `xlAutoOpen`.
-The `Args::prepare` function arranges the data specified in the `Args` object
-into a format that necessary to call `xlfRegister`.
+The `Args::prepare` function arranages the data specified in the `Args` object
+into a format that iw necessary to call `xlfRegister`.
 
 ## `Ctrl-Shift-A`
 
-After typing `=` and the name of a function, and optionally using `<Tab>` 
+After typing `=` and the namef a function, and optionally using `<Tab>` 
 to complete the name, then pressing `Ctrl-Shift-A`
 will produce the names of the arguments of the function.
 
