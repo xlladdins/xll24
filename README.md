@@ -1,4 +1,9 @@
-﻿# xll library
+﻿# xll24 library
+
+See the [xll library](https://github.com/xlladdins/xll) for
+earlier versions. Against my better judgement,
+I rewrote that for the n-th time because I use this every
+day and work hard to be lazy. 
 
 There is a reason why many companies still use the ancient 
 [Microsoft Excel C Software Development Kit](https://learn.microsoft.com/en-us/office/client-developer/excel/welcome-to-the-excel-software-development-kit), 
@@ -12,14 +17,12 @@ as if Python isn't slow enough already.
 
 There is a reason why many companies don't use the ancient Microsoft Excel C SDK.
 The example code and documentation are difficult to use and understand.
-The xll library makes it easy to call native code from Excel.
+This library makes it easy and performant to call native code from Excel.
 
-One reason for Python's popularity is that someone who knows how to call
-C, C++, and even Fortran from Python has already written a library to do that.
+One reason for Python's popularity is that people who know how to call
+C, C++, and even Fortran, from Python have written packages to do that.
 The xll library allows you to do that directly from the most popular language
 in the world, Excel.
-
-
 
 ## Install
 
@@ -54,7 +57,7 @@ See [`auto.h`](auto.h) for the list possible values for `XXX`.
 ## Excel
 
 Everything Excel has to offer is available through the [`Excel`](excel.h) function.
-The first argument is a _function number_ defined in C SDK header file
+The first argument is a _function number_ defined in the C SDK header file
 [`XLCALL.H`](XLCALL.H)
 specifying the Excel function or macro to call.
 Arguments for function numbers are documented in 
@@ -121,10 +124,11 @@ is a historical artifact of that. Unlike Unix, Windows does not make functions
 visible outside of a shared library unless they are explicitly exported.
 The pragma does that for you.
 
-Keep the Excel `WINAPI` function implementations simple. Grab the arguments you told Excel to provide,
+Keep the Excel `WINAPI` function implementations simple. 
+Grab the arguments you told Excel to provide,
 call your platform independent function, and return the result. 
-Provide a header file and library for your C and C++ code so it can be used on
-Windows, Mac, and Linux
+Provide a platform independent header file and library for your C and C++ code
+so it can be used on Windows, Mac OS, and Linux
 to get the same results displayed in Excel. 
 
 ### Macro
@@ -152,3 +156,32 @@ int WINAPI xll_macro(void)
 ## AddIn
 
 The [`AddIn`](addin.h) class is constructed from [`Args`](args.h).
+
+## `Ctrl-Shift-A`
+
+After typing `=` and the name of a function, and optionally using `<Tab>` 
+to complete the name, then pressing `Ctrl-Shift-A`
+will produce the names of the arguments of the function.
+
+I don't have access to the source code of Excel, but there is a
+simple way to extend this functionality. Instead of pressing
+`Ctrl-Shift-A` you can press `<Backspace>` to remove the
+trailing left parenthesis and then press `<Enter>`.
+You will see another funny looking number, but it is not a handle. 
+It is the [register id](https://learn.microsoft.com/en-us/office/client-developer/excel/xlfregisterid)
+Excel uses to keep track
+user defined functions.
+
+With your cursor in the cell, pressing `Ctrl-Shift-B` will
+replace the arguments you see with `Ctrl-Shift-A` with their
+default values.
+
+Pressing `Ctrl-Shift-C` will enter the default values below the cell
+and provide the function corresponding to the register id to call those.
+You can change the values below the cell to provide new arguments.
+
+Pressing `Ctrl-Shift-D` will create the names you see from `Ctrl-Shift-A`
+below the cell and provide the function corresponding to the register id
+with those names as arguments. The function has the `Output` style
+applied and the arguments have the `Input` style applied.
+
