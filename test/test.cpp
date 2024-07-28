@@ -783,10 +783,7 @@ AddIn xai_my_double(
 double WINAPI xll_my_double(HANDLEX h, double x)
 {
 #pragma XLLEXPORT
-	double(*p)(double) = my_double;
-	double y;
-	y = p(x);
-	auto h_ = safe_pointer<double(*)(double)>(h);
+	auto h_ = safe_value<double(*)(double)>(h);
 
-	return (*h_)(x);
+	return h_(x);
 }

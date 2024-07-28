@@ -67,6 +67,14 @@ namespace xll {
 		return safe_pointers.contains((void*)p) ? p : nullptr;
 	}
 
+	template<class T>
+	inline T safe_value(HANDLEX h)
+	{
+		T* p = to_pointer<T>(h);
+
+		return safe_pointers.contains((void*)p) ? reinterpret_cast<T>(p) : nullptr;
+	}
+
 	// typeid<T>.name() given pointer
 	inline std::map<void*, const char*> handle_typename;
 
