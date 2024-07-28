@@ -1,4 +1,10 @@
-﻿# xll library
+﻿# xll24 library
+
+See the [xll library](https://github.com/xlladdins/xll) for
+earlier version.
+I rewrote that for the n-th time because I use this every
+day and work hard to be lazy. It was also an opportunity to
+learn about the latest C++ features and best practices.
 
 There is a reason why many companies still use the ancient 
 [Microsoft Excel C Software Development Kit](https://learn.microsoft.com/en-us/office/client-developer/excel/welcome-to-the-excel-software-development-kit), 
@@ -12,14 +18,12 @@ as if Python isn't slow enough already.
 
 There is a reason why many companies don't use the ancient Microsoft Excel C SDK.
 The example code and documentation are difficult to use and understand.
-The xll library makes it easy to call native code from Excel.
+This library makes it easy and performant to call native code from Excel.
 
-One reason for Python's popularity is that someone who knows how to call
-C, C++, and even Fortran from Python has already written a library to do that.
+One reason for Python's popularity is that people who know how to call
+C, C++, and even Fortran, from Python have written packages to do that.
 The xll library allows you to do that directly from the most popular language
 in the world, Excel.
-
-
 
 ## Install
 
@@ -42,11 +46,11 @@ When an xll is opened in Excel it
 the xll,
 [looks for](https://learn.microsoft.com/en-us/windows/win32/api/libloaderapi/nf-libloaderapi-getprocaddress),
 [`xlAutoOpen`](https://learn.microsoft.com/en-us/office/client-developer/excel/xlautoopen)
-and calls it. There are half a dozen 
+and calls it. There are 7 
 [`xlAuto` functions](https://learn.microsoft.com/en-us/office/client-developer/excel/add-in-manager-and-xll-interface-functions)
 that Excel calls to manage the lifetime of the xll. The xll library implements those for you.
 
-To add a function to be called by when Excel calls `xlAutoXXX` create an
+To add a function to be called when Excel calls `xlAutoXXX` create an
 object of type `Auto<XXX>` and specify a function to be called.
 The function takes no arguments and returns 1 to indicate success or 0 for failure.
 See [`auto.h`](auto.h) for the list possible values for `XXX`.
@@ -54,7 +58,7 @@ See [`auto.h`](auto.h) for the list possible values for `XXX`.
 ## Excel
 
 Everything Excel has to offer is available through the [`Excel`](excel.h) function.
-The first argument is a _function number_ defined in C SDK header file
+The first argument is a _function number_ defined in the C SDK header file
 [`XLCALL.H`](XLCALL.H)
 specifying the Excel function or macro to call.
 Arguments for function numbers are documented in 
@@ -121,10 +125,11 @@ is a historical artifact of that. Unlike Unix, Windows does not make functions
 visible outside of a shared library unless they are explicitly exported.
 The pragma does that for you.
 
-Keep the Excel `WINAPI` function implementations simple. Grab the arguments you told Excel to provide,
+Keep the Excel `WINAPI` function implementations simple. 
+Grab the arguments you told Excel to provide,
 call your platform independent function, and return the result. 
-Provide a header file and library for your C and C++ code so it can be used on
-Windows, Mac, and Linux
+Provide a platform independent header file and library for your C and C++ code
+so it can be used on any computer with a C++ compiler
 to get the same results displayed in Excel. 
 
 ### Macro
@@ -152,3 +157,62 @@ int WINAPI xll_macro(void)
 ## AddIn
 
 The [`AddIn`](addin.h) class is constructed from [`Args`](args.h).
+All functions and macros must be registered with Excel, and
+unregistered when the xll is unloaded.
+
+## Args
+
+The [`Args`](args.h) struct is used to 
+[register](https://learn.microsoft.com/en-us/office/client-developer/excel/xlfregister-form-1)
+the arguments to a macro or function.
+The structs `Macro` and `Function` inherit from `Args` to
+to populate the `Args` struct.
+
+Macros only require the the name of the native function and
+the name Excel will use to call it.
+
+Functions require the signature of the native function and
+and allow you to provide information Excel can display to users
+in the [`Insert Function`](https://support.microsoft.com/en-us/office/insert-function-74474114-7c7f-43f5-bec3-096c56e2fb13)
+dialog.
+
+The `Function` struct uses the [named parameter](https://en.wikibooks.org/wiki/More_C%2B%2B_Idioms/Named_Parameter)
+idiom to specify optional arguments.
+
+## Register
+
+The [`XlfRegister`](register.h) function is used to register macros and functions 
+with Excel.
+`AddIn` objects are created when the add-in is loaded,
+but there are some things that can only be done after Excel calls `xlAutoOpen`.
+The `Args::prepare` function arranages the data specified in the `Args` object
+into a format that iw necessary to call `xlfRegister`.
+
+## `Ctrl-Shift-A`
+
+After typing `=` and the namef a function, and optionally using `<Tab>` 
+to complete the name, then pressing `Ctrl-Shift-A`
+will produce the names of the arguments of the function.
+
+I don't have access to the source code of Excel, but there is a
+simple way to extend this functionality. Instead of pressing
+`Ctrl-Shift-A` you can press `<Backspace>` to remove the
+trailing left parenthesis and then press `<Enter>`.
+You will see another funny looking number, but it is not a handle. 
+It is the [register id](https://learn.microsoft.com/en-us/office/client-developer/excel/xlfregisterid)
+Excel uses to keep track
+user defined functions.
+
+With your cursor in the cell, pressing `Ctrl-Shift-B` will
+replace the arguments you see from `Ctrl-Shift-A` with their
+default values.
+
+Pressing `Ctrl-Shift-C` will enter the default values below the cell
+and provide the function corresponding to the register id to call those.
+You can change the values below the cell to provide new arguments.
+
+Pressing `Ctrl-Shift-D` will define the names you see from `Ctrl-Shift-A`
+below the cell and provide the function corresponding to the register id
+with those names as arguments. The function has the `Output` style
+applied and the arguments have the `Input` style applied.
+

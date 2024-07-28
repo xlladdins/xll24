@@ -2,6 +2,7 @@
 // Copyright (c) KALX, LLC. All rights reserved. No warranty made.
 // Store alert mask in registry to persist across sessions.
 #pragma once
+#include <string>
 #include <string_view>
 #include <windows.h>
 #include "XLCALL.H"
