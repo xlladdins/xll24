@@ -328,6 +328,15 @@ namespace xll {
 				return *this;
 			}
 		}
+		// JSON lookup for 2 row multi.
+		OPER& operator[](const OPER& key)
+		{
+			return static_cast<OPER&>(value(*this, key));
+		}
+		const OPER& operator[](const OPER& key) const
+		{
+			return value(*this, key);
+		}
 		
 		// Promote to 1 x 1 multi.
 		OPER& enlist()

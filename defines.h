@@ -209,6 +209,14 @@ namespace xll {
 		return XLOPER12{.val = {.str = const_cast<XCHAR*>(s)}, .xltype = xltypeStr};
 	}
 
+	constexpr XLOPER12 Multi(XLOPER12* array, int rows, int columns)
+	{
+		return XLOPER12{
+			.val = {.array = {.lparray = array, .rows = rows, .columns = columns} },
+			.xltype = xltypeMulti
+		};
+	}
+
 	// Assumes lifetime of data
 	constexpr XLOPER12 BigData(BYTE* data, long size)
 	{

@@ -5,9 +5,25 @@
 
 using namespace xll;
 
+int red;
+Auto<Open> xao_ret([] {
+	red = EditColor(XLL_RGB_COLOR_RED);
+	return true;
+});
+/*
+#define XLL_RGB_COLOR_ENUM(a, b, c) XLL_CONST(LONG, ENUM_COLOR_ ## a, b, "Color", "XLL Enum", "https://en.wikipedia.org/wiki/RGB_color_model");
+XLL_RGB_COLOR(XLL_RGB_COLOR_ENUM)
+#undef XLL_RGB_COLOR_ENUM
+*/
+
 bool isFormula(const OPER& val)
 {
 	return isStr(val) && view(val).starts_with(L'=');
+}
+
+bool isHandle(const OPER& val)
+{
+	return isStr(val) && view(val).starts_with(L'\\');
 }
 
 // Strip off leading '=' if it is a formula.
@@ -60,67 +76,6 @@ OPER Set(const OPER& ref, const OPER& val)
 	}
 
 	return res;
-}
-
-void AlignRight(const OPER& ref)
-{
-	OPER ac = Excel(xlfActiveCell);
-
-	Excel(xlcSelect, ref);
-	Excel(xlcAlignment, OPER(4));
-
-	Excel(xlcSelect, ac);
-}
-// E.g., "Courier"
-void Font(const OPER& ref, const OPER& font)
-{
-	OPER ac = Excel(xlfActiveCell);
-
-	Excel(xlcSelect, ref);
-	Excel(xlcFontProperties, font);
-	Excel(xlcSelect, ac);
-}
-// E.g., "Bold", "Italic", "Underline"
-void FontStyle(const OPER& ref, const OPER& style)
-{
-	OPER ac = Excel(xlfActiveCell);
-
-	Excel(xlcSelect, ref);
-	Excel(xlcFontProperties, OPER(), style); 	
-	Excel(xlcSelect, ac);
-}
-// Font size in points.
-auto FontSize(const OPER& ref, int size)
-{
-	OPER ac = Excel(xlfActiveCell);
-
-	Excel(xlcSelect, ref);
-	Excel(xlcApplyStyle, OPER(), OPER(), size);
-	Excel(xlcSelect, ac);
-
-	return ac;
-}
-// Font color.
-auto FontColor(const OPER& ref, int size)
-{
-	OPER ac = Excel(xlfActiveCell);
-
-	Excel(xlcSelect, ref);
-	Excel(xlcApplyStyle, OPER(), OPER(), size);
-	Excel(xlcSelect, ac);
-
-	return ac;
-}
-// E.g., "#, ##0.00",
-auto FormatNumber(const OPER& ref, const OPER& format)
-{
-	OPER ac = Excel(xlfActiveCell);
-
-	Excel(xlcSelect, ref);
-	Excel(xlcFormatNumber, format);
-	Excel(xlcSelect, ac);
-
-	return ac;
 }
 
 // Paste function with default arguments.
@@ -224,8 +179,8 @@ int WINAPI xll_pasted()
 		text = pargs->functionText;
 
 		Excel(xlSet, caller, text);
-		AlignRight(caller);
-		FontStyle(caller, OPER(L"Italic"));
+		AlignHorizontal(Alignment::Horizontal::Right);
+		FormatFontItalic();
 
 		// Expand caller to size of formula output.
 		OPER output = Reshape(Move(caller, 0, 1), Excel(xlfEvaluate, Formula(pargs)));
@@ -238,19 +193,19 @@ int WINAPI xll_pasted()
 			const OPER& name = pargs->argumentName[i];
 			formula &= name;
 			Set(active, name);
-			AlignRight(active);
-			FontStyle(active, OPER(L"Bold"));
+			AlignHorizontal(Alignment::Horizontal::Right);
+			FormatFontBold();
 
 			active = Move(active, 0, 1);
 			if (isNil(pargs->argumentInit[i])) {
 				Excel(xlcDefineName, name, active);
-				FontStyle(active, OPER(L"Input"));
+				Excel(xlcApplyStyle, L"Input");
 				active = Move(active, 1, -1);
 			}
 			else {
 				const auto ref = Set(active, pargs->argumentInit[i]);
 				Excel(xlcDefineName, name, ref);
-				FontStyle(ref, OPER(L"Input"));
+				Excel(xlcApplyStyle, L"Input");
 				active = Move(active, rows(ref), -1);
 			}
 
@@ -258,8 +213,14 @@ int WINAPI xll_pasted()
 		}
 		formula &= OPER(L")");
 
+
 		Excel(xlcFormula, formula, output);
-		FontStyle(output, OPER(L"Output"));
+		Excel(xlcApplyStyle, L"Output");
+		if (isHandle(text)) {
+			FormatFontSize(8);
+			FormatFontColor(red);
+			Excel(xlcFormatNumber, "\"0x\"@");
+		}
 		Excel(xlcSelect, caller);
 	}
 	catch (const std::exception& ex) {

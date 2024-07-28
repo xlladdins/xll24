@@ -28,6 +28,9 @@ namespace xll {
 		constexpr REF(int r, int c, int h = 1, int w = 1) noexcept
 			: XLREF12{ .rwFirst = r, .rwLast = r + h - 1, .colFirst = c, .colLast = c + w - 1 }
 		{ }
+		constexpr REF()
+			: REF(0, 0, 0, 0)
+		{ }
 		REF(const REF&) noexcept = default;
 		REF& operator=(const REF&) noexcept = default;
 		~REF() noexcept = default;

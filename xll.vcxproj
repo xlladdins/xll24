@@ -135,6 +135,7 @@
     <ClInclude Include="handle.h" />
     <ClInclude Include="macrofun.h" />
     <ClInclude Include="on.h" />
+    <ClInclude Include="rgb.h" />
     <ClInclude Include="utf8.h" />
     <ClInclude Include="XLCALL.H" />
     <ClInclude Include="alert.h" />

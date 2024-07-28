@@ -54,6 +54,15 @@ namespace xll {
 	{
 		return rows(x) * columns(x);
 	}
+	// i-th row assuming lifetime of x.
+	constexpr XLOPER12 row(const XLOPER12& x, int r) noexcept
+	{
+		if (isMulti(x) && r < rows(x)) {
+			return Multi(Multi(x) + r * columns(x), 1, columns(x));
+		}
+
+		return ErrValue;
+	}
 
 	// Either one row or one column Multi
 	constexpr bool isVector(const XLOPER12& x) noexcept
@@ -61,34 +70,70 @@ namespace xll {
 		return isMulti(x) && (rows(x) == 1 || columns(x) == 1);
 	}
 
+	constexpr XLOPER12 index(const XLOPER12& x, int i) noexcept
+	{
+		return type(x) != xltypeMulti ? x : Multi(x)[i];
+	}
 	constexpr XLOPER12& index(XLOPER12& x, int i) noexcept
 	{
-		return type(x) != xltypeMulti ? x : x.val.array.lparray[i];
+		return type(x) != xltypeMulti ? x : Multi(x)[i];
+	}
+	constexpr XLOPER12 index(const XLOPER12& x, int i, int j) noexcept
+	{
+		return index(x, i * columns(x) + j);
 	}
 	constexpr XLOPER12& index(XLOPER12& x, int i, int j) noexcept
 	{
 		return index(x, i * columns(x) + j);
 	}
-
-	constexpr std::wstring_view view(const XLOPER12& x)
+	constexpr std::wstring_view view(const XLOPER12& x) noexcept
 	{
-		ensure(isStr(x));
-
-		return std::wstring_view(Str(x), count(x));
+		return isStr(x) ? std::wstring_view(Str(x), count(x)) : std::wstring_view();
 	}
+	// Index of key in two row JSON like multi.
+	constexpr int lookup(const XLOPER12& x, const XLOPER12& key) noexcept
+	{
+		if (!isStr(key)) {
+			return -1;
+		}
+
+		if (isMulti(x) && rows(x) == 2) {
+			for (int i = 0; i < columns(x); ++i) {
+				auto xi = index(x, 0, i);
+				if (!isStr(xi)) {
+					return -1;
+				}
+				if (view(key) == view(xi)) {
+					return i;
+				}
+			}
+		}
+		return -1;
+	}
+	// Lookup value correponding to key in two row JSON like multi.
+	constexpr XLOPER12 value(const XLOPER12& x, const XLOPER12& key) noexcept
+	{
+		int i = lookup(x, key);
+
+		return i == -1 ? ErrValue : index(x, 1, i);
+	}
+	constexpr XLOPER12& value(XLOPER12& x, const XLOPER12& key) noexcept
+	{
+		int i = lookup(x, key);
+
+		return index(x, 1, i);
+	}
+
+
 
 	constexpr auto span(const XLOPER12& x)
 	{
-		ensure(isMulti(x));
-
-		return std::span(Multi(x), count(x));
+		return isMulti(x) ? std::span(Multi(x), count(x)) : std::span<XLOPER12>();
 	}
 
 	constexpr auto ref(const XLOPER12& x)
 	{
-		ensure(isRef(x));
-
-		return std::span(Ref(x), count(x));
+		return isRef(x) ? std::span(Ref(x), count(x)) : std::span<XLREF12>();
 	}
 
 	constexpr auto blob(const XLOPER12& x)
