@@ -775,16 +775,17 @@ XLL_CONST(HANDLEX, MY_DOUBLE, safe_handle(my_double), "Return the handle data ty
 AddIn xai_my_double(
 	Function(XLL_DOUBLE, L"xll_my_double", L"XLL.MY.DOUBLE")
 	.Arguments({
-		Arg(XLL_HANDLEX, L"handle", L"is a handle to my_double."),
+		Arg(XLL_LPOPER, L"handle", L"is a handle to my_double."),
 		Arg(XLL_DOUBLE, L"x", L"is a number."),
 		})
 	.Category(L"XLL")
 	.FunctionHelp(L"Return 2 times the number.")
 );
-double WINAPI xll_my_double(HANDLEX h, double x)
+double WINAPI xll_my_double(LPOPER h, double x)
 {
 #pragma XLLEXPORT
-	auto h_ = safe_value<double(*)(double)>(h);
+	auto h_ = Enum<double(*)(double)>(*h, nullptr);
+	ensure(h_);
 
 	return h_(x);
 }

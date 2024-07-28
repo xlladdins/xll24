@@ -10,21 +10,14 @@ namespace xll
 	template<class T>
 	inline T Enum(const OPER& e, T init) 
 	{
-		if (isMissing(e) || isNil(e) || (isNum(e) && Num(e) == 0)) {
-			return init;
-		}
-
-		ensure(isNum(e) || isStr(e));
-
-		HANDLEX h = INVALID_HANDLEX;
-		if (isNum(e)) {
-			T t = safe_value<T>(Num(e));
-			if (t == 0) {
-				init = (T)Num(e);
-			}
+		if (isNum(e) && Num(e) != 0) {
+			init = safe_value<T>(Num(e));
+			ensure(init);
 		}	
 		else if (isStr(e)) {
 			OPER o = Excel(xlfEvaluate, OPER(L"=") & e & OPER(L"()"));
+			ensure(isNum(o));
+			return Enum(o, init);
 		}
 
 		return init;
