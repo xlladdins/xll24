@@ -370,16 +370,7 @@ namespace xll {
 		}
 		OPER& transpose()
 		{
-			int r = rows(*this);
-			int c = columns(*this);
-
-			if (r > 1 && c > 1) {
-				for (int i = 1; i < size(*this) - 1; ++i) {
-					int j = (c * i) % (r * c - 1);
-					std::swap(val.array.lparray[i], val.array.lparray[j]);
-				}
-			}
-			std::swap(val.array.rows, val.array.columns);
+			xll::transpose(*this);
 
 			return *this;
 		}
@@ -411,7 +402,6 @@ namespace xll {
 			if (rows(*this) != 1 && columns(*this) != 1) {
 				return operator=(ErrValue);
 			}
-
 			int n = size(*this);
 			OPER o(1, n + 1);
 			for (int i = 0; i < n; ++i) {

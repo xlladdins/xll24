@@ -33,7 +33,7 @@ namespace xll {
 	{
 		// first 16 bits of p are 0 and 2^(64 - 16) = 2^48
 		// doubles exactly represent integers < 2^53
-		return (HANDLEX)((uint64_t)p);
+		return static_cast<HANDLEX>(reinterpret_cast<uintptr_t>(p));
 	}
 	/// <summary>
 	/// Convert a handle to a pointer.
@@ -45,7 +45,7 @@ namespace xll {
 	template<class T>
 	inline T* to_pointer(HANDLEX h)
 	{
-		return (T*)((uint64_t)h);
+		return reinterpret_cast<T*>(static_cast<uintptr_t>(h));
 	}
 
 	// keep track of handles returned to Excel

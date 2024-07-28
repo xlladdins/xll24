@@ -761,3 +761,32 @@ LPOPER WINAPI xll_evaluate(LPOPER po)
 */
 //#endif // 0
 //#endif // 0
+
+XLL_CONST(LPOPER, XLL_NA, (LPOPER)& ErrNA, "Return the #N/A error value.", "XLL", "");
+
+double my_double(double x)
+{
+	return 2*x;
+}
+
+XLL_CONST(HANDLEX, MY_DOUBLE, safe_handle(my_double), "Return the handle data type.", "XLL", "");
+
+AddIn xai_my_double(
+	Function(XLL_DOUBLE, L"xll_my_double", L"XLL.MY.DOUBLE")
+	.Arguments({
+		Arg(XLL_HANDLEX, L"handle", L"is a handle to my_double."),
+		Arg(XLL_DOUBLE, L"x", L"is a number."),
+		})
+	.Category(L"XLL")
+	.FunctionHelp(L"Return 2 times the number.")
+);
+double WINAPI xll_my_double(HANDLEX h, double x)
+{
+#pragma XLLEXPORT
+	double(*p)(double) = my_double;
+	double y;
+	y = p(x);
+	auto h_ = safe_pointer<double(*)(double)>(h);
+
+	return (*h_)(x);
+}

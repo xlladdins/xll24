@@ -5,7 +5,6 @@
 
 namespace xll {
 
-
 	// return XLFree(x) in thread-safe functions
 	// Freed by Excel when no longer needed.
 	constexpr LPXLOPER12 XLFree(XLOPER12& x) noexcept
@@ -56,6 +55,12 @@ namespace xll {
 		return rows(x) * columns(x);
 	}
 
+	// Either one row or one column Multi
+	constexpr bool isVector(const XLOPER12& x) noexcept
+	{
+		return isMulti(x) && (rows(x) == 1 || columns(x) == 1);
+	}
+
 	constexpr XLOPER12& index(XLOPER12& x, int i) noexcept
 	{
 		return type(x) != xltypeMulti ? x : x.val.array.lparray[i];
@@ -83,6 +88,27 @@ namespace xll {
 	constexpr auto blob(const XLOPER12& x)
 	{
 		return std::span(BigData(x), count(x));
+	}
+
+	// Inplace transpose.
+	constexpr XLOPER12& transpose(XLOPER12& x)
+	{
+		if (!isMulti(x)) {
+			return x;
+		}
+
+		int r = rows(x);
+		int c = columns(x);
+
+		if (isVector(x)) {
+			for (int i = 1; i < size(x) - 1; ++i) {
+				int j = (c * i) % (r * c - 1);
+				std::swap(x.val.array.lparray[i], x.val.array.lparray[j]);
+			}
+		}
+		std::swap(x.val.array.rows, x.val.array.columns);
+
+		return x;
 	}
 
 	constexpr std::partial_ordering compare(const XLOPER12& x, const XLOPER12& y)
