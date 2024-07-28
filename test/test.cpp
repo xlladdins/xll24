@@ -1,4 +1,5 @@
 // test.cpp
+// Copyright (c) KALX, LLC. All rights reserved. No warranty made.
 //#if 0
 #include <numeric>
 #include <random>

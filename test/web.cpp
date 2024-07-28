@@ -1,4 +1,5 @@
 // web.cpp - call xlfWebservice asynchronously.
+// Copyright (c) KALX, LLC. All rights reserved. No warranty made.
 #include <chrono>
 #include <thread>
 #include "../xll.h"

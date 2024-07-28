@@ -73,6 +73,11 @@ namespace xll {
 			dealloc();
 		}
 
+		constexpr explicit operator bool() const noexcept
+		{
+			return isTrue(*this);
+		}
+
 		// Num - 64-bit IEEE floating point
 		constexpr explicit OPER(double num) noexcept
 			: XLOPER12{ Num(num) }

@@ -209,6 +209,15 @@ namespace xll {
 		return XLOPER12{.val = {.str = const_cast<XCHAR*>(s)}, .xltype = xltypeStr};
 	}
 
+	// Assumes lifetime of data
+	constexpr XLOPER12 BigData(BYTE* data, long size)
+	{
+		return XLOPER12{
+			.val = {.bigdata = {.h = {.lpbData = data }, .cbData = size} },
+			.xltype = xltypeBigData
+		};
+	}
+
 	// Argument for std::span(ptr, count).
 	constexpr size_t count(const XLOPER12& x) noexcept
 	{
@@ -238,7 +247,7 @@ namespace xll {
 	XLL_NULL_TYPE(XLL_IS)
 #undef XLL_IS
 
-#define XLL_NULL(t, d) constexpr XLOPER12 t = XLOPER12{ .xltype = xltype##t };
+#define XLL_NULL(t, d) constexpr XLOPER12 t = XLOPER12{ .val = { .w = 0 }, .xltype = xltype##t };
 	XLL_NULL_TYPE(XLL_NULL)
 #undef XLL_NULL
 

@@ -1,4 +1,5 @@
 // handle.cpp - Embed C++ objects in Excel using xll::handle<T>
+// Copyright (c) KALX, LLC. All rights reserved. No warranty made.
 // https://xlladdins.com
 //#if 0
 #include <concepts>

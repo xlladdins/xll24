@@ -127,11 +127,13 @@
     <ClInclude Include="auto.h" />
     <ClInclude Include="defines.h" />
     <ClInclude Include="ensure.h" />
+    <ClInclude Include="enum.h" />
     <ClInclude Include="excel_time.h" />
     <ClInclude Include="export.h" />
     <ClInclude Include="fp.h" />
     <ClInclude Include="fpx.h" />
     <ClInclude Include="handle.h" />
+    <ClInclude Include="macrofun.h" />
     <ClInclude Include="on.h" />
     <ClInclude Include="utf8.h" />
     <ClInclude Include="XLCALL.H" />

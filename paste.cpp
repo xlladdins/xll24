@@ -1,4 +1,5 @@
 // paste.cpp - Paste shortcuts.
+// Copyright (c) KALX, LLC. All rights reserved. No warranty made.
 #include "xll.h"
 
 using namespace xll;
@@ -45,18 +46,19 @@ OPER Reshape(const OPER& active, const OPER& ref)
 }
 
 // Set value and return selection.
-OPER Set(OPER ref, const OPER& val)
+OPER Set(const OPER& ref, const OPER& val)
 {
+	OPER res = ref;
 	if (isFormula(val)) {
 		Excel(xlcFormula, val, ref);
 		const auto e = Excel(xlfEvaluate, val);
-		ref = Reshape(ref, e);
+		res = Reshape(ref, e);
 	}
 	else {
 		Excel(xlSet, ref, val);
 	}
 
-	return ref;
+	return res;
 }
 
 void AlignRight(const OPER& ref)
@@ -68,21 +70,53 @@ void AlignRight(const OPER& ref)
 
 	Excel(xlcSelect, ac);
 }
-void Font(const OPER& ref, const OPER& style)
+// E.g., "Courier"
+void Font(const OPER& ref, const OPER& font)
 {
 	OPER ac = Excel(xlfActiveCell);
 
 	Excel(xlcSelect, ref);
-	Excel(xlcFontProperties, OPER(), style); // E.g., "Bold", "Italic", "Underline"
-	
+	Excel(xlcFontProperties, font);
 	Excel(xlcSelect, ac);
 }
-auto Style(const OPER& ref, const OPER& style)
+// E.g., "Bold", "Italic", "Underline"
+void FontStyle(const OPER& ref, const OPER& style)
 {
 	OPER ac = Excel(xlfActiveCell);
 
 	Excel(xlcSelect, ref);
-	Excel(xlcApplyStyle, style); // E.g., "Input", "Output"
+	Excel(xlcFontProperties, OPER(), style); 	
+	Excel(xlcSelect, ac);
+}
+// Font size in points.
+auto FontSize(const OPER& ref, int size)
+{
+	OPER ac = Excel(xlfActiveCell);
+
+	Excel(xlcSelect, ref);
+	Excel(xlcApplyStyle, OPER(), OPER(), size);
+	Excel(xlcSelect, ac);
+
+	return ac;
+}
+// Font color.
+auto FontColor(const OPER& ref, int size)
+{
+	OPER ac = Excel(xlfActiveCell);
+
+	Excel(xlcSelect, ref);
+	Excel(xlcApplyStyle, OPER(), OPER(), size);
+	Excel(xlcSelect, ac);
+
+	return ac;
+}
+// E.g., "#, ##0.00",
+auto FormatNumber(const OPER& ref, const OPER& format)
+{
+	OPER ac = Excel(xlfActiveCell);
+
+	Excel(xlcSelect, ref);
+	Excel(xlcFormatNumber, format);
 	Excel(xlcSelect, ac);
 
 	return ac;
@@ -190,7 +224,7 @@ int WINAPI xll_pasted()
 
 		Excel(xlSet, caller, text);
 		AlignRight(caller);
-		Font(caller, OPER(L"Italic"));
+		FontStyle(caller, OPER(L"Italic"));
 
 		// Expand caller to size of formula output.
 		OPER output = Reshape(Move(caller, 0, 1), Excel(xlfEvaluate, Formula(pargs)));
@@ -204,18 +238,18 @@ int WINAPI xll_pasted()
 			formula &= name;
 			Set(active, name);
 			AlignRight(active);
-			Font(active, OPER(L"Bold"));
+			FontStyle(active, OPER(L"Bold"));
 
 			active = Move(active, 0, 1);
 			if (isNil(pargs->argumentInit[i])) {
 				Excel(xlcDefineName, name, active);
-				Style(active, OPER(L"Input"));
+				FontStyle(active, OPER(L"Input"));
 				active = Move(active, 1, -1);
 			}
 			else {
 				const auto ref = Set(active, pargs->argumentInit[i]);
 				Excel(xlcDefineName, name, ref);
-				Style(ref, OPER(L"Input"));
+				FontStyle(ref, OPER(L"Input"));
 				active = Move(active, rows(ref), -1);
 			}
 
@@ -224,7 +258,7 @@ int WINAPI xll_pasted()
 		formula &= OPER(L")");
 
 		Excel(xlcFormula, formula, output);
-		Style(output, OPER(L"Output"));
+		FontStyle(output, OPER(L"Output"));
 		Excel(xlcSelect, caller);
 	}
 	catch (const std::exception& ex) {

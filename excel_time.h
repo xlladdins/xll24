@@ -1,4 +1,5 @@
 // excel_time.h - Excel Julian date to time_t conversion
+// Copyright (c) KALX, LLC. All rights reserved. No warranty made.
 #pragma once
 #include <expected>
 #include <limits>

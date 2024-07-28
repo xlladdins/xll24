@@ -39,7 +39,14 @@ namespace xll {
 		OPER argumentType; // array of individual argument types
 		OPER argumentName; // array of individual argument names	
 		OPER argumentInit; // array individual argument default values
+		std::string documentation;
 
+		Args& Documentation(std::string_view doc)
+		{
+			documentation = doc;
+
+			return *this;
+		}
 		bool is_hidden() const
 		{
 			return macroType == 0;
@@ -117,9 +124,12 @@ namespace xll {
 			return static_cast<int>(off + n);
 		}
 		// key-value pairs
-		// call after prepare()
-		OPER markup() const
+		OPER markup()
 		{
+			if (moduleText == OPER()) {
+				prepare();
+			}
+
 			OPER o({
 				OPER(L"moduleText"), moduleText,
 				OPER(L"procedure"), procedure,
@@ -133,10 +143,15 @@ namespace xll {
 				OPER(L"functionHelp"), functionHelp 
 			});
 			o.reshape(size(o) / 2, 2);
-			o.push_bottom(OPER({ OPER(L"argumentHelp"), OPER(L"TODO:")}));
+			OPER ah;
+			for (int i = 0; i < count(); ++i) {
+				ah.append(argumentHelp[i]);
+			}
+			o.push_bottom(OPER({ OPER(L"argumentHelp"), ah}));
 			o.push_bottom(OPER({ OPER(L"argumentType"), argumentType }));
 			o.push_bottom(OPER({ OPER(L"argumentName"), argumentName }));
 			o.push_bottom(OPER({ OPER(L"argumentInit"), argumentInit }));
+			o.push_bottom(OPER({ OPER(L"documentation"), OPER(documentation) }));
 
 			return o;
 		}

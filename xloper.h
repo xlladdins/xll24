@@ -72,25 +72,78 @@ namespace xll {
 
 	constexpr std::wstring_view view(const XLOPER12& x)
 	{
+		ensure(isStr(x));
+
 		return std::wstring_view(Str(x), count(x));
 	}
 
 	constexpr auto span(const XLOPER12& x)
 	{
+		ensure(isMulti(x));
+
 		return std::span(Multi(x), count(x));
 	}
 
 	constexpr auto ref(const XLOPER12& x)
 	{
+		ensure(isRef(x));
+
 		return std::span(Ref(x), count(x));
 	}
 
 	constexpr auto blob(const XLOPER12& x)
 	{
+		ensure(isBigData(x));
+
 		return std::span(BigData(x), count(x));
 	}
 
-	// Inplace transpose.
+	// False-like value.
+	constexpr bool isFalse(const XLOPER12& x)
+	{
+		return (isNum(x) && (Num(x) != Num(x) || Num(x) == 0))
+			|| (isStr(x) && count(x) == 0)
+			|| (isBool(x) && Bool(x) == false)
+			|| (isRef(x) && count(x) == 0)
+			|| isErr(x)
+			|| (isMulti(x) && size(x) == 0)
+			|| isMissing(x)
+			|| isNil(x)
+			|| (isSRef(x) && size(x) == 0)
+			|| (isInt(x) && Int(x) == 0)
+			|| (isBigData(x) && count(x) == 0)
+			;
+	}
+	// True-like value
+	constexpr bool isTrue(const XLOPER12& x)
+	{
+		return !isFalse(x);
+	}
+#ifdef _DEBUG
+	static_assert(isFalse(Num(0)));
+	static_assert(isTrue(Num(1)));
+	static_assert(isFalse(Num(std::numeric_limits<double>::quiet_NaN())));
+	static_assert(isFalse(Str(L"")));
+	static_assert(isTrue(Str(L"1")));
+	static_assert(isFalse(Bool(false)));
+	static_assert(isTrue(Bool(true)));
+	static_assert(isFalse(ErrNA));
+	static_assert(isFalse(XLOPER12{ .val = {.array = {.lparray = 0, .rows = 0, .columns = 0}}, .xltype = xltypeMulti }));
+	static_assert(isFalse(XLOPER12{ .val = {.array = {.lparray = 0, .rows = 1, .columns = 0}}, .xltype = xltypeMulti }));
+	static_assert(isFalse(XLOPER12{ .val = {.array = {.lparray = 0, .rows = 0, .columns = 1}}, .xltype = xltypeMulti }));
+	static_assert(isTrue(XLOPER12{ .val = {.array = {.lparray = 0, .rows = 1, .columns = 1}}, .xltype = xltypeMulti }));
+	static_assert(isFalse(Missing));
+	static_assert(!isTrue(Nil));
+	static_assert(isFalse(SRef(REF(0, 0, 0, 0))));
+	static_assert(isFalse(SRef(REF(0, 0, 1, 0))));
+	static_assert(isFalse(SRef(REF(0, 0, 0, 1))));
+	static_assert(isTrue(SRef(REF(0, 0, 1, 1))));
+	static_assert(isFalse(Int(0)));
+	static_assert(isTrue(Int(1)));
+	//static_assert(isFalse(BigData(nullptr, 0)));
+#endif // _DEBUG
+
+	// In-place transpose.
 	constexpr XLOPER12& transpose(XLOPER12& x)
 	{
 		if (!isMulti(x)) {

@@ -21,8 +21,6 @@ LPXLOPER12 WINAPI xll_evaluate(LPXLOPER12 p)
 	}
 	catch (const std::exception& ex) {
 		XLL_ERROR(ex.what());
-
-		return nullptr;
 	}
 
 	return &result;

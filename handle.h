@@ -72,7 +72,7 @@ namespace xll {
 	{
 		T* p = to_pointer<T>(h);
 
-		return safe_pointers.contains((void*)p) ? reinterpret_cast<T>(p) : nullptr;
+		return safe_pointers.contains((void*)p) ? reinterpret_cast<T>(p) : T(0);
 	}
 
 	// typeid<T>.name() given pointer
