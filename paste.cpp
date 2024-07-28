@@ -1,6 +1,7 @@
 // paste.cpp - Paste shortcuts.
 // Copyright (c) KALX, LLC. All rights reserved. No warranty made.
 #include "xll.h"
+#include "macrofun.h"
 
 using namespace xll;
 

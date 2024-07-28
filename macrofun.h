@@ -13,37 +13,36 @@ namespace xll {
 	class EditColor {
 		inline static int count = 56; // color palette index
 	public:
-		unsigned char r, g, b; // Enforce 0 <= r, g, b <= 255.
+		unsigned char r, g, b; // Enforces 0 <= r, g, b <= 255.
 		EditColor(unsigned char r, unsigned char g, unsigned char b)
 			: r(r), g(g), b(b)
 		{ }
 		// Add from end of color palette
-		int Set(int index = 0) const
+		OPER Set(int index = 0) const
 		{
 			if (index == 0) {
 				ensure(count > 1);
 				index = --count;
 			}
-			ensure(Excel(xlcEditColor, index, r, g, b));
-
-			return count;
+			
+			return Excel(xlcEditColor, index, r, g, b);
 		}
 		// Microsoft color palette
 		static OPER MSred()
 		{
-			EditColor _(0xF6, 0x53, 0x14); return _.Set();
+			return EditColor(0xF6, 0x53, 0x14).Set();
 		}
-		static int MSgreen()
+		static OPER MSgreen()
 		{
-			EditColor _(0x7C, 0xBB, 0x00); return _.Set();
+			return EditColor(0x7C, 0xBB, 0x00).Set();
 		}
-		static int MSblue()
+		static OPER MSblue()
 		{
-			EditColor _(0x00, 0xA1, 0xF1); return _.Set();
+			return EditColor(0x00, 0xA1, 0xF1).Set();
 		}
-		static int MSorange()
+		static OPER MSorange()
 		{
-			EditColor _(0xFF, 0xBB, 0x00); return _.Set();
+			return EditColor(0, 0, 0).Set();
 		}
 	};
 
