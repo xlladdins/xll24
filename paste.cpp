@@ -21,6 +21,11 @@ bool isHandle(const OPER& val)
 	return isStr(val) && view(val).starts_with(L'\\');
 }
 
+OPER Eval(const OPER& val)
+{
+	return isFormula(val) ? Excel(xlfEvaluate, val) : val;
+}
+
 // Strip off leading '=' if it is a formula.
 OPER Uneval(const OPER& val)
 {
@@ -62,9 +67,9 @@ OPER Set(const OPER& ref, const OPER& val)
 {
 	OPER res = ref;
 	if (isFormula(val)) {
-		Excel(xlcFormula, val, ref);
-		const auto e = Excel(xlfEvaluate, val);
-		res = Reshape(ref, e);
+		const auto eval = Excel(xlfEvaluate, val);
+		res = Reshape(ref, eval);
+		Excel(xlSet, res, eval);
 	}
 	else {
 		Excel(xlSet, ref, val);
@@ -120,7 +125,7 @@ int WINAPI xll_pastec()
 		text = pargs->functionText;
 
 		// Expand caller to size of formula output.
-		OPER output = Reshape(caller, Excel(xlfEvaluate, Formula(pargs)));
+		OPER output = Reshape(caller, Eval(Formula(pargs)));
 		OPER active = Move(caller, rows(output), 0);
 
 		OPER formula = OPER(L"=") & text & OPER(L"(");
@@ -219,6 +224,7 @@ int WINAPI xll_pasted()
 			else {
 				const auto ref = Set(active, pargs->argumentInit[i]);
 				Excel(xlcDefineName, name, ref);
+				Excel(xlcSelect, ref);
 				Excel(xlcApplyStyle, L"Input");
 				active = Move(active, rows(ref), -1);
 			}
