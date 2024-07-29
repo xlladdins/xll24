@@ -232,6 +232,7 @@ namespace xll {
 	public:
 		int index;
 		unsigned char r, g, b; // Enforces 0 <= r, g, b <= 255.
+		// Add color to palette at index.
 		EditColor(unsigned char r, unsigned char g, unsigned char b, int index = count)
 			: index(index), r(r), g(g), b(b)
 		{ 
@@ -249,7 +250,7 @@ namespace xll {
 	};
 
 	// FORMAT.FONT(name_text, size_num, bold, italic, underline, strike, color, outline, shadow)
-// https://xlladdins.github.io/Excel4Macros/format.font.html
+	// https://xlladdins.github.io/Excel4Macros/format.font.html
 	struct FormatFont {
 		OPER name_text = Missing; // font name, e.g., "Calibri"
 		OPER size_num = Missing;  // font size in points
