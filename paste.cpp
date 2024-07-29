@@ -5,47 +5,6 @@
 
 using namespace xll;
 
-int red = 0; // red color index
-bool Handle = false;
-
-AddIn xai_setup(
-	Macro("xll_setup_red_Handle", "XLL.SETUP.RED.HANDLE")
-);
-int WINAPI xll_setup_red_Handle()
-{
-#pragma XLLEXPORT
-	// Add to color palette.
-	if (!red) {
-		red = EditColor(XLL_RGB_COLOR_RED);
-	}
-	// Handle style.
-	if (!Handle) {
-		DefineStyle(OPER(L"Handle"))
-			.Number(OPER(L"\"0x\"@"))
-			.FormatFont(FormatFont(false).Size(8).Color(red))
-			.Alignment(Alignment(false).Horizontal(Alignment::Horizontal::Center));
-		Handle = true;
-	}
-
-	return true;
-}
-// Add red to color palette and define Handle style.
-On<xlcOnSheet> xon_sheet(Missing, "XLL.SETUP.RED.HANDLE");
-	// Add to color palette.
-	if (!red) {
-		red = EditColor(XLL_RGB_COLOR_RED);
-	}
-	// Handle style.
-	if (!Handle) {
-		DefineStyle(OPER(L"Handle"))
-			.Number(OPER(L"\"0x\"@"))
-			.FormatFont(FormatFont(false).Size(8).Color(red))
-			.Alignment(Alignment(false).Horizontal(Alignment::Horizontal::Center));
-		Handle = true;
-	}
-
-	return true;
-});
 /*
 #define XLL_RGB_COLOR_ENUM(a, b, c) XLL_CONST(LONG, ENUM_COLOR_ ## a, b, "Color", "XLL Enum", "https://en.wikipedia.org/wiki/RGB_color_model");
 XLL_RGB_COLOR(XLL_RGB_COLOR_ENUM)
@@ -211,6 +170,19 @@ int WINAPI xll_pasted()
 	int result = TRUE;
 
 	try {
+		// Add red to color palette and define Handle style.
+		if (!red) {
+			red = EditColor(XLL_RGB_COLOR_RED);
+		}
+		// Handle style.
+		if (!Handle) {
+			DefineStyle(OPER(L"Handle"))
+				.Number(OPER(L"\"0x\"#"))
+				.FormatFont(FormatFont(false).Size(8).Color(red))
+				.Alignment(Alignment(false).Horizontal(Alignment::Horizontal::Center))
+				.Alignment(Alignment(false).Vertical(Alignment::Vertical::Center));
+			Handle = true;
+		}
 
 		OPER caller = Excel(xlfActiveCell);
 		OPER text = Excel(xlCoerce, caller);
@@ -219,7 +191,7 @@ int WINAPI xll_pasted()
 		text = pargs->functionText;
 
 		Excel(xlSet, caller, text);
-		Alignment().Horizontal(Alignment::Horizontal::Right);
+		AlignHorizontalRight();
 		FormatFont().Italic();
 
 		// Format handle.
@@ -235,7 +207,7 @@ int WINAPI xll_pasted()
 			const OPER& name = pargs->argumentName[i];
 			formula &= name;
 			Set(active, name);
-			Alignment().Horizontal(Alignment::Horizontal::Right);
+			AlignHorizontalRight();
 			FormatFont().Bold();
 
 			active = Move(active, 0, 1);

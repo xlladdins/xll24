@@ -167,7 +167,7 @@ XLL_RGB_COLOR(XLL_RGB_COLOR_ENUM)
 namespace xll {
 
 	// Alignment().Member(value)... operates on active cell. 
-	// Destructor calls xlcAlignment.
+	// Destructor calls xlcAlignment if set is true.
 	class Alignment {
 		bool set;
 	public:
@@ -246,6 +246,40 @@ namespace xll {
 			return *this;
 		}
 	};
+	void AlignHorizontalGeneral(bool b = true)
+	{
+		Alignment(b).Horizontal(Alignment::Horizontal::General);
+	}
+	void AlignHorizontalLeft(bool b = true)
+	{
+		Alignment(b).Horizontal(Alignment::Horizontal::Left);
+	}
+	void AlignHorizontalCenter(bool b = true)
+	{
+		Alignment(b).Horizontal(Alignment::Horizontal::Center);
+	}
+	void AlignHorizontalRight(bool b = true)
+	{
+		Alignment(b).Horizontal(Alignment::Horizontal::Right);
+	}
+	void AlignHorizontalFill(bool b = true)
+	{
+		Alignment(b).Horizontal(Alignment::Horizontal::Fill);
+	}
+	void AlignHorizontalJustify(bool b = true)
+	{
+		Alignment(b).Horizontal(Alignment::Horizontal::Justify);
+	}
+	void AlignHorizontalCenterAcrossSelection(bool b = true)
+	{
+		Alignment(b).Horizontal(Alignment::Horizontal::CenterAcrossSelection);
+	}
+
+	void AlignVerticalCenter(bool b = true)
+	{
+		Alignment(b).Vertical(Alignment::Vertical::Center);
+	}
+	// TODO: Top, ...
 
 	struct Border {
 		OPER outline = Missing; 
