@@ -56,8 +56,10 @@ namespace xll {
 			return operator=(static_cast<const XLOPER12&>(o));
 		}
 		OPER(OPER&& o) noexcept
-			: XLOPER12{ .val = o.val , .xltype = std::exchange(o.xltype, xltypeNil) }
-		{ }
+			: XLOPER12{ o }
+		{
+			o.xltype = xltypeNil;
+		}
 		OPER& operator=(OPER&& o) noexcept
 		{
 			if (this != &o) {
