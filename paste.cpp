@@ -5,9 +5,45 @@
 
 using namespace xll;
 
-int red;
-Auto<Open> xao_ret([] {
-	red = EditColor(XLL_RGB_COLOR_RED);
+int red = 0; // red color index
+bool Handle = false;
+
+AddIn xai_setup(
+	Macro("xll_setup_red_Handle", "XLL.SETUP.RED.HANDLE")
+);
+int WINAPI xll_setup_red_Handle()
+{
+#pragma XLLEXPORT
+	// Add to color palette.
+	if (!red) {
+		red = EditColor(XLL_RGB_COLOR_RED);
+	}
+	// Handle style.
+	if (!Handle) {
+		DefineStyle(OPER(L"Handle"))
+			.Number(OPER(L"\"0x\"@"))
+			.FormatFont(FormatFont(false).Size(8).Color(red))
+			.Alignment(Alignment(false).Horizontal(Alignment::Horizontal::Center));
+		Handle = true;
+	}
+
+	return true;
+}
+// Add red to color palette and define Handle style.
+On<xlcOnSheet> xon_sheet(Missing, "XLL.SETUP.RED.HANDLE");
+	// Add to color palette.
+	if (!red) {
+		red = EditColor(XLL_RGB_COLOR_RED);
+	}
+	// Handle style.
+	if (!Handle) {
+		DefineStyle(OPER(L"Handle"))
+			.Number(OPER(L"\"0x\"@"))
+			.FormatFont(FormatFont(false).Size(8).Color(red))
+			.Alignment(Alignment(false).Horizontal(Alignment::Horizontal::Center));
+		Handle = true;
+	}
+
 	return true;
 });
 /*
@@ -162,6 +198,9 @@ int WINAPI xll_pastec()
 	return result;
 }
 On<xlcOnKey> xok_pastec(ON_CTRL ON_SHIFT "C", "XLL.PASTEC");
+
+int red = 0;
+bool Handle = false;
 // Paste function and define names.
 AddIn xai_pasted(
 	Macro("xll_pasted", "XLL.PASTED")
@@ -172,6 +211,7 @@ int WINAPI xll_pasted()
 	int result = TRUE;
 
 	try {
+
 		OPER caller = Excel(xlfActiveCell);
 		OPER text = Excel(xlCoerce, caller);
 		const Args* pargs = AddIn::find(text);
@@ -179,11 +219,13 @@ int WINAPI xll_pasted()
 		text = pargs->functionText;
 
 		Excel(xlSet, caller, text);
-		AlignHorizontal(Alignment::Horizontal::Right);
-		FormatFontItalic();
+		Alignment().Horizontal(Alignment::Horizontal::Right);
+		FormatFont().Italic();
+
+		// Format handle.
+		OPER output = Reshape(Move(caller, 0, 1), Excel(xlfEvaluate, Formula(pargs)));
 
 		// Expand caller to size of formula output.
-		OPER output = Reshape(Move(caller, 0, 1), Excel(xlfEvaluate, Formula(pargs)));
 		OPER active = Move(caller, rows(output), 0);
 
 		OPER formula = OPER(L"=") & text & OPER(L"(");
@@ -193,8 +235,8 @@ int WINAPI xll_pasted()
 			const OPER& name = pargs->argumentName[i];
 			formula &= name;
 			Set(active, name);
-			AlignHorizontal(Alignment::Horizontal::Right);
-			FormatFontBold();
+			Alignment().Horizontal(Alignment::Horizontal::Right);
+			FormatFont().Bold();
 
 			active = Move(active, 0, 1);
 			if (isNil(pargs->argumentInit[i])) {
@@ -213,14 +255,9 @@ int WINAPI xll_pasted()
 		}
 		formula &= OPER(L")");
 
-
 		Excel(xlcFormula, formula, output);
-		Excel(xlcApplyStyle, L"Output");
-		if (isHandle(text)) {
-			FormatFontSize(8);
-			FormatFontColor(red);
-			Excel(xlcFormatNumber, "\"0x\"@");
-		}
+		Excel(xlcSelect, output);
+		Excel(xlcApplyStyle, isHandle(text) ? L"Handle" : L"Output");
 		Excel(xlcSelect, caller);
 	}
 	catch (const std::exception& ex) {

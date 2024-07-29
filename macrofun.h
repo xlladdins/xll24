@@ -4,6 +4,8 @@
 #pragma once
 #include "excel.h"
 
+#pragma region RGB_COLOR
+
 #define XLL_RGB_COLOR(X) \
 X(WHITE, 0xFFFFFF, ({255, 255, 255})) \
 X(RED, 0xFF0000, ({255, 0, 0})) \
@@ -154,6 +156,9 @@ X(MS_GREEN, 0x7CBB00, ({124, 187, 0})) \
 X(MS_BLUE, 0x00A1F1, ({0, 161, 241})) \
 X(MS_ORANGE, 0xFFBB00, ({255, 187, 0})) \
 
+#pragma endregion // RGB_COLOR
+
+// Hexidecimal value corresponding to the color name.
 #define XLL_RGB_COLOR_ENUM(name, rgb, rgbv) \
 constexpr unsigned long XLL_RGB_COLOR_##name = rgb;
 XLL_RGB_COLOR(XLL_RGB_COLOR_ENUM)
@@ -161,7 +166,11 @@ XLL_RGB_COLOR(XLL_RGB_COLOR_ENUM)
 
 namespace xll {
 
-	struct Alignment {
+	// Alignment().Member(value)... operates on active cell. 
+	// Destructor calls xlcAlignment.
+	class Alignment {
+		bool set;
+	public:
 		OPER horiz_align = Missing;   // Horizontal alignment
 		OPER wrap = Missing;          // boolean
 		OPER vert_align = Missing;    // Vertical alignment
@@ -170,6 +179,9 @@ namespace xll {
 		OPER shrink_to_fit = Missing; // boolean
 		OPER merge_cells = Missing;   // boolean
 
+		Alignment(bool set = true)
+			: set(set)
+		{ }
 		~Alignment()
 		{
 			Excel(xlcAlignment, horiz_align, wrap, vert_align, orientation, add_indent, shrink_to_fit, merge_cells);
@@ -197,32 +209,139 @@ namespace xll {
 			Downward = 3,
 			Automatic = 4
 		};
-	};
-	void AlignHorizontal(Alignment::Horizontal align)
-	{
-		Alignment a{ .horiz_align = OPER(static_cast<int>(align)) };
-	}
-	void AlignVertical(Alignment::Vertical align)
-	{
-		Alignment a{ .vert_align = OPER(static_cast<int>(align)) };
-	}
-	void AlignOrientation(Alignment::Orientation align)
-	{
-		Alignment a{ .orientation = OPER(static_cast<int>(align)) };
-	}
-	void AlignWrap(bool b = true)
-	{
-		Alignment a{ .wrap = OPER(b) };
-	}
-	void AlignShrink(bool b = true)
-	{
-		Alignment a{ .shrink_to_fit = OPER(b) };
-	}
-	void AlignMerge(bool b = true)
-	{
-		Alignment a{ .merge_cells = OPER(b) };
-	}
+		Alignment& Horizontal(Alignment::Horizontal horiz)
+		{
+			horiz_align = OPER(static_cast<int>(horiz));
 
+			return *this;
+		}
+		Alignment& Vertical(Alignment::Vertical vert)
+		{
+			vert_align = OPER(static_cast<int>(vert));
+
+			return *this;
+		}
+		Alignment& Orientation(Alignment::Orientation orient)
+		{
+			orientation = OPER(static_cast<int>(orient));
+
+			return *this;
+		}
+		Alignment& Wrap(bool b = true)
+		{
+			wrap = OPER(b);
+
+			return *this;
+		}
+		Alignment& Shrink(bool b = true)
+		{
+			shrink_to_fit = OPER(b);
+
+			return *this;
+		}
+		Alignment& Merge(bool b = true)
+		{
+			merge_cells = OPER(b);
+
+			return *this;
+		}
+	};
+
+	struct Border {
+		OPER outline = Missing; 
+		OPER left = Missing;
+		OPER right = Missing;
+		OPER top = Missing;
+		OPER bottom = Missing;
+		OPER shade = Missing;
+		OPER outline_color = Missing;
+		OPER left_color = Missing;
+		OPER right_color = Missing;
+		OPER top_color = Missing;
+		OPER bottom_color = Missing;
+
+		enum class Line {
+			None = 0,
+			Thin = 1,
+			Medium = 2,
+			Dashed = 3,
+			Dotted = 4,
+			Thick = 5,
+			Double = 6,
+			Hair = 7,
+		};
+
+		~Border()
+		{
+			Excel(xlcBorder, outline, left, right, top, bottom, shade, outline_color, left_color, right_color, top_color, bottom_color);
+		}
+		Border& Outline(Line line)
+		{
+			outline = OPER(static_cast<int>(line));
+
+			return *this;
+		}
+		Border& Left(Line line)
+		{
+			left = OPER(static_cast<int>(line));
+
+			return *this;
+		}
+		Border& Right(Line line)
+		{
+			right = OPER(static_cast<int>(line));
+
+			return *this;
+		}
+		Border& Top(Line line)
+		{
+			top = OPER(static_cast<int>(line));
+
+			return *this;
+		}	
+		Border& Bottom(Line line)
+		{
+			bottom = OPER(static_cast<int>(line));
+
+			return *this;
+		}
+		Border& Shade(bool b = true)
+		{
+			shade = OPER(b);
+
+			return *this;
+		}
+		Border& OutlineColor(int index)
+		{
+			outline_color = OPER(index);
+
+			return *this;
+		}
+		Border& LeftColor(int index)
+		{
+			left_color = OPER(index);
+
+			return *this;
+		}
+		Border& RightColor(int index)
+		{
+			right_color = OPER(index);
+
+			return *this;
+		}	
+		Border& TopColor(int index)
+		{
+			top_color = OPER(index);
+
+			return *this;
+		}
+		Border& BottomColor(int index)
+		{
+			bottom_color = OPER(index);
+
+			return *this;
+		}
+	};
 	// https://xlladdins.github.io/Excel4Macros/edit.color.html
 	// Equivalent to clicking the Modify button on the Color tab, 
 	// which appears when you click the Options command on the Tools menu.
@@ -232,6 +351,7 @@ namespace xll {
 	public:
 		int index;
 		unsigned char r, g, b; // Enforces 0 <= r, g, b <= 255.
+		// Add color to palette at index.
 		EditColor(unsigned char r, unsigned char g, unsigned char b, int index = count)
 			: index(index), r(r), g(g), b(b)
 		{ 
@@ -248,9 +368,10 @@ namespace xll {
 		}
 	};
 
-	// FORMAT.FONT(name_text, size_num, bold, italic, underline, strike, color, outline, shadow)
-// https://xlladdins.github.io/Excel4Macros/format.font.html
-	struct FormatFont {
+	// https://xlladdins.github.io/Excel4Macros/format.font.html
+	class FormatFont {
+		bool set;
+	public:
 		OPER name_text = Missing; // font name, e.g., "Calibri"
 		OPER size_num = Missing;  // font size in points
 		OPER bold = Missing;      // boolean
@@ -261,41 +382,133 @@ namespace xll {
 		OPER outline = Missing;   // boolean
 		OPER shadow = Missing;    // boolean
 
+		FormatFont(bool set = true)
+			: set(set)
+		{ }
 		~FormatFont()
 		{
-			Excel(xlcFormatFont, name_text, size_num,
-				bold, italic, underline, strike,
-				color, outline, shadow);
+			if (set) {
+				Excel(xlcFormatFont, name_text, size_num,
+					bold, italic, underline, strike,
+					color, outline, shadow);
+			}
+		}
+		FormatFont& Name(const OPER& name)
+		{
+			name_text = name;
+
+			return *this;
+		}
+		FormatFont& Size(int points)
+		{
+			size_num = OPER(points);
+
+			return *this;
+		}
+		FormatFont& Bold(bool b = true)
+		{
+			bold = OPER(b);
+
+			return *this;
+		}
+		FormatFont& Italic(bool b = true)
+		{
+			italic = OPER(b);
+
+			return *this;
+		}
+		FormatFont& Underline(bool b = true)
+		{
+			underline = OPER(b);
+
+			return *this;
+		}
+		FormatFont& Strike(bool b = true)
+		{
+			strike = OPER(b);
+
+			return *this;
+		}
+		// Use color palette index from EditColor.
+		FormatFont& Color(int index)
+		{
+			color = OPER(index);
+
+			return *this;
+		}
+		FormatFont& Outline(bool b = true)
+		{
+			outline = OPER(b);
+
+			return *this;
+		}
+		FormatFont& Shadow(bool b = true)
+		{
+			shadow = OPER(b);
+
+			return *this;
 		}
 	};
-	void FormatFontName(const OPER& name)
-	{
-		FormatFont ff{ .name_text = name };
-	}
-	void FormatFontSize(int points)
-	{
-		FormatFont ff{ .size_num = OPER(points) };
-	}
-	void FormatFontBold(bool b = true)
-	{
-		FormatFont ff{ .bold = OPER(b) };
-	}
-	void FormatFontItalic(bool b = true)
-	{
-		FormatFont ff{ .italic = OPER(b) };
-	}
-	void FormatFontUnderline(bool b = true)
-	{
-		FormatFont ff{ .underline = OPER(b) };
-	}
-	void FormatFontStrike(bool b = true)
-	{
-		FormatFont ff{ .strike = OPER(b) };
-	}
-	void FormatFontColor(int index)
-	{
-		FormatFont ff{ .color = OPER(index) };
-	}
+	
+	// https://xlladdins.github.io/Excel4Macros/define.style.html
+	struct DefineStyle {
+		OPER name;
 
+		DefineStyle(const OPER& name)
+			: name(name)
+		{ }
+		// Number format, using the arguments from the FORMAT.NUMBER function
+		DefineStyle& Number(const OPER& number)
+		{
+			Excel(xlcDefineStyle, name, 2, number);
+
+			return *this;
+		}
+		// Number format, using the arguments from the FORMAT.NUMBER function
+		DefineStyle& FormatFont(const FormatFont& format)
+		{
+			Excel(xlcDefineStyle, name, 3, 
+				format.name_text, 
+				format.size_num, 
+				format.bold,
+				format.italic, 
+				format.underline, 
+				format.strike, 
+				format.color, 
+				format.outline, 
+				format.shadow);
+
+			return *this;
+		}
+		DefineStyle& Alignment(const Alignment& align)
+		{
+			Excel(xlcDefineStyle, name, 4,
+				align.horiz_align,
+				align.wrap,
+				align.vert_align,
+				align.orientation);
+
+			return *this;
+		}
+		DefineStyle& Border(const Border& border)
+		{
+			Excel(xlcDefineStyle, name, 5,
+				border.outline,
+				border.left,
+				border.right,
+				border.top,
+				border.bottom,
+				border.shade,
+				border.outline_color,
+				border.left_color,
+				border.right_color,
+				border.top_color,
+				border.bottom_color);
+
+			return *this;
+		}
+		// TODO: pattern
+		// TODO: protection
+	};
 
 } // namespace xll
