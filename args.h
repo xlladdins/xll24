@@ -41,12 +41,6 @@ namespace xll {
 		OPER argumentInit; // array individual argument default values
 		std::string documentation;
 
-		Args& Documentation(std::string_view doc)
-		{
-			documentation = doc;
-
-			return *this;
-		}
 		bool is_hidden() const
 		{
 			return macroType == 0;
@@ -123,6 +117,13 @@ namespace xll {
 
 			return static_cast<int>(off + n);
 		}
+		Args& Documentation(std::string_view doc)
+		{
+			documentation = doc;
+
+			return *this;
+		}
+
 		// key-value pairs
 		OPER markup()
 		{
