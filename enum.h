@@ -60,7 +60,7 @@ namespace xll
 	}
 	// Convert to safe pointer.
 	template<class T>
-	inline std::expected<T*, OPER> EnumPtr(const OPER& o, T* init)
+	inline std::expected<T*, OPER> EnumPtr(const XLOPER12& o, T* init)
 	{
 		if (isTrue(o)) {
 			HANDLEX h = INVALID_HANDLEX;
