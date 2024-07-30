@@ -37,7 +37,7 @@ namespace xll
 	template<class T>
 	inline std::expected<T, OPER> EnumVal(const XLOPER12& o, T init)
 	{
-		if (o) {
+		if (isTrue(o)) {
 			double x;
 			if (isStr(o)) {
 				OPER e = Eval(o);
@@ -62,7 +62,7 @@ namespace xll
 	template<class T>
 	inline std::expected<T*, OPER> EnumPtr(const OPER& o, T* init)
 	{
-		if (o) {
+		if (isTrue(o)) {
 			HANDLEX h = INVALID_HANDLEX;
 			if (isStr(o)) {
 				OPER e = Eval(o);
