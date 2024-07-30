@@ -190,7 +190,7 @@ into a format that iw necessary to call `xlfRegister`.
 
 ## `Ctrl-Shift-A`
 
-After typing `=` and the namef a function, and optionally using `<Tab>` 
+After typing `=` and the name of a function, and optionally using `<Tab>` 
 to complete the name, then pressing `Ctrl-Shift-A`
 will produce the names of the arguments of the function.
 
@@ -198,9 +198,9 @@ I don't have access to the source code of Excel, but there is a
 simple way to extend this functionality. Instead of pressing
 `Ctrl-Shift-A` you can press `<Backspace>` to remove the
 trailing left parenthesis and then press `<Enter>`.
-You will see another funny looking number, but it is not a handle. 
+You will see a funny looking number, but it is not a handle. 
 It is the [register id](https://learn.microsoft.com/en-us/office/client-developer/excel/xlfregisterid)
-Excel uses to keep track
+Excel uses the regiser id to keep track
 user defined functions.
 
 With your cursor in the cell, pressing `Ctrl-Shift-B` will
@@ -216,3 +216,6 @@ below the cell and provide the function corresponding to the register id
 with those names as arguments. The function has the `Output` style
 applied and the arguments have the `Input` style applied.
 
+If the function text starts with a backslash (`\`) then the
+function returns a _handle_ to a C++ object. The handle is a `double` 
+having the same bits as the pointer to the underlying C++ object. 

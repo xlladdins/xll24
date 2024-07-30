@@ -21,6 +21,9 @@ namespace xll {
 
 	// Upper left and lower right corners of single reference. 
 	struct REF : public XLREF12 {
+		constexpr REF() noexcept
+			: REF(0, 0, 0, 0)
+		{ }
 		constexpr REF(const XLREF12& r) noexcept
 			: XLREF12(r)
 		{ }
@@ -28,13 +31,20 @@ namespace xll {
 		constexpr REF(int r, int c, int h = 1, int w = 1) noexcept
 			: XLREF12{ .rwFirst = r, .rwLast = r + h - 1, .colFirst = c, .colLast = c + w - 1 }
 		{ }
-		constexpr REF()
-			: REF(0, 0, 0, 0)
-		{ }
 		REF(const REF&) noexcept = default;
 		REF& operator=(const REF&) noexcept = default;
 		~REF() noexcept = default;
+
+		constexpr explicit operator bool() const
+		{
+			return size(*this) > 0;
+		}
 	};
+#ifdef _DEBUG
+	static_assert(sizeof(REF) == sizeof(XLREF12));
+	static_assert(!REF());
+	static_assert(REF(1, 2));
+#endif // _DEBUG
 
 	constexpr REF reshape(const XLREF12& r, int h, int w)
 	{

@@ -36,6 +36,7 @@ namespace xll {
 		OPER helpTopic;
 		OPER functionHelp;
 		OPER argumentHelp[max_help]; // array of individual argument help
+		// Auxiliary arrays.
 		OPER argumentType; // array of individual argument types
 		OPER argumentName; // array of individual argument names	
 		OPER argumentInit; // array individual argument default values

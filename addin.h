@@ -19,33 +19,31 @@ namespace xll {
 					& args.functionText & OPER(L" already registered");
 				XLL_WARNING(view(err));
 			}
-			else {
-				addins[args.functionText] = &args;
-				const Auto<xll::Register> xao_reg([&]() -> int {
-					try {
-						OPER regid = XlfRegister(&args);
-						if (regid.xltype == xltypeNum) {
-							regids[regid.val.num] = &args;
-						}
-						else {
-							const auto err = OPER(L"AddIn: failed to register: ") & args.functionText;
-							XLL_WARNING(view(err));
-						}
-
-						return regid.xltype == xltypeNum;
+			addins[args.functionText] = &args;
+			const Auto<xll::Register> xao_reg([&]() -> int {
+				try {
+					OPER regid = XlfRegister(&args);
+					if (regid.xltype == xltypeNum) {
+						regids[regid.val.num] = &args;
 					}
-					catch (const std::exception& ex) {
-						XLL_ERROR(ex.what());
-
-						return false;
+					else {
+						const auto err = OPER(L"AddIn: failed to register: ") & args.functionText;
+						XLL_WARNING(view(err));
 					}
-					catch (...) {
-						XLL_ERROR("AddIn::Auto<Register>: unknown exception");
 
-						return false;
-					}
-				});
-			}
+					return regid.xltype == xltypeNum;
+				}
+				catch (const std::exception& ex) {
+					XLL_ERROR(ex.what());
+
+					return false;
+				}
+				catch (...) {
+					XLL_ERROR("AddIn::Auto<Register>: unknown exception");
+
+					return false;
+				}
+			});
 		}
 
 		// Auto<Unregister> function with Excel

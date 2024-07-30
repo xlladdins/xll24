@@ -21,11 +21,6 @@ bool isHandle(const OPER& val)
 	return isStr(val) && view(val).starts_with(L'\\');
 }
 
-OPER Eval(const OPER& val)
-{
-	return isFormula(val) ? Excel(xlfEvaluate, val) : val;
-}
-
 // Strip off leading '=' if it is a formula.
 OPER Uneval(const OPER& val)
 {

@@ -775,8 +775,8 @@ XLL_CONST(HANDLEX, MY_DOUBLE, safe_handle(my_double), "Return the handle data ty
 AddIn xai_my_double(
 	Function(XLL_DOUBLE, L"xll_my_double", L"XLL.MY.DOUBLE")
 	.Arguments({
-		Arg(XLL_LPOPER, L"handle", L"is a handle to my_double."),
-		Arg(XLL_DOUBLE, L"x", L"is a number."),
+		Arg(XLL_LPOPER, L"handle", L"is a handle to my_double.", L"XLL.MY.DOUBLE"),
+		Arg(XLL_DOUBLE, L"x", L"is a number.", 3),
 		})
 	.Category(L"XLL")
 	.FunctionHelp(L"Return 2 times the number.")
@@ -784,8 +784,16 @@ AddIn xai_my_double(
 double WINAPI xll_my_double(LPOPER h, double x)
 {
 #pragma XLLEXPORT
-	auto h_ = Enum<double(*)(double)>(*h, nullptr);
-	ensure(h_);
+	double result = std::numeric_limits<double>::quiet_NaN();
 
-	return h_(x);
+	try {
+		auto h_ = EnumPtr(*h, my_double);
+		ensure(h_);
+		result = (*h_)(x);
+	}
+	catch (const std::exception& ex) {
+		XLL_ERROR(ex.what());
+	}	
+
+	return result;
 }

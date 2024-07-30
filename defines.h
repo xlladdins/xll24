@@ -193,16 +193,16 @@ namespace xll {
 	}
 
 	// Argument for std::span(ptr, count).
-	constexpr size_t count(const XLOPER12& x) noexcept
+	constexpr XCHAR count(const XLOPER12& x) noexcept
 	{
 		if (x.xltype & xltypeStr)
 			return x.val.str[0];
 		if (x.xltype & xltypeMulti)
-			return x.val.array.rows * x.val.array.columns;
+			return static_cast<XCHAR>(x.val.array.rows * x.val.array.columns);
 		if (x.xltype & xltypeRef)
-			return x.val.mref.lpmref->count;
+			return static_cast<XCHAR>(x.val.mref.lpmref->count);
 		if (x.xltype & xltypeBigData)
-			return x.val.bigdata.cbData;
+			return static_cast<XCHAR>(x.val.bigdata.cbData);
 
 		return 0;
 	}

@@ -506,13 +506,13 @@ namespace xll {
 			xltype = type(x);
 			switch (xltype) {
 			case xltypeStr:
-				alloc(Str(x), x.val.str[0]);
+				alloc(Str(x), count(x));
 				break;
 			case xltypeMulti:
-				alloc(x.val.array.rows, x.val.array.columns, Multi(x));
+				alloc(rows(x), columns(x), Multi(x));
 				break;
 			case xltypeBigData:
-				alloc(BigData(x), x.val.bigdata.cbData);
+				alloc(BigData(x), count(x));
 				break;
 			default:
 				val = x.val;
