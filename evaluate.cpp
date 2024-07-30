@@ -14,14 +14,12 @@ AddIn xai_evaluate(
 LPXLOPER12 WINAPI xll_evaluate(LPXLOPER12 p)
 {
 #pragma XLLEXPORT
-	static OPER result;
-
 	try {
-		result = Excel(xlfEvaluate, *p);
+		ensure(0 == ::Excel12(xlfEvaluate, p, 1, p));
 	}
 	catch (const std::exception& ex) {
 		XLL_ERROR(ex.what());
 	}
 
-	return &result;
+	return XLFree(*p);
 }

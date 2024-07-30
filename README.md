@@ -1,7 +1,7 @@
 ﻿# xll24 library
 
 See the [xll library](https://github.com/xlladdins/xll) for
-earlier version.
+an earlier version.
 I rewrote that for the n-th time because I use this every
 day and work hard to be lazy. It was also an opportunity to
 learn about the latest C++ features and best practices.
@@ -217,5 +217,6 @@ with those names as arguments. The function has the `Output` style
 applied and the arguments have the `Input` style applied.
 
 If the function text starts with a backslash (`\`) then the
-function returns a _handle_ to a C++ object. The handle is a `double` 
+function returns a _handle_ to a C++ object. The handle is a
+64-bit IEEE `double` 
 having the same bits as the pointer to the underlying C++ object. 

@@ -389,9 +389,11 @@ namespace xll {
 		EditColor(unsigned char r, unsigned char g, unsigned char b, int index = count)
 			: index(index), r(r), g(g), b(b)
 		{ 
-			--count;
-			ensure(count > 0);
+			ensure(0 < index && index <= 56);
 			ensure(Excel(xlcEditColor, index, r, g, b));
+			if (index == count) {
+				--count;
+			}
 		}
 		EditColor(unsigned long rgb)
 			: EditColor((rgb >> 16) & 0xFF, (rgb >> 8) & 0xFF, rgb & 0xFF)
@@ -488,11 +490,11 @@ namespace xll {
 	struct DefineStyle {
 		OPER name;
 
-		DefineStyle(const OPER& name)
+		DefineStyle(const wchar_t* name)
 			: name(name)
 		{ }
 		// Number format, using the arguments from the FORMAT.NUMBER function
-		DefineStyle& Number(const OPER& number)
+		DefineStyle& Number(const wchar_t* number)
 		{
 			Excel(xlcDefineStyle, name, 2, number);
 

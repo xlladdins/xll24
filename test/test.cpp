@@ -775,7 +775,7 @@ XLL_CONST(HANDLEX, MY_DOUBLE, safe_handle(my_double), "Return the handle data ty
 AddIn xai_my_double(
 	Function(XLL_DOUBLE, L"xll_my_double", L"XLL.MY.DOUBLE")
 	.Arguments({
-		Arg(XLL_LPOPER, L"handle", L"is a handle to my_double.", L"XLL.MY.DOUBLE"),
+		Arg(XLL_LPOPER, L"handle", L"is a handle to my_double.", L"=MY_DOUBLE()"),
 		Arg(XLL_DOUBLE, L"x", L"is a number.", 3),
 		})
 	.Category(L"XLL")

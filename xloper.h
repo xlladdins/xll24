@@ -9,7 +9,9 @@ namespace xll {
 	// Freed by Excel when no longer needed.
 	constexpr LPXLOPER12 XLFree(XLOPER12& x) noexcept
 	{
-		x.xltype |= xlbitXLFree;
+		if (isAlloc(x)) {
+			x.xltype |= xlbitXLFree;
+		}
 
 		return &x;
 	}
@@ -17,7 +19,9 @@ namespace xll {
 	// Excel calls xlAutoFree12 when no longer needed.
 	constexpr LPXLOPER12 DLLFree(XLOPER12& x) noexcept
 	{
-		x.xltype |= xlbitDLLFree;
+		if (isAlloc(x)) {
+			x.xltype |= xlbitDLLFree;
+		}
 
 		return &x;
 	}

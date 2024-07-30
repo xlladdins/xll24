@@ -7,15 +7,35 @@
 
 namespace xll
 {
-	// Evaluate an enumerated constant.
-	inline OPER Eval(const OPER& o)
+	inline bool isFormula(const XLOPER12& x)
 	{
-		return Excel(xlfEvaluate, OPER(L"=") & o & OPER(L"()"));
+		const auto v = view(x);
+
+		return isStr(x) && v.starts_with(L'=') && v.ends_with(L')');
+	}	
+
+	inline bool isHandle(const XLOPER12& x)
+	{
+		return type(x) == xltypeStr && x.val.str[0] > 0 && x.val.str[1] == L'\\';
+	}
+
+	// String is name of a user defined function
+	inline bool isUDF(const XLOPER12& x)
+	{
+		return AddIn::addins.contains(x);
+	}
+
+	// Evaluate an enumerated constant.
+	inline OPER Eval(const XLOPER12& x)
+	{
+		OPER o = Excel(xlfEvaluate, x);
+
+		return isFormula(x) && !isUDF(x) ? o : Excel(xlfEvaluate, OPER(L"=") & x & OPER(L"()"));
 	}
 
 	// Return asNum(o) as T. If o is a string, evaluate it first.
 	template<class T>
-	inline std::expected<T, OPER> EnumVal(const OPER& o, T init)
+	inline std::expected<T, OPER> EnumVal(const XLOPER12& o, T init)
 	{
 		if (o) {
 			double x;
@@ -38,6 +58,7 @@ namespace xll
 
 		return init;
 	}
+	// Convert to safe pointer.
 	template<class T>
 	inline std::expected<T*, OPER> EnumPtr(const OPER& o, T* init)
 	{

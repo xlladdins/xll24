@@ -24,7 +24,9 @@ bool isHandle(const OPER& val)
 // Strip off leading '=' if it is a formula.
 OPER Uneval(const OPER& val)
 {
-	return isFormula(val) ? OPER(view(val).substr(1)) : val;
+	return isFormula(val) ? OPER(view(val).substr(1)) 
+		: isUDF(val) ? val & OPER(L"()")
+		: val;
 }
 
 // Construct formula from Args default values.
@@ -64,7 +66,7 @@ OPER Set(const OPER& ref, const OPER& val)
 	if (isFormula(val)) {
 		const auto eval = Excel(xlfEvaluate, val);
 		res = Reshape(ref, eval);
-		Excel(xlSet, res, eval);
+		Excel(xlcFormula, val, res);
 	}
 	else {
 		Excel(xlSet, ref, val);
@@ -176,8 +178,8 @@ int WINAPI xll_pasted()
 		}
 		// Handle style.
 		if (!Handle) {
-			DefineStyle(OPER(L"Handle"))
-				.Number(OPER(L"\"0x\"#"))
+			DefineStyle(L"Handle")
+				.Number(L"\"0x\"#")
 				.FormatFont(FormatFont(false).Size(8).Color(red))
 				.Alignment(Alignment(false).Horizontal(Alignment::Horizontal::Center))
 				.Alignment(Alignment(false).Vertical(Alignment::Vertical::Center));
@@ -231,7 +233,6 @@ int WINAPI xll_pasted()
 		Excel(xlcFormula, formula, output);
 		Excel(xlcSelect, output);
 		Excel(xlcApplyStyle, isHandle(text) ? L"Handle" : L"Output");
-		Excel(xlcSelect, caller);
 	}
 	catch (const std::exception& ex) {
 		result = FALSE;
