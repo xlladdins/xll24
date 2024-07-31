@@ -200,10 +200,9 @@ simple way to extend this functionality. Instead of pressing
 trailing left parenthesis and then press `<Enter>`.
 You will see a funny looking number, but it is not a handle. 
 It is the [register id](https://learn.microsoft.com/en-us/office/client-developer/excel/xlfregisterid)
-Excel uses the regiser id to keep track
-user defined functions.
+Excel uses to keep track of user defined functions.
 
-With your cursor in the cell, pressing `Ctrl-Shift-B` will
+With your cursor in the cell containing the register id, pressing `Ctrl-Shift-B` will
 replace the arguments you see from `Ctrl-Shift-A` with their
 default values.
 

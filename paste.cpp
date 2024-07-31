@@ -11,10 +11,10 @@ XLL_RGB_COLOR(XLL_RGB_COLOR_ENUM)
 #undef XLL_RGB_COLOR_ENUM
 */
 
-// Strip off leading '=' if it is a formula.
+// Strip off leading '=' 
 OPER Uneval(const OPER& val)
 {
-	return isFormula(val) ? OPER(view(val).substr(1)) 
+	return isStr(val) && val.val.str[0] > 0 && val.val.str[1] == L'=' ? OPER(view(val).substr(1))
 		: isUDF(val) ? val & OPER(L"()")
 		: val;
 }

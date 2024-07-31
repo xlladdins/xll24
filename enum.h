@@ -7,6 +7,7 @@
 
 namespace xll
 {
+	// "=...)"
 	inline bool isFormula(const XLOPER12& x)
 	{
 		const auto v = view(x);
@@ -14,6 +15,7 @@ namespace xll
 		return isStr(x) && v.starts_with(L'=') && v.ends_with(L')');
 	}	
 
+	// "\..."
 	// Functions returning a handle start with backslash by convention.
 	inline bool isHandle(const XLOPER12& x)
 	{
