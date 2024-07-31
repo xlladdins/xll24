@@ -494,7 +494,7 @@ int fp_test()
 		ensure(size(a) == 0);
 		ensure(rows(a) == 0);
 		ensure(columns(a) == 0);
-		a.push_back(1.1);
+		a.append(1.1);
 		ensure(size(a) == 1);
 		ensure(rows(a) == 1);
 		ensure(columns(a) == 1);

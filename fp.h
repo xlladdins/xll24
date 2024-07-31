@@ -110,6 +110,9 @@ namespace xll {
 		{
 			std::copy_n(a, r * c, fpx_->array);
 		}
+		FPX(const _FP12& a)
+			: FPX(a.rows, a.columns, a.array)
+		{ }
 		// One row array.
 		FPX(std::initializer_list<double> a)
 			: FPX(1, static_cast<int>(a.size()), a.begin())
@@ -117,9 +120,6 @@ namespace xll {
 		template<size_t N>
 		FPX(const double(&a)[N])
 			: FPX(1, static_cast<int>(N), a)
-		{ }
-		explicit FPX(const _FP12& a)
-			: FPX(a.rows, a.columns, a.array)
 		{ }
 		FPX(const FPX& a)
 			: FPX(a.rows(), a.columns(), a.array())
@@ -130,7 +130,7 @@ namespace xll {
 		FPX(I i)
 		{
 			while (i) {
-				push_back(*i);
+				append(*i);
 				++i;
 			}
 		}
@@ -146,6 +146,14 @@ namespace xll {
 				fpx_ = fpx_malloc(a.rows(), a.columns());
 				std::copy_n(a.array(), a.size(), fpx_->array);
 			}
+
+			return *this;
+		}
+		FPX& operator=(const _FP12& a)
+		{
+			fpx_free(fpx_);
+			fpx_ = fpx_malloc(a.rows, a.columns);
+			std::copy_n(a.array, xll::size(a), fpx_->array);
 
 			return *this;
 		}
@@ -233,11 +241,16 @@ namespace xll {
 
 		FPX& vstack(const _FP12& a)
 		{
-			ensure(columns() == a.columns);
+			if (size() == 0) {
+				operator=(a);
+			}
+			else {
+				ensure(columns() == a.columns);
 
-			int n = size();
-			resize(rows() + a.rows, columns());
-			std::copy_n(a.array, a.rows * a.columns, fpx_->array + n);
+				int n = size();
+				resize(rows() + a.rows, columns());
+				std::copy_n(a.array, a.rows * a.columns, fpx_->array + n);
+			}
 
 			return *this;
 		}
@@ -248,14 +261,19 @@ namespace xll {
 
 		FPX& hstack(const _FP12& a)
 		{
-			// !!! not efficient
-			FPX a_(*this);
-			a_.transpose();
-			FPX _a(a);
-			_a.transpose();
-			a_.vstack(_a);
-			a_.transpose();
-			swap(a_);
+			if (size() == 0) {
+				operator=(a);
+			}
+			else {
+				// !!! not efficient
+				FPX a_(*this);
+				a_.transpose();
+				FPX _a(a);
+				_a.transpose();
+				a_.vstack(_a);
+				a_.transpose();
+				swap(a_);
+			}
 
 			return *this;
 		}
@@ -265,7 +283,7 @@ namespace xll {
 		}
 
 		// Only works for vector arrays
-		FPX& push_back(double x)
+		FPX& append(double x)
 		{
 			auto n = size();
 			ensure(n == 0 || rows() == 1 || columns() == 1);
