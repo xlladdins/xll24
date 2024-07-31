@@ -11,16 +11,6 @@ XLL_RGB_COLOR(XLL_RGB_COLOR_ENUM)
 #undef XLL_RGB_COLOR_ENUM
 */
 
-bool isFormula(const OPER& val)
-{
-	return isStr(val) && view(val).starts_with(L'=');
-}
-
-bool isHandle(const OPER& val)
-{
-	return isStr(val) && view(val).starts_with(L'\\');
-}
-
 // Strip off leading '=' if it is a formula.
 OPER Uneval(const OPER& val)
 {
@@ -63,10 +53,14 @@ OPER Reshape(const OPER& active, const OPER& ref)
 OPER Set(const OPER& ref, const OPER& val)
 {
 	OPER res = ref;
+	OPER eval = Excel(xlfEvaluate, val);
 	if (isFormula(val)) {
-		const auto eval = Excel(xlfEvaluate, val);
 		res = Reshape(ref, eval);
 		Excel(xlcFormula, val, res);
+	}
+	else if (isMulti(eval)) {
+		res = Reshape(ref, eval);
+		Excel(xlSet, res, eval);
 	}
 	else {
 		Excel(xlSet, ref, val);
@@ -122,7 +116,7 @@ int WINAPI xll_pastec()
 		text = pargs->functionText;
 
 		// Expand caller to size of formula output.
-		OPER output = Reshape(caller, Eval(Formula(pargs)));
+		OPER output = Reshape(caller, Excel(xlfEvaluate, Formula(pargs)));
 		OPER active = Move(caller, rows(output), 0);
 
 		OPER formula = OPER(L"=") & text & OPER(L"(");

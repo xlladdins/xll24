@@ -14,23 +14,16 @@ namespace xll
 		return isStr(x) && v.starts_with(L'=') && v.ends_with(L')');
 	}	
 
+	// Functions returning a handle start with backslash by convention.
 	inline bool isHandle(const XLOPER12& x)
 	{
-		return type(x) == xltypeStr && x.val.str[0] > 0 && x.val.str[1] == L'\\';
+		return isStr(x) && x.val.str[0] > 0 && x.val.str[1] == L'\\';
 	}
 
 	// String is name of a user defined function
 	inline bool isUDF(const XLOPER12& x)
 	{
-		return AddIn::addins.contains(x);
-	}
-
-	// Evaluate an enumerated constant.
-	inline OPER Eval(const XLOPER12& x)
-	{
-		OPER o = Excel(xlfEvaluate, x);
-
-		return isFormula(x) && !isUDF(x) ? o : Excel(xlfEvaluate, OPER(L"=") & x & OPER(L"()"));
+		return isStr(x) && AddIn::addins.contains(x);
 	}
 
 	// Return asNum(o) as T. If o is a string, evaluate it first.
@@ -40,7 +33,7 @@ namespace xll
 		if (isTrue(o)) {
 			double x;
 			if (isStr(o)) {
-				OPER e = Eval(o);
+				OPER e = Excel(xlfEvaluate, o);
 				if (!isNum(e)) {
 					return std::unexpected<OPER>(e);
 				}
@@ -65,7 +58,7 @@ namespace xll
 		if (isTrue(o)) {
 			HANDLEX h = INVALID_HANDLEX;
 			if (isStr(o)) {
-				OPER e = Eval(o);
+				OPER e = Excel(xlfEvaluate, o);
 				if (!isNum(e)) {
 					return std::unexpected(e);
 				}
