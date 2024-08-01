@@ -548,7 +548,7 @@ int fp_test()
 	}
 	{
 		FPX a({1,2,3,4,5,6});
-		assert(a.size() == 6);
+		ensure(a.size() == 6);
 		a.resize(2, 3);
 		ensure(a(0,2) == 3);
 		ensure(a(1,0) == 4);
