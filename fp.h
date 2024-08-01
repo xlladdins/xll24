@@ -79,18 +79,9 @@ namespace xll {
 		return array(a) + size(a);
 	}
 	// inplace transpose
-	constexpr FP12& transpose(FP12& x) noexcept
+	inline FP12& transpose(FP12& x) noexcept
 	{
-		int r = rows(x);
-		int c = columns(x);
-
-		if (r > 1 && c > 1) {
-			for (int i = 1; i < size(x) - 1; ++i) {
-				int j = (c * i) % (r * c - 1);
-				std::swap(x.array[i], x.array[j]);
-			}
-		}
-		std::swap(x.rows, x.columns);
+		fpx_transpose(reinterpret_cast<struct fpx*>(&x));
 
 		return x;
 	}

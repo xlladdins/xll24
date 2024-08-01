@@ -546,6 +546,16 @@ int fp_test()
 		ensure(c[10] == 5);
 		ensure(c[11] == 6);
 	}
+	{
+		FPX a({1,2,3,4,5,6});
+		assert(a.size() == 6);
+		a.resize(2, 3);
+		ensure(a(0,2) == 3);
+		ensure(a(1,0) == 4);
+		a.transpose();
+		ensure(a(2, 0) == 3);
+		ensure(a(0, 1) == 4);
+	}
 
 	return 0;
 }

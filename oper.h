@@ -386,7 +386,11 @@ namespace xll {
 		}
 		OPER& transpose()
 		{
-			xll::transpose(*this);
+			XLOPER12 o;
+			XLOPER12* po = this;
+			::Excel12(xlfTranspose, &o, 1, po);
+			operator=(o);
+			::Excel12(xlFree, 0, 1, &o);
 
 			return *this;
 		}

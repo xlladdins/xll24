@@ -12,9 +12,10 @@ XLL_RGB_COLOR(XLL_RGB_COLOR_ENUM)
 */
 
 // Strip off leading '=' 
-OPER Uneval(const OPER& val)
+OPER Uneval(const XLOPER12& val)
 {
-	return isStr(val) && val.val.str[0] > 0 && val.val.str[1] == L'=' ? OPER(view(val).substr(1))
+	return isMissing(val) || isNil(val) ? OPER(L"")
+		: StartsWith(val, L'=') ? OPER(view(val).substr(1))
 		: isUDF(val) ? val & OPER(L"()")
 		: val;
 }
@@ -36,9 +37,9 @@ OPER Formula(const Args* pargs)
 }
 
 // Translate by r rows and c columns.
-OPER Move(const OPER& o, int r, int c)
+OPER Move(const XLOPER12& o, int r, int c, int w = 1, int h = 1)
 {
-	OPER sel = Excel(xlfOffset, o, r, c);
+	OPER sel = Excel(xlfOffset, o, r, c, w, h);
 	OPER s = Excel(xlcSelect, sel);
 	return sel;
 }

@@ -192,27 +192,6 @@ namespace xll {
 	//static_assert(isFalse(BigData(nullptr, 0)));
 #endif // _DEBUG
 
-	// In-place transpose.
-	constexpr XLOPER12& transpose(XLOPER12& x)
-	{
-		if (!isMulti(x)) {
-			return x;
-		}
-
-		int r = rows(x);
-		int c = columns(x);
-
-		if (isVector(x)) {
-			for (int i = 1; i < size(x) - 1; ++i) {
-				int j = (c * i) % (r * c - 1);
-				std::swap(x.val.array.lparray[i], x.val.array.lparray[j]);
-			}
-		}
-		std::swap(x.val.array.rows, x.val.array.columns);
-
-		return x;
-	}
-
 	constexpr std::partial_ordering compare(const XLOPER12& x, const XLOPER12& y)
 	{
 		const int xtype = type(x);
