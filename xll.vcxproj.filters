@@ -129,6 +129,7 @@
   <ItemGroup>
     <None Include="README.md" />
     <None Include="cpp.hint" />
+    <None Include="xll.props" />
   </ItemGroup>
   <ItemGroup>
     <Natvis Include="Visualizers\oper.natvis">
