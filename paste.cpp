@@ -11,6 +11,33 @@ XLL_RGB_COLOR(XLL_RGB_COLOR_ENUM)
 #undef XLL_RGB_COLOR_ENUM
 */
 
+// Define style for handles.
+int red = 0;
+int Handle = 0;
+AddIn xai_handle_style(
+	Macro(L"xll_handle_style", L"XLL.HANDLE.STYLE")
+);
+// Add red to color palette and define Handle style.
+int WINAPI xll_handle_style()
+{
+#pragma XLLEXPORT
+	if (!red) {
+		red = EditColor(XLL_RGB_COLOR_RED);
+		// Handle style.
+		if (!Handle) {
+			DefineStyle(L"Handle")
+				.Number(L"\"0x\"#")
+				.FormatFont(FormatFont(false).Size(8).Color(red))
+				.Alignment(Alignment(false).Horizontal(Alignment::Horizontal::Center))
+				.Alignment(Alignment(false).Vertical(Alignment::Vertical::Center));
+		}
+		Handle = 1;
+	}
+
+	return 1;
+}
+On<xlcOnSheet> xlos_handle_style("", "XLL.HANDLE.STYLE", true);
+
 // Strip off leading '=' 
 OPER Uneval(const XLOPER12& val)
 {
@@ -155,8 +182,6 @@ int WINAPI xll_pastec()
 }
 On<xlcOnKey> xok_pastec(ON_CTRL ON_SHIFT "C", "XLL.PASTEC");
 
-int red = 0;
-bool Handle = false;
 // Paste function and define names.
 AddIn xai_pasted(
 	Macro("xll_pasted", "XLL.PASTED")
@@ -167,20 +192,6 @@ int WINAPI xll_pasted()
 	int result = TRUE;
 
 	try {
-		// Add red to color palette and define Handle style.
-		if (!red) {
-			red = EditColor(XLL_RGB_COLOR_RED);
-		}
-		// Handle style.
-		if (!Handle) {
-			DefineStyle(L"Handle")
-				.Number(L"\"0x\"#")
-				.FormatFont(FormatFont(false).Size(8).Color(red))
-				.Alignment(Alignment(false).Horizontal(Alignment::Horizontal::Center))
-				.Alignment(Alignment(false).Vertical(Alignment::Vertical::Center));
-			Handle = true;
-		}
-
 		OPER caller = Excel(xlfActiveCell);
 		OPER text = Excel(xlCoerce, caller);
 		const Args* pargs = AddIn::find(text);
