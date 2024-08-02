@@ -176,21 +176,21 @@ namespace xll {
 		}
 		double* array() noexcept
 		{
-			return fpx_ ? fpx_->array : nullptr;
+			return (size() && fpx_) ? fpx_->array : nullptr;
 		}
 		const double* array() const noexcept
 		{
-			return fpx_ ? fpx_->array : nullptr;
+			return (size() && fpx_) ? fpx_->array : nullptr;
 		}
 
 		// Return pointer to _FP12.
 		_FP12* get() noexcept
 		{
-			return reinterpret_cast<_FP12*>(fpx_);
+			return (size() && fpx_) ? reinterpret_cast<_FP12*>(fpx_) : nullptr;
 		}
 		const _FP12* get() const noexcept
 		{
-			return reinterpret_cast<const _FP12*>(fpx_);
+			return (size() && fpx_) ? reinterpret_cast<const _FP12*>(fpx_) : nullptr;
 		}
 		operator _FP12& () noexcept
 		{

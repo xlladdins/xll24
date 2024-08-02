@@ -20,6 +20,27 @@ namespace xll {
 		return regids;
 	}
 
+	// Find Args pointer given name or register id.
+	inline const Args* find(const OPER& name)
+	{
+		const Args* pargs = nullptr;
+
+		if (isNum(name)) {
+			const auto i = RegIds().find(Num(name));
+			if (i != RegIds().end()) {
+				pargs = i->second;
+			}
+		}
+		else {
+			const auto i = AddIns().find(name);
+			if (i != AddIns().end()) {
+				pargs = i->second;
+			}
+		}
+
+		return pargs;
+	}
+
 	// Create add-in to be registered with Excel.
 	class AddIn {
 		Args args;
@@ -27,13 +48,11 @@ namespace xll {
 		// Auto<Register> function with Excel
 		void Register()
 		{
-			/*
-			if (AddIns.contains(args.functionText)) {
+			if (AddIns().contains(args.functionText)) {
 				const auto err = OPER(L"AddIn: ")
 					& args.functionText & OPER(L" already registered");
 				XLL_WARNING(view(err));
 			}
-			*/
 			AddIns()[args.functionText] = &args;
 			const Auto<xll::Register> xao_reg([&]() -> int {
 				try {

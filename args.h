@@ -126,12 +126,8 @@ namespace xll {
 		}
 
 		// key-value pairs
-		OPER markup()
+		OPER markup() const
 		{
-			if (moduleText == OPER()) {
-				prepare();
-			}
-
 			OPER o({
 				OPER(L"moduleText"), moduleText,
 				OPER(L"procedure"), procedure,

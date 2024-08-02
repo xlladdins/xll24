@@ -80,6 +80,23 @@ namespace xll {
 			return isTrue(*this);
 		}
 
+		const OPER* begin() const
+		{
+			return &operator[](0);
+		}
+		OPER* begin()
+		{
+			return &operator[](0);
+		}
+		const OPER* end() const
+		{
+			return begin() + (isMulti(*this) ? size(*this) : 1);
+		}
+		OPER* end()
+		{
+			return begin() + (isMulti(*this) ? size(*this) : 1);
+		}
+
 		// Num - 64-bit IEEE floating point
 		constexpr explicit OPER(double num) noexcept
 			: XLOPER12{ Num(num) }
@@ -457,6 +474,14 @@ namespace xll {
 			else if (xltype == xltypeBigData) {
 				delete[] BigData(*this);
 			}
+			/* TODO: handle not yet defined
+			else if (xltype == xltypeNum) {
+				handle<OPER> h(val.num); // might be handle to OPER
+				if (h) {
+					h->dealloc();
+				}
+			}
+			*/
 
 			xltype = xltypeNil;
 		}

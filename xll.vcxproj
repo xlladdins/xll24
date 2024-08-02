@@ -147,6 +147,7 @@
     <ClInclude Include="xloper.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="addin.cpp" />
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="evaluate.cpp" />
     <ClCompile Include="fpx.c">
@@ -164,6 +165,7 @@
       <LanguageStandard_C Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">stdc17</LanguageStandard_C>
     </ClCompile>
     <ClCompile Include="paste.cpp" />
+    <ClCompile Include="range.cpp" />
     <ClCompile Include="xlauto.cpp" />
     <ClCompile Include="XLCALL.CPP">
       <DisableAnalyzeExternal Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</DisableAnalyzeExternal>

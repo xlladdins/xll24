@@ -184,7 +184,9 @@ namespace xll {
 		{ }
 		~Alignment()
 		{
-			Excel(xlcAlignment, horiz_align, wrap, vert_align, orientation, add_indent, shrink_to_fit, merge_cells);
+			if (set) {
+				Excel(xlcAlignment, horiz_align, wrap, vert_align, orientation, add_indent, shrink_to_fit, merge_cells);
+			}
 		}
 
 		enum class Horizontal {
