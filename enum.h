@@ -31,7 +31,7 @@ namespace xll
 	// String is name of a user defined function
 	inline bool isUDF(const XLOPER12& x)
 	{
-		return isStr(x) && AddIn::addins.contains(x);
+		return isStr(x) && AddIns().contains(x);
 	}
 
 	inline OPER Eval(const XLOPER12& x)

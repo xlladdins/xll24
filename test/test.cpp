@@ -385,8 +385,8 @@ int multi_test()
 int markup_test()
 {
 	{
-		ensure(AddIn::addins.contains(OPER(L"XLL.HYPOT")));
-		auto args = AddIn::addins[OPER(L"XLL.HYPOT")];
+		ensure(AddIns().contains(OPER(L"XLL.HYPOT")));
+		auto args = AddIns()[OPER(L"XLL.HYPOT")];
 		auto mu = args->markup();
 		ensure(rows(mu) == 15);
 		ensure(columns(mu) == 2);

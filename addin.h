@@ -7,6 +7,19 @@
 
 namespace xll {
 
+	inline std::map<OPER, Args*>& AddIns()
+	{
+		static std::map<OPER, Args*> addins;
+
+		return addins;
+	}
+	inline std::map<double, Args*>& RegIds()
+	{
+		static std::map<double, Args*> regids;
+
+		return regids;
+	}
+
 	// Create add-in to be registered with Excel.
 	class AddIn {
 		Args args;
@@ -14,17 +27,19 @@ namespace xll {
 		// Auto<Register> function with Excel
 		void Register()
 		{
-			if (addins.contains(args.functionText)) {
+			/*
+			if (AddIns.contains(args.functionText)) {
 				const auto err = OPER(L"AddIn: ")
 					& args.functionText & OPER(L" already registered");
 				XLL_WARNING(view(err));
 			}
-			addins[args.functionText] = &args;
+			*/
+			AddIns()[args.functionText] = &args;
 			const Auto<xll::Register> xao_reg([&]() -> int {
 				try {
 					OPER regid = XlfRegister(&args);
 					if (regid.xltype == xltypeNum) {
-						regids[regid.val.num] = &args;
+						RegIds()[regid.val.num] = &args;
 					}
 					else {
 						const auto err = OPER(L"AddIn: failed to register: ") & args.functionText;
@@ -57,8 +72,8 @@ namespace xll {
 
 						return FALSE;
 					}
-					addins.erase(text);
-					regids.erase(Num(Excel(xlfEvaluate, text)));
+					AddIns().erase(text);
+					RegIds().erase(Num(Excel(xlfEvaluate, text)));
 				}
 				catch (const std::exception& ex) {
 					XLL_ERROR(ex.what());
@@ -75,22 +90,20 @@ namespace xll {
 			});
 		}
 	public:
-		static inline std::map<OPER, Args*> addins;
-		static inline std::map<double, Args*> regids;
 		// Lookup using function text or register id.
 		static inline const Args* find(const OPER& text)
 		{
 			const Args* pargs = nullptr;
 
 			if (isNum(text)) {
-				const auto i = regids.find(Num(text));
-				if (i != regids.end()) {
+				const auto i = RegIds().find(Num(text));
+				if (i != RegIds().end()) {
 					pargs = i->second;
 				}
 			}
 			else {
-				const auto i = addins.find(text);
-				if (i != addins.end()) {
+				const auto i = AddIns().find(text);
+				if (i != AddIns().end()) {
 					pargs = i->second;
 				}
 			}

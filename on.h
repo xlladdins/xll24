@@ -54,7 +54,7 @@
 namespace xll {
 
 	// Calls on xlcOnXXX but overwrites existing macros.
-	// ???Keep a list of all On macros???
+	// TODO: ???Keep a list of all On macros???
 	template<int Key>
 	class On {
 		using cstr = const char*;
@@ -64,7 +64,7 @@ namespace xll {
 			Auto<OpenAfter> xao([text, macro]() {
 				return Excel(Key, OPER(text), OPER(macro)) == true;
 				});
-			///* This seems to cause memory leaks!!!
+			///* TODO: This seems to cause memory leaks!!!
 			Auto<CloseBefore> xac([text]() {
 				return Excel(Key, OPER(text)) == true;
 			});
