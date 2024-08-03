@@ -58,11 +58,12 @@ inline HWND xllGetHwnd(void) noexcept
 	return static_cast<HWND>(IntToPtr(xHwnd.val.w));
 }
 
-inline int XLL_ALERT(int level, std::string_view text, LPCSTR caption, UINT type = 0)
+inline int XLL_ALERT(int level, std::string_view text, 
+	LPCSTR caption, UINT type = 0, bool force = false)
 {
 	int alert_level = get_alert_mask();
 
-	if (alert_level & level) {
+	if (force || (alert_level & level)) {
 		const int ret = MessageBoxA(xllGetHwnd(), std::string(text).c_str(), caption, MB_OKCANCEL | type);
 		if (ret == IDCANCEL) {
 			alert_level &= ~level;
@@ -72,11 +73,12 @@ inline int XLL_ALERT(int level, std::string_view text, LPCSTR caption, UINT type
 
 	return alert_level;
 }
-inline int XLL_ALERT(int level, std::wstring_view text, LPCWSTR caption, UINT type = 0)
+inline int XLL_ALERT(int level, std::wstring_view text, 
+	LPCWSTR caption, UINT type = 0, bool force = false)
 {
 	int alert_level = get_alert_mask();
 
-	if (alert_level & level) {
+	if (force || (alert_level & level)) {
 		int ret = MessageBoxW(xllGetHwnd(), std::wstring(text).c_str(), caption, MB_OKCANCEL | type);
 		if (ret == IDCANCEL) {
 			alert_level &= ~level;
@@ -87,29 +89,29 @@ inline int XLL_ALERT(int level, std::wstring_view text, LPCWSTR caption, UINT ty
 	return alert_level;
 }
 
-inline int XLL_ERROR(std::string_view text)
+inline int XLL_ERROR(std::string_view text, bool force = false)
 {
-	return XLL_ALERT(XLL_ALERT_ERROR, text, "Error", MB_ICONERROR);
+	return XLL_ALERT(XLL_ALERT_ERROR, text, "Error", MB_ICONERROR, force);
 }
-inline int XLL_ERROR(std::wstring_view text)
+inline int XLL_ERROR(std::wstring_view text, bool force = false)
 {
-	return XLL_ALERT(XLL_ALERT_ERROR, text, L"Error", MB_ICONERROR);
-}
-
-inline int XLL_WARNING(std::string_view text)
-{
-	return XLL_ALERT(XLL_ALERT_WARNING, text, "Warning", MB_ICONWARNING);
-}
-inline int XLL_WARNING(std::wstring_view text)
-{
-	return XLL_ALERT(XLL_ALERT_WARNING, text, L"Warning", MB_ICONWARNING);
+	return XLL_ALERT(XLL_ALERT_ERROR, text, L"Error", MB_ICONERROR, force);
 }
 
-inline int XLL_INFORMATION(std::string_view text)
+inline int XLL_WARNING(std::string_view text, bool force = false)
 {
-	return XLL_ALERT(XLL_ALERT_INFORMATION, text, "Information", MB_ICONINFORMATION);
+	return XLL_ALERT(XLL_ALERT_WARNING, text, "Warning", MB_ICONWARNING, force);
 }
-inline int XLL_INFORMATION(std::wstring_view text)
+inline int XLL_WARNING(std::wstring_view text, bool force = false)
 {
-	return XLL_ALERT(XLL_ALERT_INFORMATION, text, L"Information", MB_ICONINFORMATION);
+	return XLL_ALERT(XLL_ALERT_WARNING, text, L"Warning", MB_ICONWARNING, force);
+}
+
+inline int XLL_INFORMATION(std::string_view text, bool force = false)
+{
+	return XLL_ALERT(XLL_ALERT_INFORMATION, text, "Information", MB_ICONINFORMATION, force);
+}
+inline int XLL_INFORMATION(std::wstring_view text, bool force = false)
+{
+	return XLL_ALERT(XLL_ALERT_INFORMATION, text, L"Information", MB_ICONINFORMATION, force);
 }
