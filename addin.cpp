@@ -2,25 +2,6 @@
 #include "xll.h"
 
 using namespace xll;
-
-// Replace nested OPER with safe handles.
-OPER make_safe(const OPER& o)
-{
-	if (type(o) != xltypeMulti) {
-		return o;
-	}
-
-	OPER o_(o);
-	for (OPER& oi : o_) {
-		if (isMulti(oi)) {
-			handle<OPER> h(new OPER(make_safe(oi))); // TODO: fix OPER::dealloc to check for handles.
-			oi = h.get();
-		}
-	}
-
-	return o_;
-}
-
 AddIn xai_addin_info(
 	Function(XLL_LPOPER, L"xll_addin_info", L"ADDIN.INFO")
 	.Arguments({
@@ -38,7 +19,7 @@ LPOPER WINAPI xll_addin_info(const LPOPER pname)
 	try {
 		const Args* pargs = AddIn::find(*pname);
 		if (pargs) {
-			info = make_safe(pargs->markup());
+			info = compress(pargs->markup());
 		}
 		else {
 			info = ErrNA;

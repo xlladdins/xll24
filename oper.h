@@ -5,6 +5,7 @@
 #include <cassert>
 #endif // _DEBUG
 #include <initializer_list>
+#include <map>
 #include "xloper.h"
 #include "utf8.h"
 
@@ -23,6 +24,41 @@ namespace xll {
 		return s && *s && n < 0xFF ? len(s + 1, n + 1) : n;
 	}
 	static_assert(len("abc") == 3);
+
+	struct OPER;
+	// Keep track of nested handles.
+	struct handles {
+		static double handle(OPER* po)
+		{
+			return static_cast<double>(reinterpret_cast<uintptr_t>(po));
+		}
+		static OPER* pointer(double h)
+		{
+			return reinterpret_cast<OPER*>(static_cast<uintptr_t>(h));
+		}
+		static std::map<double, OPER*>& map()
+		{
+			static std::map<double, OPER*> map;
+
+			return map;
+		}
+		static double insert(OPER* po)
+		{
+			map().insert({ handle(po), po});
+
+			return handle(po);
+		}
+		static OPER* find(double h)
+		{
+			const auto i = map().find(h);
+
+			return i == map().end() ? nullptr : i->second;
+		}
+		static void erase(double h)
+		{
+			map().erase(h);
+		}
+	};
 
 	struct OPER : public XLOPER12 {
 		// xltypeNil
@@ -268,11 +304,11 @@ namespace xll {
 
 			return *this = Int(w);
 		}
-		bool operator==(int w) const
+		template<std::integral T>
+		bool operator==(T w) const
 		{
 			return operator==(static_cast<double>(w));
 		}
-
 
 		// Err
 		constexpr explicit OPER(xll::xlerr err) noexcept
@@ -474,14 +510,12 @@ namespace xll {
 			else if (xltype == xltypeBigData) {
 				delete[] BigData(*this);
 			}
-			/* TODO: handle not yet defined
 			else if (xltype == xltypeNum) {
-				handle<OPER> h(val.num); // might be handle to OPER
-				if (h) {
-					h->dealloc();
+				OPER* po = handles::find(val.num);
+				if (po) {
+					po->dealloc();
 				}
 			}
-			*/
 
 			xltype = xltypeNil;
 		}
@@ -549,6 +583,45 @@ namespace xll {
 
 		}
 	};
+
+	// Replace nested OPER with safe handles.
+	inline OPER compress(const OPER& o)
+	{
+		if (type(o) != xltypeMulti) {
+			return o;
+		}
+
+		OPER o_(o);
+		for (OPER& oi : o_) {
+			if (isMulti(oi)) {
+				oi = handles::insert(new OPER(compress(oi)));
+			}
+		}
+
+		return o_;
+	}
+
+	inline OPER expand(const OPER& o)
+	{
+		if (isMulti(o)) {
+			OPER o_(o);
+			for (OPER& oi : o_) {
+				oi = expand(oi);
+			}
+
+			return o_;
+		}
+		if (type(o) == xltypeNum) {
+			OPER* po = handles::find(o.val.num);
+			if (po) {
+				return expand(*po);
+			}
+		}
+
+		return o;
+
+
+	}
 
 } // namespace xll
 
