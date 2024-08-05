@@ -149,6 +149,7 @@
   <ItemGroup>
     <ClCompile Include="addin.cpp" />
     <ClCompile Include="dllmain.cpp" />
+    <ClCompile Include="alert.cpp" />
     <ClCompile Include="evaluate.cpp" />
     <ClCompile Include="fpx.c">
       <ExceptionHandling Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExceptionHandling>
