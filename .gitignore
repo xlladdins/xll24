@@ -364,3 +364,4 @@ FodyWeavers.xsd
 /Templates/ProjectTemplates/Visual C++/xll
 /setup/Release/setup.msi
 /xll.zip
+/.CMakeLists.txt.swp
