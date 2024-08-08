@@ -365,3 +365,4 @@ FodyWeavers.xsd
 /setup/Release/setup.msi
 /xll.zip
 /.CMakeLists.txt.swp
+/Output-CMake.txt
