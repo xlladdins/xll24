@@ -27,106 +27,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="XLCALL.H">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="xll.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="alert.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="excel.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="oper.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="register.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ensure.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ref.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="defines.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="auto.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="xloper.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="utf8.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="addin.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="export.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="fpx.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="fp.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="handle.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="args.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="on.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="excel_time.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="enum.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="macrofun.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="rgb.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="XLCALL.CPP">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="xlauto.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="debug.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="dllmain.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="fpx.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="paste.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="evaluate.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="range.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="addin.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
     <None Include="README.md" />
     <None Include="cpp.hint" />
     <None Include="xll.props" />
@@ -135,5 +35,102 @@
     <Natvis Include="Visualizers\oper.natvis">
       <Filter>Visualizers</Filter>
     </Natvis>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="include\addin.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\alert.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\args.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\auto.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\defines.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ensure.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\enum.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\excel.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\excel_time.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\export.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\fp.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\fpx.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\handle.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\macrofun.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\on.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\oper.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ref.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\register.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\utf8.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\XLCALL.H">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xll.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xloper.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\addin.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\debug.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\dllmain.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\evaluate.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\fpx.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\paste.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\range.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\xlauto.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\XLCALL.CPP">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

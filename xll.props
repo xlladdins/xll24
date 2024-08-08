@@ -1,5 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- Property file for xll add-ins. Assumes git submodule for xll exists -->
+<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+	<LocalDebuggerCommand>$(registry:HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\excel.exe)</LocalDebuggerCommand>
+	<LocalDebuggerCommandArguments>"$(TargetPath)" /p "$(ProjectDir)"</LocalDebuggerCommandArguments>
+	<DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
+</PropertyGroup>
+<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+	<LocalDebuggerCommand>$(registry:HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\excel.exe)</LocalDebuggerCommand>
+	<DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
+	<LocalDebuggerCommandArguments>"$(TargetPath)" /p "$(ProjectDir)"</LocalDebuggerCommandArguments>
+</PropertyGroup>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ImportGroup Label="PropertySheets" />
   <ItemGroup Label="ProjectConfigurations">
