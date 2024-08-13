@@ -128,11 +128,6 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <None Include="cpp.hint" />
-    <None Include="README.md" />
-    <None Include="xll.props" />
-  </ItemGroup>
-  <ItemGroup>
     <Natvis Include="Visualizers\oper.natvis" />
   </ItemGroup>
   <ItemGroup>
@@ -173,6 +168,10 @@
   </ItemGroup>
   <ItemGroup>
     <Text Include="CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="README.md" />
+    <None Include="xll.props" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

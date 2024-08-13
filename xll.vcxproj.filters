@@ -27,11 +27,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <None Include="README.md" />
-    <None Include="cpp.hint" />
-    <None Include="xll.props" />
-  </ItemGroup>
-  <ItemGroup>
     <Natvis Include="Visualizers\oper.natvis">
       <Filter>Visualizers</Filter>
     </Natvis>
@@ -135,11 +130,12 @@
     <ClCompile Include="depends.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="alert.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Text Include="CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="README.md" />
+    <None Include="xll.props" />
   </ItemGroup>
 </Project>
