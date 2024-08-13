@@ -46,7 +46,7 @@ namespace xll
 
 	inline OPER Eval(const XLOPER12& x)
 	{
-		return Excel(xlfEvaluate, isUDF(x) ? OPER(L"=") & x & OPER(L"()") : x);
+		return isFormula(x) ? Excel(xlfEvaluate, x) : x;
 	}
 
 	// Return asNum(o) as T. If o is a string, evaluate it first.
