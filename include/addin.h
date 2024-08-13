@@ -20,27 +20,6 @@ namespace xll {
 		return regids;
 	}
 
-	// Find Args pointer given name or register id.
-	inline const Args* find(const OPER& name)
-	{
-		const Args* pargs = nullptr;
-
-		if (isNum(name)) {
-			const auto i = RegIds().find(Num(name));
-			if (i != RegIds().end()) {
-				pargs = i->second;
-			}
-		}
-		else {
-			const auto i = AddIns().find(name);
-			if (i != AddIns().end()) {
-				pargs = i->second;
-			}
-		}
-
-		return pargs;
-	}
-
 	// Create add-in to be registered with Excel.
 	class AddIn {
 		Args args;

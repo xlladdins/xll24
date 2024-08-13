@@ -334,6 +334,13 @@ int multi_test()
 		}
 	}
 	{
+		OPER o(2, 3);
+		o[0] = o;
+		OPER p = compress(o);
+		OPER q = expand(p);
+		ensure(o == q);
+	}
+	{
 		OPER o({ OPER(1.23), OPER(L"abc"), OPER(true) });
 		ensure(o == OPER().push_bottom(o));
 		ensure(o == o.push_bottom(OPER()));
@@ -570,6 +577,11 @@ int int_test()
 		o = 0;
 		ensure(o == 0);
 		ensure(type(o) == xltypeInt);
+	}
+	{
+		OPER o(1.);
+		ensure(o == 1);
+		ensure(o == (long)1);
 	}
 	return 0;
 }

@@ -3,7 +3,6 @@
 
 using namespace xll;
 
-
 AddIn xai_range_set(
 	Function(XLL_HANDLEX, L"xll_range_set", L"\\RANGE")
 	.Arguments({
@@ -19,8 +18,7 @@ HANDLEX WINAPI xll_range_set(LPOPER pr)
 	HANDLEX result = INVALID_HANDLEX;
 
 	try {
-		handle<OPER> h(new OPER(*pr));
-		result = h.get();
+		result = handles::insert(new OPER(*pr));
 	}
 	catch (const std::exception& ex) {
 		XLL_ERROR(ex.what());
@@ -46,9 +44,9 @@ LPXLOPER12 WINAPI xll_range_get(HANDLEX h)
 		if (h_) {
 			return h_.ptr();
 		}
-		OPER* p = safe_pointer<OPER>(h);
-		if (p) {
-			return p;
+		OPER* po = handles::find(h);
+		if (po) {
+			return po;
 		}
 	}
 	catch (const std::exception& ex) {

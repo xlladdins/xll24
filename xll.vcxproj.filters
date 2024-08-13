@@ -135,6 +135,9 @@
     <ClCompile Include="depends.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="alert.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Text Include="CMakeLists.txt" />
