@@ -7,26 +7,36 @@
 
 namespace xll
 {
-	constexpr bool StartsWith(const XLOPER12& x, wchar_t c)
+	constexpr bool StartsWith(const XLOPER12& x, int c)
 	{
 		return isStr(x) && x.val.str[0] > 0 && x.val.str[1] == c;
 	}
-	constexpr bool EndsWith(const XLOPER12& x, wchar_t c)
+	constexpr bool EndsWith(const XLOPER12& x, int c)
 	{
 		return isStr(x) && x.val.str[0] > 0 && x.val.str[x.val.str[0]] == c;
 	}
-	// "=...)"
-	inline bool isFormula(const XLOPER12& x)
+	constexpr bool isFormula(const XLOPER12& x)
 	{
-		return StartsWith(x, L'=') && EndsWith(x, L')');	
+		return StartsWith(x, '=');
+	}
+	// "=...)"
+	constexpr bool isFunction(const XLOPER12& x)
+	{
+		return isFormula(x) && EndsWith(x, ')');
 	}	
-
 	// "\..."
 	// Functions returning a handle start with backslash by convention.
-	inline bool isHandle(const XLOPER12& x)
+	constexpr bool isHandle(const XLOPER12& x)
 	{
-		return StartsWith(x, L'\\');
+		return StartsWith(x, '\\');
 	}
+#ifdef _DEBUG
+	static_assert(StartsWith(Str(L"\x03=A1"), '='));
+	static_assert(EndsWith(Str(L"\x03=A1"), '1'));
+	static_assert(isFormula(Str(L"\x03=A1")));
+	static_assert(!isFunction(Str(L"\x03=A1")));
+	static_assert(isHandle(Str(L"\x03\\A1")));
+#endif // _DEBUG
 
 	// String is name of a user defined function
 	inline bool isUDF(const XLOPER12& x)

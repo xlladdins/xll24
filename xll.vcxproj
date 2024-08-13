@@ -160,6 +160,7 @@
     <ClInclude Include="include\xloper.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="depends.cpp" />
     <ClCompile Include="src\addin.cpp" />
     <ClCompile Include="src\debug.cpp" />
     <ClCompile Include="src\dllmain.cpp" />

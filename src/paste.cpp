@@ -81,14 +81,16 @@ OPER Reshape(const OPER& active, const OPER& ref)
 OPER Set(const OPER& ref, const OPER& val)
 {
 	OPER res = ref;
-	OPER eval = Excel(xlfEvaluate, val);
+
 	if (isFormula(val)) {
-		res = Reshape(ref, eval);
-		Excel(xlcFormula, val, res);
-	}
-	else if (isMulti(eval)) {
-		res = Reshape(ref, eval);
-		Excel(xlSet, res, eval);
+		OPER eval = Excel(xlfEvaluate, val);
+		if (isMulti(eval)) {
+			res = Reshape(ref, eval);
+			Excel(xlSet, res, eval);
+		}
+		else {
+			Excel(xlcFormula, val, res);
+		}
 	}
 	else {
 		Excel(xlSet, ref, val);
