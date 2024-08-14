@@ -81,14 +81,16 @@ OPER Reshape(const OPER& active, const OPER& ref)
 OPER Set(const OPER& ref, const OPER& val)
 {
 	OPER res = ref;
-	OPER eval = Excel(xlfEvaluate, val);
+
 	if (isFormula(val)) {
-		res = Reshape(ref, eval);
-		Excel(xlcFormula, val, res);
-	}
-	else if (isMulti(eval)) {
-		res = Reshape(ref, eval);
-		Excel(xlSet, res, eval);
+		OPER eval = Excel(xlfEvaluate, val);
+		if (isMulti(eval)) {
+			res = Reshape(ref, eval);
+			Excel(xlSet, res, eval);
+		}
+		else {
+			Excel(xlcFormula, val, res);
+		}
 	}
 	else {
 		Excel(xlSet, ref, val);
@@ -252,3 +254,50 @@ int WINAPI xll_pasted()
 	return result;
 }
 On<xlcOnKey> xok_pasted(ON_CTRL ON_SHIFT "D", "XLL.PASTED");
+
+// Get text of Listbox.
+AddIn xai_list_macro(Macro(L"xll_list_macro", L"XLL.LIST.MACRO"));
+int WINAPI xll_list_macro()
+{
+#pragma XLLEXPORT
+	try {
+		OPER ret;
+		auto ac = Excel(xlfActiveCell);
+		auto sel = Excel(xlfSelection);
+		ret = Excel(xlfGetWindow, 3); // x position
+		ret = Excel(xlfGetWindow, 4); // y position
+	}
+	catch (const std::exception& ex) {
+		XLL_ERROR(ex.what());
+		return 0;
+	}
+	return 1;
+}
+
+AddIn xai_list(Macro(L"xll_list", L"XLL.LIST"));
+int WINAPI xll_list()
+{
+#pragma XLLEXPORT
+	try {
+		OPER ret;
+		auto ac = Excel(xlfActiveCell);
+		auto sel = Excel(xlfSelection);
+		auto val = Excel(xlCoerce, sel);
+		auto list = Eval(val);
+		const auto ac1 = Excel(xlfOffset, ac, 1, 1);
+		const auto ac2 = Excel(xlfOffset, ac, 2, 2);
+		ret = Excel(xlfCreateObject, 20, ac1, 0, 0, ac2, 0, 0); // Listbox
+		ret = Excel(xlcObjectProperties, 1); // move and size with cell
+		for (const auto& item : list) {
+			ret = Excel(xlcAddListItem, item);
+		}
+		ret = Excel(xlcAssignToObject, L"XLL.LIST.MACRO");
+		//Excel(xlcSelect, Excel(xlfOffset, ac, 3, 4));
+	}
+	catch (const std::exception& ex) {
+		XLL_ERROR(ex.what());
+		return 0;
+	}
+	return 1;
+}
+On<xlcOnKey> xok_list(ON_CTRL ON_SHIFT "E", "XLL.LIST");

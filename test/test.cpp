@@ -3,8 +3,8 @@
 //#if 0
 #include <numeric>
 #include <random>
-#include "../xll.h"
-#include "../excel_time.h"
+#include "xll.h"
+#include "excel_time.h"
 
 using namespace xll;
 

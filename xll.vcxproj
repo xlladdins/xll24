@@ -52,6 +52,9 @@
     <EnableClangTidyCodeAnalysis>false</EnableClangTidyCodeAnalysis>
     <ClangTidyChecks>clang-analyzer-*</ClangTidyChecks>
     <CodeAnalysisRuleSet>NativeMinimumRules.ruleset</CodeAnalysisRuleSet>
+    <IncludePath>include;$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
+    <LibraryPath>lib;$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64)</LibraryPath>
+    <SourcePath>src;$(VC_SourcePath);</SourcePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <TargetExt>.lib</TargetExt>
@@ -60,6 +63,9 @@
     <CodeAnalysisRuleSet>NativeMinimumRules.ruleset</CodeAnalysisRuleSet>
     <ClangTidyChecks>clang-analyzer-*,-clang-diagnostic-unknown-pragmas</ClangTidyChecks>
     <EnableClangTidyCodeAnalysis>false</EnableClangTidyCodeAnalysis>
+    <IncludePath>include;$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
+    <LibraryPath>lib;$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64)</LibraryPath>
+    <SourcePath>src;$(VC_SourcePath);</SourcePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -122,66 +128,50 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="addin.h" />
-    <ClInclude Include="args.h" />
-    <ClInclude Include="auto.h" />
-    <ClInclude Include="defines.h" />
-    <ClInclude Include="ensure.h" />
-    <ClInclude Include="enum.h" />
-    <ClInclude Include="excel_time.h" />
-    <ClInclude Include="export.h" />
-    <ClInclude Include="fp.h" />
-    <ClInclude Include="fpx.h" />
-    <ClInclude Include="handle.h" />
-    <ClInclude Include="macrofun.h" />
-    <ClInclude Include="on.h" />
-    <ClInclude Include="rgb.h" />
-    <ClInclude Include="utf8.h" />
-    <ClInclude Include="XLCALL.H" />
-    <ClInclude Include="alert.h" />
-    <ClInclude Include="excel.h" />
-    <ClInclude Include="xll.h" />
-    <ClInclude Include="oper.h" />
-    <ClInclude Include="ref.h" />
-    <ClInclude Include="register.h" />
-    <ClInclude Include="xloper.h" />
+    <Natvis Include="Visualizers\oper.natvis" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="addin.cpp" />
-    <ClCompile Include="dllmain.cpp" />
-    <ClCompile Include="alert.cpp" />
-    <ClCompile Include="evaluate.cpp" />
-    <ClCompile Include="fpx.c">
-      <ExceptionHandling Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExceptionHandling>
-      <AssemblerOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">AssemblyAndSourceCode</AssemblerOutput>
-      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">CompileAsC</CompileAs>
-      <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-      </AdditionalOptions>
-      <ExceptionHandling Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExceptionHandling>
-      <AssemblerOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">AssemblyAndSourceCode</AssemblerOutput>
-      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">CompileAsC</CompileAs>
-      <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-      </AdditionalOptions>
-      <LanguageStandard_C Condition="'$(Configuration)|$(Platform)'=='Release|x64'">stdc17</LanguageStandard_C>
-      <LanguageStandard_C Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">stdc17</LanguageStandard_C>
-    </ClCompile>
-    <ClCompile Include="paste.cpp" />
-    <ClCompile Include="range.cpp" />
-    <ClCompile Include="xlauto.cpp" />
-    <ClCompile Include="XLCALL.CPP">
-      <DisableAnalyzeExternal Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</DisableAnalyzeExternal>
-      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Default</CompileAs>
-      <SupportJustMyCode Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</SupportJustMyCode>
-    </ClCompile>
-    <ClCompile Include="debug.cpp" />
+    <ClInclude Include="include\addin.h" />
+    <ClInclude Include="include\alert.h" />
+    <ClInclude Include="include\args.h" />
+    <ClInclude Include="include\auto.h" />
+    <ClInclude Include="include\defines.h" />
+    <ClInclude Include="include\ensure.h" />
+    <ClInclude Include="include\enum.h" />
+    <ClInclude Include="include\excel.h" />
+    <ClInclude Include="include\excel_time.h" />
+    <ClInclude Include="include\export.h" />
+    <ClInclude Include="include\fp.h" />
+    <ClInclude Include="include\fpx.h" />
+    <ClInclude Include="include\handle.h" />
+    <ClInclude Include="include\macrofun.h" />
+    <ClInclude Include="include\on.h" />
+    <ClInclude Include="include\oper.h" />
+    <ClInclude Include="include\ref.h" />
+    <ClInclude Include="include\register.h" />
+    <ClInclude Include="include\utf8.h" />
+    <ClInclude Include="include\XLCALL.H" />
+    <ClInclude Include="include\xll.h" />
+    <ClInclude Include="include\xloper.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="cpp.hint" />
+    <ClCompile Include="depends.cpp" />
+    <ClCompile Include="src\addin.cpp" />
+    <ClCompile Include="src\debug.cpp" />
+    <ClCompile Include="src\dllmain.cpp" />
+    <ClCompile Include="src\evaluate.cpp" />
+    <ClCompile Include="src\fpx.c" />
+    <ClCompile Include="src\paste.cpp" />
+    <ClCompile Include="src\range.cpp" />
+    <ClCompile Include="src\xlauto.cpp" />
+    <ClCompile Include="src\XLCALL.CPP" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
     <None Include="README.md" />
     <None Include="xll.props" />
-  </ItemGroup>
-  <ItemGroup>
-    <Natvis Include="Visualizers\oper.natvis" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
