@@ -186,20 +186,18 @@ with Excel.
 `AddIn` objects are created when the add-in is loaded,
 but there are some things that can only be done after Excel calls `xlAutoOpen`.
 The `Args::prepare` function arranages the data specified in the `Args` object
-into a format that iw necessary to call `xlfRegister`.
+into a format that is necessary to call `xlfRegister`.
 
 ## `Ctrl-Shift-A`
 
-After typing `=` and the name of a function, and optionally using `<Tab>` 
-to complete the name, then pressing `Ctrl-Shift-A`
+After typing `=` and the name of a function then pressing `Ctrl-Shift-A`
 will produce the names of the arguments of the function.
 
 I don't have access to the source code of Excel, but there is a
 simple way to extend this functionality. Instead of pressing
 `Ctrl-Shift-A` you can press `<Backspace>` to remove the
 trailing left parenthesis and then press `<Enter>`.
-You will see a funny looking number, but it is not a handle. 
-It is the [register id](https://learn.microsoft.com/en-us/office/client-developer/excel/xlfregisterid)
+You will see the [register id](https://learn.microsoft.com/en-us/office/client-developer/excel/xlfregisterid)
 Excel uses to keep track of user defined functions.
 
 With your cursor in the cell containing the register id, pressing `Ctrl-Shift-B` will
