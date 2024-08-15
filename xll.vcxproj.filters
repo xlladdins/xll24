@@ -127,7 +127,10 @@
     <ClCompile Include="src\XLCALL.CPP">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="depends.cpp">
+    <ClCompile Include="src\depends.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\alert.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
