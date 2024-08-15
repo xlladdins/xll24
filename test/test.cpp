@@ -589,6 +589,11 @@ int int_test()
 int WINAPI xll_test()
 {
 #pragma XLLEXPORT
+	//FMLAINFO fmla;
+	//int res;
+	//res = LPenHelper(xlGetFmlaInfo, &fmla);
+	//res = LPenHelper(xlGetMouseInfo, &fmla);
+
 	int xal = get_alert_mask();
 	set_alert_mask(1);
 	int al = get_alert_mask();

@@ -261,11 +261,11 @@ int WINAPI xll_list_macro()
 {
 #pragma XLLEXPORT
 	try {
-		OPER ret;
-		auto ac = Excel(xlfActiveCell);
-		auto sel = Excel(xlfSelection);
-		ret = Excel(xlfGetWindow, 3); // x position
-		ret = Excel(xlfGetWindow, 4); // y position
+		//OPER ret;
+		//FMLAINFO fmla;
+		//int res;
+		//res = LPenHelper(xlGetFmlaInfo, &fmla);
+		//res = LPenHelper(xlGetMouseInfo, &fmla);
 	}
 	catch (const std::exception& ex) {
 		XLL_ERROR(ex.what());

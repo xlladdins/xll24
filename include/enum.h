@@ -1,4 +1,4 @@
-// enum.h - define XLL_CONST functions used for enumerations
+// enum.h - Functions used for enumerations.
 // Copyright (c) KALX, LLC. All rights reserved. No warranty made.
 #pragma once
 #include <expected>
@@ -43,10 +43,29 @@ namespace xll
 	{
 		return isStr(x) && AddIns().contains(x);
 	}
+	// UDF with no arguments
+	inline bool isEnum(const XLOPER12& x)
+	{
+		const Args* pargs = AddIn::find(x);
+		if (pargs && size(pargs->argumentType) == 0) {
+			return true;
+		}
+
+		return false;
+	}
 
 	inline OPER Eval(const XLOPER12& x)
 	{
-		return isFormula(x) ? Excel(xlfEvaluate, x) : x;
+		OPER o = x;
+
+		if (isEnum(x)) {
+			o = Excel(xlfEvaluate, OPER(L"=") & OPER(x) & OPER(L"()"));
+		}
+		else if (isFormula(x)) {
+			o = Excel(xlfEvaluate, x);
+		}
+
+		return o;
 	}
 
 	// Return asNum(o) as T. If o is a string, evaluate it first.
