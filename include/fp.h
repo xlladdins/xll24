@@ -35,6 +35,15 @@ namespace xll {
 		return a.array;
 	}
 
+	constexpr double& index(FP12& a, int i, int j) noexcept
+	{
+		return a.array[i * columns(a) + j];
+	}
+	constexpr double index(const FP12& a, int i, int j) noexcept
+	{
+		return a.array[i * columns(a) + j];
+	}
+
 	constexpr auto span(FP12& a) noexcept
 	{
 		return std::span<double>(array(a), size(a));
@@ -201,6 +210,23 @@ namespace xll {
 			return reinterpret_cast<const _FP12&>(*fpx_);
 		}
 
+		double& operator[](int i) noexcept
+		{
+			return array()[i];
+		}
+		double operator[](int i) const noexcept
+		{
+			return array()[i];
+		}
+		double& operator()(int i, int j) noexcept
+		{
+			return xll::index(*get(), i, j);
+		}
+		double operator()(int i, int j) const noexcept
+		{
+			return xll::index(*get(), i, j);
+		}
+
 		FPX& resize(int r, int c)
 		{
 			if (r * c != size()) {
@@ -295,23 +321,6 @@ namespace xll {
 			return *this;
 		}
 
-		double operator[](int i) const noexcept
-		{
-			return fpx_->array[i];
-		}
-		double& operator[](int i) noexcept
-		{
-			return fpx_->array[i];
-		}
-
-		double operator()(int i, int j) const noexcept
-		{
-			return fpx_->array[fpx_index(fpx_, i, j)];
-		}
-		double& operator()(int i, int j) noexcept
-		{
-			return fpx_->array[fpx_index(fpx_, i, j)];
-		}
 	};
 
 	// Fixed size array.
