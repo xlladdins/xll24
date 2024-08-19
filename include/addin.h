@@ -99,7 +99,7 @@ namespace xll {
 					pargs = i->second;
 				}
 			}
-			else {
+			else if (isStr(text)) {
 				const auto i = AddIns().find(text);
 				if (i != AddIns().end()) {
 					pargs = i->second;
@@ -109,8 +109,8 @@ namespace xll {
 			return pargs;
 		}
 		
-		AddIn(const Args& args_)
-			: args(args_)
+		AddIn(const Args& args)
+			: args(args)
 		{
 			Register();
 			Unregister();

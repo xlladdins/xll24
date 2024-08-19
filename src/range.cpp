@@ -7,7 +7,7 @@ using namespace xll;
 AddIn xai_range_set(
 	Function(XLL_HANDLEX, L"xll_range_set", L"\\RANGE")
 	.Arguments({
-		Arg(XLL_LPOPER, L"Range", L"is a range.")
+		Arg(XLL_LPOPER, L"Range", L"is a range.", "={1,2,3;4,5,6}")
 		})
 	.Uncalced()
 	.Category(L"XLL")
