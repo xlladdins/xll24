@@ -26,6 +26,21 @@ int excel_time_test()
 		auto ds = Num(Excel(xlfSecond, now)) - Num(Excel(xlfSecond, d));
 		ensure(fabs(ds) <= 1);
 	}
+	{
+		double now = asNum(Excel(xlfNow));
+		auto now_days = to_days(now);
+		auto now_ymd = to_ymd(now);
+		ensure(now_ymd == std::chrono::year_month_day{ now_days });
+		ensure(Excel(xlfYear, now) == (int)now_ymd.year());
+		ensure(Excel(xlfMonth, now) == (unsigned)now_ymd.month());
+		ensure(Excel(xlfDay, now) == (unsigned)now_ymd.day());
+
+		auto fd = from_days(now_days);
+		auto fy = from_ymd(now_ymd);
+		ensure(fd == fy);
+		ensure(from_days(to_days(now)) == (int)now);
+		ensure(from_ymd(to_ymd(now)) == (int)now);
+	}
 
 	return 0;
 }
@@ -589,6 +604,11 @@ int int_test()
 int WINAPI xll_test()
 {
 #pragma XLLEXPORT
+	//FMLAINFO fmla;
+	//int res;
+	//res = LPenHelper(xlGetFmlaInfo, &fmla);
+	//res = LPenHelper(xlGetMouseInfo, &fmla);
+
 	int xal = get_alert_mask();
 	set_alert_mask(1);
 	int al = get_alert_mask();

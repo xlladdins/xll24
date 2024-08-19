@@ -175,6 +175,7 @@ namespace xll {
 		return XLOPER12{.val = {.str = const_cast<XCHAR*>(s)}, .xltype = xltypeStr};
 	}
 
+	// Assumes lifetime of array.
 	constexpr XLOPER12 Multi(XLOPER12* array, int rows, int columns)
 	{
 		return XLOPER12{
