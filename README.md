@@ -51,13 +51,13 @@ that Excel calls to manage the lifetime of the xll. The xll library implements t
 To add a function to be called when Excel calls `xlAutoXXX` create an
 object of type `Auto<XXX>` and specify a function to be called.
 The function takes no arguments and returns 1 to indicate success or 0 for failure.
-See [`include/auto.h`](auto.h) for the list possible values for `XXX`.
+See [`auto.h`](include/auto.h) for the list possible values for `XXX`.
 
 ## Excel
 
 Everything Excel has to offer is available through the [`Excel`](include/excel.h) function.
 The first argument is a _function number_ defined in the C SDK header file
-[`include/XLCALL.H`](XLCALL.H)
+[`XLCALL.H`](include/XLCALL.H)
 specifying the Excel function or macro to call.
 Arguments for function numbers are documented in 
 [Excel4Macros](https://xlladdins.github.io/Excel4Macros/index.html).
@@ -214,7 +214,7 @@ the character string. The function `EVAL(cell)` function does the same thing.
 The `\RANGE(range)` function returns a handle to a range of cells.
 The function `RANGE(handle)` returns the range corresponding to the handle.
 
-### `Ctrl-Shift-A`
+### `Ctrl-Shift-A/B/C/D`
 
 After typing `=` and the name of a function then pressing `Ctrl-Shift-A`
 will produce the names of the arguments of the function.
