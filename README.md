@@ -42,8 +42,8 @@ that exports well-known functions.
 When an xll is opened in Excel it 
 [dynamically loads](https://learn.microsoft.com/en-us/windows/win32/api/libloaderapi/nf-libloaderapi-loadlibrarya) 
 the xll,
-[looks for](https://learn.microsoft.com/en-us/windows/win32/api/libloaderapi/nf-libloaderapi-getprocaddress),
-[`xlAutoOpen`](https://learn.microsoft.com/en-us/office/client-developer/excel/xlautoopen)
+[looks for](https://learn.microsoft.com/en-us/windows/win32/api/libloaderapi/nf-libloaderapi-getprocaddress) 
+[`xlAutoOpen`](https://learn.microsoft.com/en-us/office/client-developer/excel/xlautoopen), then
 and calls it. There are 7 
 [`xlAuto` functions](https://learn.microsoft.com/en-us/office/client-developer/excel/add-in-manager-and-xll-interface-functions)
 that Excel calls to manage the lifetime of the xll. The xll library implements those for you.
