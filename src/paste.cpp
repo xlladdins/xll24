@@ -110,11 +110,19 @@ int WINAPI xll_pasteb()
 
 	try {
 		OPER active = Excel(xlfActiveCell);
-		OPER text = Excel(xlCoerce, active);
-		const Args* pargs = AddIn::find(text);
+		OPER cell = Excel(xlCoerce, active);
+		const Args* pargs = AddIn::find(cell);
 		ensure(pargs || !"xll_pasteb: add-in not found");
 
-		Excel(xlcFormula, Formula(pargs), active);
+		OPER formula = Formula(pargs);
+		Excel(xlcFormula, formula, active);
+		if (isHandle(pargs->functionText)) {
+			Excel(xlcApplyStyle, L"Handle");
+		}
+		//		OPER res = Excel(xlfEvaluate, formula);
+//		OPER out = Reshape(active, res);
+//		Excel(xlcSelect, out);
+//		Excel(xlcApplyStyle, isHandle(text) ? L"Handle" : L"Output");
 	}
 	catch (const std::exception& ex) {
 		result = FALSE;
@@ -169,7 +177,11 @@ int WINAPI xll_pastec()
 		formula &= OPER(L")");
 
 		Excel(xlcFormula, formula, output);
-		Excel(xlcSelect, caller);
+		Excel(xlcSelect, output);
+		if (isHandle(text)) {
+			Excel(xlcApplyStyle, L"Handle");
+		}
+//		Excel(xlcApplyStyle, isHandle(text) ? L"Handle" : L"Output");
 	}
 	catch (const std::exception& ex) {
 		result = FALSE;

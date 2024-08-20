@@ -140,5 +140,8 @@
   <ItemGroup>
     <None Include="README.md" />
     <None Include="xll.props" />
+    <None Include="xll.bat">
+      <Filter>Source Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

@@ -2,9 +2,6 @@
 
 See the [xll library](https://github.com/xlladdins/xll) for
 an earlier version.
-I rewrote that for the n-th time because I use this every
-day and work hard to be lazy. It was also an opportunity to
-learn about the latest C++ features and best practices.
 
 There is a reason why many companies still use the ancient 
 [Microsoft Excel C Software Development Kit](https://learn.microsoft.com/en-us/office/client-developer/excel/welcome-to-the-excel-software-development-kit), 
@@ -17,7 +14,7 @@ actually calls over the network to do every calculation,
 as if Python isn't slow enough already.
 
 There is a reason why many companies don't use the ancient Microsoft Excel C SDK.
-The example code and documentation are difficult to use and understand.
+The example code and documentation are difficult to understand and use.
 This library makes it easy and performant to call native code from Excel.
 
 One reason for Python's popularity is that people who know how to call
@@ -28,7 +25,8 @@ in the world, Excel.
 ## Install
 
 The xll library requires 64-bit Excel on Windows and Visual Studio 2022.
-Run [`setup`](setup/Release/setup.msi) to install a template project called `xll` that will
+Run [`setup`](setup/Release/setup.msi). 
+This installs a template project called `xll` that will
 show up when you create a new project in Visual Studio.
 
 ## Use
@@ -44,8 +42,8 @@ that exports well-known functions.
 When an xll is opened in Excel it 
 [dynamically loads](https://learn.microsoft.com/en-us/windows/win32/api/libloaderapi/nf-libloaderapi-loadlibrarya) 
 the xll,
-[looks for](https://learn.microsoft.com/en-us/windows/win32/api/libloaderapi/nf-libloaderapi-getprocaddress),
-[`xlAutoOpen`](https://learn.microsoft.com/en-us/office/client-developer/excel/xlautoopen)
+[looks for](https://learn.microsoft.com/en-us/windows/win32/api/libloaderapi/nf-libloaderapi-getprocaddress) 
+[`xlAutoOpen`](https://learn.microsoft.com/en-us/office/client-developer/excel/xlautoopen), then
 and calls it. There are 7 
 [`xlAuto` functions](https://learn.microsoft.com/en-us/office/client-developer/excel/add-in-manager-and-xll-interface-functions)
 that Excel calls to manage the lifetime of the xll. The xll library implements those for you.
@@ -53,13 +51,13 @@ that Excel calls to manage the lifetime of the xll. The xll library implements t
 To add a function to be called when Excel calls `xlAutoXXX` create an
 object of type `Auto<XXX>` and specify a function to be called.
 The function takes no arguments and returns 1 to indicate success or 0 for failure.
-See [`auto.h`](auto.h) for the list possible values for `XXX`.
+See [`auto.h`](include/auto.h) for the list possible values for `XXX`.
 
 ## Excel
 
-Everything Excel has to offer is available through the [`Excel`](excel.h) function.
+Everything Excel has to offer is available through the [`Excel`](include/excel.h) function.
 The first argument is a _function number_ defined in the C SDK header file
-[`XLCALL.H`](XLCALL.H)
+[`XLCALL.H`](include/XLCALL.H)
 specifying the Excel function or macro to call.
 Arguments for function numbers are documented in 
 [Excel4Macros](https://xlladdins.github.io/Excel4Macros/index.html).
@@ -73,14 +71,14 @@ There are exceptions to this. The primary one is
 [`xlfRegister`](https://learn.microsoft.com/en-us/office/client-developer/excel/xlfregister-form-1).
 It has the side effect of registering a function or macro with Excel.
 There is no need to call `xlfRegister` directly.
-The [`AddIn`](addin.h) class is used to register functions and macros with Excel.
+The [`AddIn`](include/addin.h) class is used to register functions and macros with Excel.
 
 ### Function
 
 An Excel function returns a result that depends only on its arguments
 and has no side effects.
 To call a C or C++ function from Excel use
-the [`AddIn`](addin.h) class to instantiate an object
+the [`AddIn`](include/addin.h) class to instantiate an object
 that specifies the information Excel needs.
 
 Here is how to register `xll_hypot` as `STD.HYPOT` in Excel.
@@ -156,13 +154,13 @@ int WINAPI xll_macro(void)
 
 ## AddIn
 
-The [`AddIn`](addin.h) class is constructed from [`Args`](args.h).
+The [`AddIn`](include/addin.h) class is constructed from [`Args`](include/args.h).
 All functions and macros must be registered with Excel, and
 unregistered when the xll is unloaded.
 
 ## Args
 
-The [`Args`](args.h) struct is used to 
+The [`Args`](include/args.h) struct is used to 
 [register](https://learn.microsoft.com/en-us/office/client-developer/excel/xlfregister-form-1)
 the arguments to a macro or function.
 The structs `Macro` and `Function` inherit from `Args` to
@@ -188,7 +186,35 @@ but there are some things that can only be done after Excel calls `xlAutoOpen`.
 The `Args::prepare` function arranages the data specified in the `Args` object
 into a format that is necessary to call `xlfRegister`.
 
-## `Ctrl-Shift-A`
+## Predefined Functions and Macros
+
+### ADDIN.INFO
+
+The `ADDIN.INFO(name)` function returns information about an add-in
+given its name.
+
+### XLL.ALERT.LEVEL
+
+Functions and macros can report errors, warnings, and information to the user.
+The `XLL.ALERT.LEVEL` function take a mask indicating what type of alerts
+to report. The mask is a sum of any of the following values:
+`XLL_ALERT_ERROR()`, `XLL_ALERT_WARNING()`, and `XLL_ALERT_INFORMATION()`.
+
+### DEPENDS
+
+To force `cell` to be calculated after `ref`, use `=DEPENDS(cell, ref)`.
+
+### EVAL
+
+Selecting characters in the formula in bar then pressing `F9` evaluates
+the character string. The function `EVAL(cell)` function does the same thing.
+
+### RANGE
+
+The `\RANGE(range)` function returns a handle to a range of cells.
+The function `RANGE(handle)` returns the range corresponding to the handle.
+
+### `Ctrl-Shift-A/B/C/D`
 
 After typing `=` and the name of a function then pressing `Ctrl-Shift-A`
 will produce the names of the arguments of the function.
