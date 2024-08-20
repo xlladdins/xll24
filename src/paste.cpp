@@ -222,13 +222,13 @@ int WINAPI xll_pasted()
 
 			active = Move(active, 0, 1);
 			if (isNil(pargs->argumentInit[i])) {
-				Excel(xlcDefineName, name, active);
+				Excel(xlcDefineName, name, active, Missing, Missing, Missing, Missing, true);
 				Excel(xlcApplyStyle, L"Input");
 				active = Move(active, 1, -1);
 			}
 			else {
 				const auto ref = Set(active, pargs->argumentInit[i]);
-				Excel(xlcDefineName, name, ref);
+				Excel(xlcDefineName, name, ref, Missing, Missing, Missing, Missing, true);
 				Excel(xlcSelect, ref);
 				Excel(xlcApplyStyle, L"Input");
 				active = Move(active, rows(ref), -1);
