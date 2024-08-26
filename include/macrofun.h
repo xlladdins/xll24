@@ -554,48 +554,50 @@ namespace xll {
 	};
 
 	// https://xlladdins.github.io/Excel4Macros/select.html
-	class Select {
-		OPER sel;
-	public:
+	struct Select {
+		OPER selection;
+
 		Select()
-			: sel(Excel(xlfSelection))
+			: selection(Excel(xlfSelection))
 		{ }
+
+		// Set active cell of selection.
 		Select& ActiveCell(const OPER& cell)
 		{
-			Excel(xlcSelect, sel, cell);
+			Excel(xlcSelect, selection, cell);
 			
 			return *this;
 		}
 		Select& Offset(int row, int col)
 		{
-			sel = Excel(xlfOffset, sel, row, col);
-			Excel(xlcSelect, sel);
+			selection = Excel(xlfOffset, selection, row, col);
+			Excel(xlcSelect, selection);
 
 			return *this;
 		}
 		Select& Offset(int row, int col, int height, int width)
 		{
-			sel = Excel(xlfOffset, sel, row, col, height, width);
-			Excel(xlcSelect, sel);
+			selection = Excel(xlfOffset, selection, row, col, height, width);
+			Excel(xlcSelect, selection);
 
 			return *this;
 		}
 		// Move the selection.
 		Select& Up()
 		{
-			return Offset(-rows(sel), 0);
+			return Offset(-rows(selection), 0);
 		}
 		Select& Down()
 		{
-			return Offset(rows(sel), 0);
+			return Offset(rows(selection), 0);
 		}
 		Select& Left()
 		{
-			return Offset(0, -columns(sel));
+			return Offset(0, -columns(selection));
 		}
 		Select& Right()
 		{
-			return Offset(0, columns(sel));
+			return Offset(0, columns(selection));
 		}
 	};
 
