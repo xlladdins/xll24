@@ -98,6 +98,9 @@
     <ClInclude Include="include\xloper.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\type.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\addin.cpp">
@@ -131,6 +134,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\alert.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\doevents.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

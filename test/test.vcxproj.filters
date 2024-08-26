@@ -24,5 +24,8 @@
     <ClCompile Include="web.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="type_test.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

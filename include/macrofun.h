@@ -166,6 +166,7 @@ XLL_RGB_COLOR(XLL_RGB_COLOR_ENUM)
 
 namespace xll {
 
+	// https://xlladdins.github.io/Excel4Macros/alignment.html
 	// Alignment().Member(value)... operates on active cell. 
 	// Destructor calls xlcAlignment if set is true.
 	class Alignment {
@@ -248,41 +249,43 @@ namespace xll {
 			return *this;
 		}
 	};
-	void AlignHorizontalGeneral(bool b = true)
+	inline void AlignHorizontalGeneral(bool b = true)
 	{
 		Alignment(b).Horizontal(Alignment::Horizontal::General);
 	}
-	void AlignHorizontalLeft(bool b = true)
+	inline void AlignHorizontalLeft(bool b = true)
 	{
 		Alignment(b).Horizontal(Alignment::Horizontal::Left);
 	}
-	void AlignHorizontalCenter(bool b = true)
+	inline void AlignHorizontalCenter(bool b = true)
 	{
 		Alignment(b).Horizontal(Alignment::Horizontal::Center);
 	}
-	void AlignHorizontalRight(bool b = true)
+	inline void AlignHorizontalRight(bool b = true)
 	{
 		Alignment(b).Horizontal(Alignment::Horizontal::Right);
 	}
-	void AlignHorizontalFill(bool b = true)
+	inline void AlignHorizontalFill(bool b = true)
 	{
 		Alignment(b).Horizontal(Alignment::Horizontal::Fill);
 	}
-	void AlignHorizontalJustify(bool b = true)
+	inline void AlignHorizontalJustify(bool b = true)
 	{
 		Alignment(b).Horizontal(Alignment::Horizontal::Justify);
 	}
-	void AlignHorizontalCenterAcrossSelection(bool b = true)
+	inline void AlignHorizontalCenterAcrossSelection(bool b = true)
 	{
 		Alignment(b).Horizontal(Alignment::Horizontal::CenterAcrossSelection);
 	}
 
-	void AlignVerticalCenter(bool b = true)
+	inline void AlignVerticalCenter(bool b = true)
 	{
 		Alignment(b).Vertical(Alignment::Vertical::Center);
 	}
 	// TODO: Top, ...
 
+	// https://xlladdins.github.io/Excel4Macros/border.html	
+	// Destructor calls xlcBorder.
 	struct Border {
 		OPER outline = Missing; 
 		OPER left = Missing;
@@ -380,7 +383,6 @@ namespace xll {
 	};
 	// https://xlladdins.github.io/Excel4Macros/edit.color.html
 	// Equivalent to clicking the Modify button on the Color tab, 
-	// which appears when you click the Options command on the Tools menu.
 	// Defines the color for one of the 56 color palette boxes.
 	class EditColor {
 		inline static int count = 56; // max color palette index
@@ -407,6 +409,7 @@ namespace xll {
 	};
 
 	// https://xlladdins.github.io/Excel4Macros/format.font.html
+	// Destructor calls xlcFormatFont if set is true.
 	class FormatFont {
 		bool set;
 	public:
@@ -489,6 +492,7 @@ namespace xll {
 	};
 	
 	// https://xlladdins.github.io/Excel4Macros/define.style.html
+	// Calls xlcDefineStyle immediately.
 	struct DefineStyle {
 		OPER name;
 
@@ -547,6 +551,52 @@ namespace xll {
 		}
 		// TODO: pattern
 		// TODO: protection
+	};
+
+	// https://xlladdins.github.io/Excel4Macros/select.html
+	class Select {
+		OPER sel;
+	public:
+		Select()
+			: sel(Excel(xlfSelection))
+		{ }
+		Select& ActiveCell(const OPER& cell)
+		{
+			Excel(xlcSelect, sel, cell);
+			
+			return *this;
+		}
+		Select& Offset(int row, int col)
+		{
+			sel = Excel(xlfOffset, sel, row, col);
+			Excel(xlcSelect, sel);
+
+			return *this;
+		}
+		Select& Offset(int row, int col, int height, int width)
+		{
+			sel = Excel(xlfOffset, sel, row, col, height, width);
+			Excel(xlcSelect, sel);
+
+			return *this;
+		}
+		// Move the selection.
+		Select& Up()
+		{
+			return Offset(-rows(sel), 0);
+		}
+		Select& Down()
+		{
+			return Offset(rows(sel), 0);
+		}
+		Select& Left()
+		{
+			return Offset(0, -columns(sel));
+		}
+		Select& Right()
+		{
+			return Offset(0, columns(sel));
+		}
 	};
 
 } // namespace xll

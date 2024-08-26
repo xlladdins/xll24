@@ -112,6 +112,7 @@
   <ItemGroup>
     <ClCompile Include="handle.cpp" />
     <ClCompile Include="test.cpp" />
+    <ClCompile Include="type_test.cpp" />
     <ClCompile Include="web.cpp" />
   </ItemGroup>
   <ItemGroup>

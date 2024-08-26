@@ -144,6 +144,7 @@
     <ClInclude Include="include\fp.h" />
     <ClInclude Include="include\fpx.h" />
     <ClInclude Include="include\handle.h" />
+    <ClInclude Include="include\type.h" />
     <ClInclude Include="include\macrofun.h" />
     <ClInclude Include="include\on.h" />
     <ClInclude Include="include\oper.h" />
@@ -160,6 +161,7 @@
     <ClCompile Include="src\debug.cpp" />
     <ClCompile Include="src\depends.cpp" />
     <ClCompile Include="src\dllmain.cpp" />
+    <ClCompile Include="src\doevents.cpp" />
     <ClCompile Include="src\evaluate.cpp" />
     <ClCompile Include="src\fpx.c" />
     <ClCompile Include="src\paste.cpp" />
