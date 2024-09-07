@@ -243,3 +243,23 @@ If the function text starts with a backslash (`\`) then the
 function returns a _handle_ to a C++ object. The handle is a
 64-bit IEEE `double` 
 having the same bits as the pointer to the underlying C++ object. 
+
+### [Range](src/range.cpp)
+
+The `\RANGE` function returns a handle to a range of cells.
+The `RANGE` function returns the range corresponding to the handle.
+
+## JSON
+
+Two row `OPER`s correspond to [JSON](https://json.org) objects.
+The first row are the string keys and the second row are the corresponding values.
+JSON objects can be nested, and so can `OPER`s.
+However, Excel only displays two dimensional ranges.
+We address this by providing a handle to a range if it is nested.
+Use the `RANGE` function to get the range corresponding to the handle.
+
+## TODO
+
+Handle multiple add-ins being loaded.
+Perhaps define hidden named ranges with the data?
+Only exists per Excel session.
