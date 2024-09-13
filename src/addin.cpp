@@ -3,7 +3,7 @@
 
 using namespace xll;
 AddIn xai_addin_info(
-	Function(XLL_LPOPER, L"xll_addin_info", L"ADDIN.INFO")
+	Function(XLL_LPOPER, L"xll_addin_info", L"XLL.ADDIN.INFO")
 	.Arguments({
 		Arg(XLL_LPOPER, L"Name", L"is the name or register id of the add-in."),
 		})

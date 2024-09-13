@@ -26,7 +26,9 @@ namespace xll {
 			DoEvents(pause); // prevent macro from making Excel unresponsive.
 		}
 		DoEvents(wait);
-		Excel(xlcFormula, OPER(s), ac);
+		if (t.val.str[0] && t.val.str[1] == '=') {
+			Excel(xlcFormula, t, ac);
+		}
 		Excel(xlcOptionsCalculation, ct);
 	}
 } // namespace xll
