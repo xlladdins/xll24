@@ -45,7 +45,7 @@ namespace xll {
 #undef XLL_SCALAR
 	constexpr bool isScalar(const XLOPER12& x)
 	{
-		return (x.xltype & xltypeScalar) != 0;
+		return type(x) != xltypeBigData && (type(x) & xltypeScalar) != 0;
 	}
 
 	// Create XLOPER12 from scalar.
@@ -148,20 +148,23 @@ namespace xll {
 	XLL_TYPE_ALLOC(XLL_IS)
 #undef XLL_IS
 
-#define XLL_ALLOC(a, b, c, d)  | xltype##a
-	constexpr int xltypeAlloc = 0
-		XLL_TYPE_ALLOC(XLL_ALLOC);
-#undef XLL_ALLOC
-
-	constexpr bool isAlloc(const XLOPER12& x)
+		constexpr bool isAlloc(const XLOPER12& x)
 	{
-		return (x.xltype & xltypeAlloc) != 0;
+		switch (type(x)) {
+		case xltypeStr:
+		case xltypeMulti:
+		case xltypeRef:
+		case xltypeBigData:
+			return true;
+		default:
+			return false;
+		}
 	}
 
 	// Return pointer to underlying data.
 	// constexpr XCHAR* Str(const XLOPER12& x) { return x.xltype & xltypeStr ? x.val.str + 1 : nullptr; }
 #define XLL_ALLOC(a,b,c,d)  constexpr c a(const XLOPER12& x) \
-		{ return x.xltype & xltype##a ? x.val.b : nullptr; }
+		{ return type(x) == xltype##a ? x.val.b : nullptr; }
 	XLL_TYPE_ALLOC(XLL_ALLOC)
 #undef XLL_ALLOC
 
@@ -196,13 +199,13 @@ namespace xll {
 	// Argument for std::span(ptr, count).
 	constexpr XCHAR count(const XLOPER12& x) noexcept
 	{
-		if (x.xltype & xltypeStr)
+		if (isStr(x))
 			return x.val.str[0];
-		if (x.xltype & xltypeMulti)
+		if (isMulti(x))
 			return static_cast<XCHAR>(x.val.array.rows * x.val.array.columns);
-		if (x.xltype & xltypeRef)
+		if (isRef(x))
 			return static_cast<XCHAR>(x.val.mref.lpmref->count);
-		if (x.xltype & xltypeBigData)
+		if (isBigData(x))
 			return static_cast<XCHAR>(x.val.bigdata.cbData);
 
 		return 0;

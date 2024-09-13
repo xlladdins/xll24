@@ -22,7 +22,7 @@ namespace xll {
 		ensure_ret(ret);
 		// ensure_err(res); // allow xltypeErr to be returned
 		OPER o(res);
-		if (res.xltype & xltypeAlloc) {
+		if (isAlloc(res)) {
 			::Excel12(xlFree, 0, 1, &res);
 		}
 
@@ -35,11 +35,8 @@ namespace xll {
 
 		const int ret = ::Excel12v(fn, &res, 0, nullptr);
 		ensure_ret(ret);
-		if (res.xltype & xltypeAlloc) {
-			res.xltype |= xlbitXLFree;
-		}
 		OPER o(res);
-		if (res.xltype & xltypeAlloc) {
+		if (isAlloc(res)) {
 			::Excel12(xlFree, 0, 1, &res);
 		}
 

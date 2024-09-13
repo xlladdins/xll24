@@ -63,3 +63,34 @@ void WINAPI xll_webservice(const wchar_t* url, LPXLOPER12 phandle)
 
 	return;
 }
+
+
+void PerformComputation(OPER asyncHandle, double input) {
+	// Simulate a time-consuming computation
+	std::this_thread::sleep_for(std::chrono::seconds(2));
+	double result = input * 2; // Example computation
+
+	// Prepare the result
+	XLOPER12 xlResult;
+	xlResult.xltype = xltypeNum;
+	xlResult.val.num = result;
+
+	// Return the result to Excel
+	XLOPER12 res;
+	Excel12(xlAsyncReturn, &res, 2, &asyncHandle, &xlResult);
+}
+// Function implementation
+AddIn xai_MyAsyncFunction(
+	Function(XLL_VOID, "MyAsyncFunction", "XLL.AF")
+	.Arguments({
+		Arg(XLL_DOUBLE, "input", "is the input value")
+		})
+	.Asynchronous()
+	.FunctionHelp("An example asynchronous function.")
+);
+void WINAPI MyAsyncFunction(XLOPER12* asyncHandle, double input) 
+{
+#pragma XLLEXPORT
+	std::jthread t(PerformComputation, *asyncHandle, input);
+	t.detach();
+}
