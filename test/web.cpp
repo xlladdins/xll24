@@ -76,8 +76,11 @@ void PerformComputation(OPER asyncHandle, double input) {
 	xlResult.val.num = result;
 
 	// Return the result to Excel
+	int ret;
 	XLOPER12 res;
-	Excel12(xlAsyncReturn, &res, 2, &asyncHandle, &xlResult);
+	ret = Excel12(xlAsyncReturn, &res, 2, &asyncHandle, &xlResult);
+	ret = ret;
+	res = res;
 }
 // Function implementation
 AddIn xai_MyAsyncFunction(
@@ -88,7 +91,7 @@ AddIn xai_MyAsyncFunction(
 	.Asynchronous()
 	.FunctionHelp("An example asynchronous function.")
 );
-void WINAPI MyAsyncFunction(XLOPER12* asyncHandle, double input) 
+void WINAPI MyAsyncFunction(LPXLOPER12 asyncHandle, double input) 
 {
 #pragma XLLEXPORT
 	std::jthread t(PerformComputation, *asyncHandle, input);
