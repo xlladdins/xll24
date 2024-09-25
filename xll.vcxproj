@@ -89,6 +89,7 @@
     <Lib>
       <SubSystem>Windows</SubSystem>
       <TreatLibWarningAsErrors>true</TreatLibWarningAsErrors>
+      <AdditionalDependencies>XLCALL32.LIB</AdditionalDependencies>
     </Lib>
     <PostBuildEvent>
       <Command>
@@ -118,6 +119,7 @@
     <Lib>
       <SubSystem>Windows</SubSystem>
       <TreatLibWarningAsErrors>true</TreatLibWarningAsErrors>
+      <AdditionalDependencies>XLCALL32.LIB</AdditionalDependencies>
     </Lib>
     <PostBuildEvent>
       <Command>xll.bat</Command>

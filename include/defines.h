@@ -148,7 +148,7 @@ namespace xll {
 	XLL_TYPE_ALLOC(XLL_IS)
 #undef XLL_IS
 
-		constexpr bool isAlloc(const XLOPER12& x)
+	constexpr bool isAlloc(const XLOPER12& x)
 	{
 		switch (type(x)) {
 		case xltypeStr:
