@@ -270,7 +270,7 @@ namespace xll {
 		{ }
 		bool operator==(bool xbool) const
 		{
-			return type(*this) == xltypeBool && Bool(*this) == static_cast<BOOL>(xbool);
+			return isBool(*this) && Bool(*this) == static_cast<BOOL>(xbool);
 		}
 		OPER& operator=(bool xbool) noexcept
 		{
@@ -285,7 +285,7 @@ namespace xll {
 		{ }
 		bool operator==(const XLREF12& ref) const
 		{
-			return type(*this) == xltypeSRef && val.sref.ref == ref;
+			return isSRef(*this) && val.sref.ref == ref;
 		}
 		OPER& operator=(const XLREF12& ref) noexcept
 		{
@@ -365,7 +365,7 @@ namespace xll {
 		// Two-dimensional index.
 		OPER& operator()(int i, int j)
 		{
-			if (type(*this) == xltypeMulti) {
+			if (isMulti(*this)) {
 				return static_cast<OPER&>(Multi(*this)[i * columns(*this) + j]);
 			}
 			else {
@@ -375,7 +375,7 @@ namespace xll {
 		}
 		const OPER& operator()(int i, int j) const
 		{
-			if (type(*this) == xltypeMulti) {
+			if (isMulti(*this)) {
 				return static_cast<OPER&>(Multi(*this)[i * columns(*this) + j]);
 			}
 			else {
@@ -396,7 +396,7 @@ namespace xll {
 		// Promote to 1 x 1 multi.
 		OPER& enlist()
 		{
-			if (type(*this) != xltypeMulti) {
+			if (!isMulti(*this)) {
 				OPER o(*this);
 				dealloc();
 				alloc(1, 1, &o);
@@ -425,7 +425,7 @@ namespace xll {
 			for (int i = 0; i < n; ++i) {
 				o[i] = operator[](i);
 			}
-			if (type(x) != xltypeMulti) {
+			if (!isMulti(*this)) {
 				o[n] = x;
 			}
 			else {
