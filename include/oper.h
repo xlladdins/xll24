@@ -304,6 +304,7 @@ namespace xll {
 
 			return *this = Int(w);
 		}
+		// Excel converts ints to doubles.
 		template<std::integral T>
 		bool operator==(T w) const
 		{
@@ -327,14 +328,24 @@ namespace xll {
 
 		OPER& reshape(int r, int c)
 		{
-			if (r * c != size(*this)) {
-				dealloc();
-				xltype = xltypeErr;
-				val.err = xlerrValue;
+			ensure(r * c == size(*this));
+
+			val.array.rows = r;
+			val.array.columns = c;
+
+			return *this;
+		}
+		OPER& resize(int r, int c)
+		{
+			if (r * c == size(*this)) {
+				return reshape(r, c);
 			}
-			else {
-				val.array.rows = r;
-				val.array.columns = c;
+
+			OPER o(*this);
+			dealloc();
+			alloc(r, c, nullptr);
+			for (int i = 0; i < (std::min)(r * c, size(o)); ++i) {
+				operator[](i) = o[i];
 			}
 
 			return *this;

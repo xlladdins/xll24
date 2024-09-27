@@ -286,7 +286,7 @@ int multi_test()
 	}
 	{
 		OPER m;
-		m.reshape(2, 3);
+		m.resize(2, 3);
 		m[0] = 0;
 		ensure(m[0] == 0);
 		m(0, 0) = 0;
@@ -399,6 +399,30 @@ int multi_test()
 		OPER o({ OPER(1),OPER(2) });
 		o.append(OPER());
 		ensure(o == OPER({ OPER(1),OPER(2), OPER() }));
+	}
+	{
+		OPER o{ OPER(1),OPER(L"a"), OPER(true) };
+		ensure(o);
+		ensure(rows(o) == 1);
+		ensure(columns(o) == 3);
+		o.resize(2, 2);
+		ensure(rows(o) == 2);
+		ensure(columns(o) == 2);
+		ensure(o[0] == 1);
+		ensure(o[1] == L"a");
+		ensure(o[2] == true);
+		ensure(o[3] == OPER());
+	}
+	{
+		OPER o{ OPER(1),OPER(L"a"), OPER(true) };
+		ensure(o);
+		ensure(rows(o) == 1);
+		ensure(columns(o) == 3);
+		o.resize(2, 1);
+		ensure(rows(o) == 2);
+		ensure(columns(o) == 1);
+		ensure(o[0] == 1);
+		ensure(o[1] == L"a");
 	}
 
 	return 0;

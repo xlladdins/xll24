@@ -4,22 +4,23 @@
 
 namespace py {
 
-#define PY_ARG_TYPE(X)                                                          \
-	X(BOOL,     "A", "A",  "c_bool", "c_bool")     \
-	X(DOUBLE,   "B", "B",  "c_double", "c_double") \
-	X(CSTRING,  "C", "C%", "c_char_p", "c_wchar_p")\
-	X(PSTRING,  "D", "D%", "c_char_p", "c_wchar_p")\
-	X(DOUBLE_,  "E", "E",  "c_void", "c_void")     \
-	X(CSTRING_, "F", "F%", "c_void", "c_void")     \
-	X(PSTRING_, "G", "G%", "c_void", "c_void")     \
-	X(USHORT,   "H", "H",  "c_ushort", "c_ushort") \
-	X(WORD,     "H", "H",  "c_ushort", "c_ushort") \
-	X(SHORT,    "I", "I",  "c_short", "c_short")   \
-	X(LONG,     "J", "J",  "c_long", "c_long")     \
-	X(FP,       "K", "K%", "?", "?")               \
-	X(BOOL_,    "L", "L",  "c_void_p", "c_void_p")     \
-	X(SHORT_,   "M", "M",  "c_void_p", "c_void_p")     \
-	X(LONG_,    "N", "N",  "c_void_p", "c_void_p")     \
+// Excel to Python types.
+#define PY_ARG_TYPE(X)                              \
+	X(BOOL,     "A", "A",  "c_bool", "c_bool")      \
+	X(DOUBLE,   "B", "B",  "c_double", "c_double")  \
+	X(CSTRING,  "C", "C%", "c_char_p", "c_wchar_p") \
+	X(PSTRING,  "D", "D%", "c_char_p", "c_wchar_p") \
+	X(DOUBLE_,  "E", "E",  "c_void", "c_void")      \
+	X(CSTRING_, "F", "F%", "c_void", "c_void")      \
+	X(PSTRING_, "G", "G%", "c_void", "c_void")      \
+	X(USHORT,   "H", "H",  "c_ushort", "c_ushort")  \
+	X(WORD,     "H", "H",  "c_ushort", "c_ushort")  \
+	X(SHORT,    "I", "I",  "c_short", "c_short")    \
+	X(LONG,     "J", "J",  "c_long", "c_long")      \
+	X(FP,       "K", "K%", "?", "?")                \
+	X(BOOL_,    "L", "L",  "c_void_p", "c_void_p")  \
+	X(SHORT_,   "M", "M",  "c_void_p", "c_void_p")  \
+	X(LONG_,    "N", "N",  "c_void_p", "c_void_p")  \
 	X(LPOPER,   "P", "Q",  "pointer", "to OPER struct (never a reference type)")    \
 	X(LPXLOPER, "R", "U",  "pointer", "to XLOPER struct")                           \
 	X(UINT,     "H", "H",  "c_uint", "c_uint")     \
