@@ -17,12 +17,21 @@ LPOPER WINAPI xll_addin_info(const LPOPER pname)
 	static OPER info;
 
 	try {
-		const Args* pargs = AddIn::find(*pname);
-		if (pargs) {
-			info = compress(pargs->markup());
+		if (isMissing(*pname)) {
+			info = OPER{};
+			for (const auto& [k, v] : AddIns()) {
+				info.append(k);
+			}
+			info.reshape(size(info), 1);
 		}
 		else {
-			info = ErrNA;
+			const Args* pargs = AddIn::find(*pname);
+			if (pargs) {
+				info = compress(pargs->Info());
+			}
+			else {
+				info = ErrNA;
+			}
 		}
 	}
 	catch (const std::exception& ex) {

@@ -409,7 +409,7 @@ int markup_test()
 	{
 		ensure(AddIns().contains(OPER(L"XLL.HYPOT")));
 		auto args = AddIns()[OPER(L"XLL.HYPOT")];
-		auto mu = args->markup();
+		auto mu = args->Info();
 		ensure(rows(mu) == 15);
 		ensure(columns(mu) == 2);
 		ensure(mu(10, 0) == L"argumentHelp");

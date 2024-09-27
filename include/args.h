@@ -126,7 +126,7 @@ namespace xll {
 		}
 
 		// key-value pairs
-		OPER markup() const
+		OPER Info() const
 		{
 			OPER o({
 				OPER(L"moduleText"), moduleText,

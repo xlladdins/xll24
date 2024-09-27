@@ -1,5 +1,7 @@
 # Call Excel add-ins from Python
 
+The `py.xll` add-in calls 
+
 Use Python [`ctypes`](https://docs.python.org/3/library/ctypes.html)
 to load and specify the signature of `xll::AddIn` functions.
 
