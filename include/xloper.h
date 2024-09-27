@@ -94,7 +94,7 @@ namespace xll {
 	{
 		return isStr(x) ? std::wstring_view(Str(x), count(x)) : std::wstring_view();
 	}
-	// Index of key in two row JSON like multi.
+	// Index of key in JSON like multi.
 	constexpr int lookup(const XLOPER12& x, const XLOPER12& key) noexcept
 	{
 		if (!isStr(key)) {

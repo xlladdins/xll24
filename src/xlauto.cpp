@@ -40,6 +40,7 @@ xlAutoClose(void)
 {
 	XLL_TRACE;
 	try {
+		ensure(Auto<CloseBefore>::Call());
 		ensure(Auto<Close>::Call());
 	}
 	catch (const std::exception& ex) {

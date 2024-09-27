@@ -145,11 +145,11 @@ namespace xll {
 			for (int i = 0; i < count(); ++i) {
 				ah.append(argumentHelp[i]);
 			}
-			o.push_bottom(OPER({ OPER(L"argumentHelp"), ah}));
-			o.push_bottom(OPER({ OPER(L"argumentType"), argumentType }));
-			o.push_bottom(OPER({ OPER(L"argumentName"), argumentName }));
-			o.push_bottom(OPER({ OPER(L"argumentInit"), argumentInit }));
-			o.push_bottom(OPER({ OPER(L"documentation"), OPER(documentation) }));
+			o.vstack(OPER({ OPER(L"argumentHelp"), ah}));
+			o.vstack(OPER({ OPER(L"argumentType"), argumentType }));
+			o.vstack(OPER({ OPER(L"argumentName"), argumentName }));
+			o.vstack(OPER({ OPER(L"argumentInit"), argumentInit }));
+			o.vstack(OPER({ OPER(L"documentation"), OPER(documentation) }));
 
 			return o;
 		}

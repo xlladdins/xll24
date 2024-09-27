@@ -261,6 +261,20 @@ namespace xll {
 			return str;
 		}
 
+		// Replace non-alphanumeric characters with '_'.
+		constexpr OPER& make_safe()
+		{
+			if (isStr(*this)) {
+				for (int i = 1; i <= val.str[0]; ++i) {
+					if (!iswalnum(val.str[i])) {
+						val.str[i] = L'_';
+					}
+				}
+			}
+
+			return *this;
+		}
+
 		/*
 		OPER& operator&=(const XCHAR* str)
 		{
@@ -432,7 +446,7 @@ namespace xll {
 			return *this;
 		}
 
-		OPER& push_bottom(const XLOPER12& x)
+		OPER& vstack(const XLOPER12& x)
 		{
 			if (size(x) == 0) {
 				return *this;
@@ -466,22 +480,25 @@ namespace xll {
 		}
 		OPER& transpose()
 		{
-			XLOPER12 o;
-			XLOPER12* po = this;
-			::Excel12(xlfTranspose, &o, 1, po);
-			operator=(o);
-			::Excel12(xlFree, 0, 1, &o);
+			if (isMulti(*this)) {
+				XLOPER12 o;
+				int ret = ::Excel12(xlfTranspose, &o, 1, this);
+				if (ret == xlretSuccess) {
+					operator=(o);
+					::Excel12(xlFree, 0, 1, &o);
+				}
+			}
 
 			return *this;
 		}
-		OPER& push_right(const XLOPER12& x)
+		OPER& hstack(const XLOPER12& x)
 		{
 			// Not efficient.
 			OPER x_(*this);
 			x_.transpose();
 			OPER _x(x);
 			_x.transpose();
-			push_bottom(_x);
+			vstack(_x);
 			x_.transpose();
 			std::swap(*this, x_);
 

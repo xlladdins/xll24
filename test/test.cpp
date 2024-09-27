@@ -357,14 +357,14 @@ int multi_test()
 	}
 	{
 		OPER o({ OPER(1.23), OPER(L"abc"), OPER(true) });
-		ensure(o == OPER().push_bottom(o));
-		ensure(o == o.push_bottom(OPER()));
-		ensure(OPER(L"abc") == OPER(L"abc").push_bottom(OPER()));
-		ensure(OPER(L"abc") == OPER().push_bottom(OPER(L"abc")));
+		ensure(o == OPER().vstack(o));
+		ensure(o == o.vstack(OPER()));
+		ensure(OPER(L"abc") == OPER(L"abc").vstack(OPER()));
+		ensure(OPER(L"abc") == OPER().vstack(OPER(L"abc")));
 	}
 	{
 		OPER o({ OPER(1.23), OPER(L"abc"), OPER(true) });
-		OPER o2 = o.push_bottom(o);
+		OPER o2 = o.vstack(o);
 		ensure(rows(o2) == 2);
 		ensure(columns(o2) == 3);
 		ensure(o2[0] == o[0]);
@@ -377,7 +377,7 @@ int multi_test()
 	{
 		OPER o({ OPER(1.23), OPER(L"abc"), OPER(true) });
 		o[2] = o;
-		OPER o2 = o.push_bottom(o);
+		OPER o2 = o.vstack(o);
 		ensure(rows(o2) == 2);
 		ensure(columns(o2) == 3);
 		ensure(o2[0] == o[0]);
