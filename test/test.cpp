@@ -428,6 +428,27 @@ int multi_test()
 	return 0;
 }
 
+int json_test()
+{
+	OPER o{ OPER(L"a"), OPER(L"b"), OPER(L"c"), OPER(1), OPER(L"two"), OPER(false)};
+	{
+		o.reshape(2, 3); // row major JSON
+		ensure(o[OPER(L"a")] == 1);
+		ensure(o[L"a"] == 1);
+		ensure(o["a"] == 1);
+		ensure(o[OPER(L"b")] == L"two");
+		ensure(!o[OPER(L"c")]);
+	}
+	{
+		o.reshape(3, 2); // column major JSON
+		ensure(o[OPER(L"a")] == L"b");
+		ensure(o[OPER(L"c")] == 1);
+		ensure(!o[OPER(L"two")]);
+	}
+
+	return 0;
+}
+
 int markup_test()
 {
 	{
@@ -652,6 +673,7 @@ int WINAPI xll_test()
 		err_test();
 		bool_test();
 		multi_test();
+		json_test();
 		markup_test();
 		evaluate_test();
 		excel_test();

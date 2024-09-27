@@ -1,6 +1,7 @@
 // xloper.h - XLOPER12 helpers
 // Copyright (c) KALX, LLC. All rights reserved. No warranty made.
 #pragma once
+#include <string_view>
 #include "ref.h"
 
 namespace xll {
@@ -58,6 +59,7 @@ namespace xll {
 	{
 		return rows(x) * columns(x);
 	}
+
 	// i-th row assuming lifetime of x.
 	constexpr XLOPER12 row(const XLOPER12& x, int r) noexcept
 	{
@@ -90,42 +92,10 @@ namespace xll {
 	{
 		return index(x, i * columns(x) + j);
 	}
+
 	constexpr std::wstring_view view(const XLOPER12& x) noexcept
 	{
 		return isStr(x) ? std::wstring_view(Str(x), count(x)) : std::wstring_view();
-	}
-	// Index of key in JSON like multi.
-	constexpr int lookup(const XLOPER12& x, const XLOPER12& key) noexcept
-	{
-		if (!isStr(key)) {
-			return -1;
-		}
-
-		if (isMulti(x) && rows(x) == 2) {
-			for (int i = 0; i < columns(x); ++i) {
-				auto xi = index(x, 0, i);
-				if (!isStr(xi)) {
-					return -1;
-				}
-				if (view(key) == view(xi)) {
-					return i;
-				}
-			}
-		}
-		return -1;
-	}
-	// Lookup value correponding to key in two row JSON like multi.
-	constexpr XLOPER12 value(const XLOPER12& x, const XLOPER12& key) noexcept
-	{
-		int i = lookup(x, key);
-
-		return i == -1 ? ErrValue : index(x, 1, i);
-	}
-	constexpr XLOPER12& value(XLOPER12& x, const XLOPER12& key) noexcept
-	{
-		int i = lookup(x, key);
-
-		return index(x, 1, i);
 	}
 
 	constexpr auto span(const XLOPER12& x)
@@ -143,6 +113,87 @@ namespace xll {
 		ensure(isBigData(x));
 
 		return std::span(BigData(x), count(x));
+	}
+
+	constexpr std::partial_ordering compare(const XLOPER12& x, const XLOPER12& y)
+	{
+		const int xtype = type(x);
+		const int ytype = type(y);
+
+		if (xtype != ytype) {
+			return xtype <=> ytype;
+		}
+
+		switch (xtype) {
+		case xltypeNum:
+			return x.val.num <=> y.val.num;
+		case xltypeStr:
+			return std::lexicographical_compare_three_way(view(x).begin(), view(x).end(), view(y).begin(), view(y).end());
+		case xltypeBool:
+			return x.val.xbool <=> y.val.xbool;
+		case xltypeErr:
+			return x.val.err <=> y.val.err;
+		case xltypeMulti:
+			return rows(x) != rows(y) ? rows(x) <=> rows(y)
+				: columns(x) != columns(y) ? columns(x) <=> columns(y)
+				: std::lexicographical_compare_three_way(span(x).begin(), span(x).end(), span(y).begin(), span(y).end(), xll::compare);
+		case xltypeInt:
+			return x.val.w <=> y.val.w;
+		case xltypeSRef:
+			return x.val.sref.ref <=> y.val.sref.ref;
+		case xltypeRef:
+			return x.val.mref.idSheet != y.val.mref.idSheet ? x.val.mref.idSheet <=> y.val.mref.idSheet
+				: std::lexicographical_compare_three_way(ref(x).begin(), ref(x).end(), ref(y).begin(), ref(y).end());
+		case xltypeBigData:
+			return count(x) != count(y) ? count(x) <=> count(y)
+				: std::lexicographical_compare_three_way(blob(x).begin(), blob(x).end(), blob(y).begin(), blob(y).end());
+		}
+
+		return std::partial_ordering::equivalent;
+	}
+
+	// Index of value in JSON like multi corresponding to key.
+	constexpr int lookup(const XLOPER12& x, const XLOPER12& key) noexcept
+	{
+		if (!isMulti(x)) {
+			return -1;
+		}
+
+		if (rows(x) == 2) {
+			for (int j = 0; j < columns(x); ++j) {
+				const auto& xj = index(x, 0, j);
+				if (compare(xj, key) == 0) {
+					return columns(x) + j;
+				}
+			}
+
+			return -1;
+		}
+		else if (columns(x) == 2) {
+			for (int i = 0; i < rows(x); ++i) {
+				const auto& xi = index(x, i, 0);
+				if (compare(xi, key) == 0) {
+					return 2 * i + 1;
+				}
+			}
+
+			return -1;
+		}
+		
+		return -1;
+	}
+	// Lookup value correponding to key in two row JSON like multi.
+	constexpr XLOPER12 value(const XLOPER12& x, const XLOPER12& key) noexcept
+	{
+		int i = lookup(x, key);
+
+		return i == -1 ? ErrValue : index(x, i);
+	}
+	constexpr XLOPER12& value(XLOPER12& x, const XLOPER12& key) noexcept
+	{
+		int i = lookup(x, key);
+
+		return index(x, i);
 	}
 
 	// False-like value.
@@ -190,42 +241,6 @@ namespace xll {
 	//static_assert(isFalse(BigData(nullptr, 0)));
 #endif // _DEBUG
 
-	constexpr std::partial_ordering compare(const XLOPER12& x, const XLOPER12& y)
-	{
-		const int xtype = type(x);
-		const int ytype = type(y);
-
-		if (xtype != ytype) {
-			return xtype <=> ytype;
-		}
-
-		switch (xtype) {
-		case xltypeNum:
-			return x.val.num <=> y.val.num;
-		case xltypeStr:
-			return std::lexicographical_compare_three_way(view(x).begin(), view(x).end(), view(y).begin(), view(y).end());
-		case xltypeBool:
-			return x.val.xbool <=> y.val.xbool;
-		case xltypeErr:
-			return x.val.err <=> y.val.err;
-		case xltypeMulti:
-			return rows(x) != rows(y) ? rows(x) <=> rows(y)
-				: columns(x) != columns(y) ? columns(x) <=> columns(y)
-				: std::lexicographical_compare_three_way(span(x).begin(), span(x).end(), span(y).begin(), span(y).end(), xll::compare);
-		case xltypeInt:
-			return x.val.w <=> y.val.w;
-		case xltypeSRef:
-			return x.val.sref.ref <=> y.val.sref.ref;
-		case xltypeRef:
-			return x.val.mref.idSheet != y.val.mref.idSheet ? x.val.mref.idSheet <=> y.val.mref.idSheet
-				: std::lexicographical_compare_three_way(ref(x).begin(), ref(x).end(), ref(y).begin(), ref(y).end());
-		case xltypeBigData:
-			return count(x) != count(y) ? count(x) <=> count(y)
-				: std::lexicographical_compare_three_way(blob(x).begin(), blob(x).end(), blob(y).begin(), blob(y).end());
-		}
-
-		return std::partial_ordering::equivalent;
-	}
 } // namespace xll
 
 constexpr auto operator<=>(const XLOPER12& x, const XLOPER12& y)

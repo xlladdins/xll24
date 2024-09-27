@@ -429,11 +429,28 @@ namespace xll {
 		{
 			return static_cast<OPER&>(value(*this, key));
 		}
+		OPER& operator[](const std::string_view& key)
+		{
+			return static_cast<OPER&>(value(*this, OPER(key)));
+		}
+		OPER& operator[](const std::wstring_view& key)
+		{
+			return static_cast<OPER&>(value(*this, OPER(key)));
+		}
+
 		const OPER& operator[](const OPER& key) const
 		{
 			return value(*this, key);
 		}
-		
+		const OPER& operator[](const std::string_view& key) const
+		{
+			return value(*this, OPER(key));
+		}
+		const OPER& operator[](const std::wstring_view& key) const
+		{
+			return value(*this, OPER(key));
+		}
+
 		// Promote to 1 x 1 multi.
 		OPER& enlist()
 		{
