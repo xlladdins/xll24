@@ -244,7 +244,23 @@ namespace xll {
 
 			return *this;
 		}
-		
+		std::wstring to_wstring() const
+		{
+			ensure(isStr(*this));
+
+			return std::wstring(val.str + 1, val.str[0]);
+		}
+		std::string to_string() const
+		{
+			ensure(isStr(*this));
+
+			const char* s = utf8::wcstombs(val.str + 1, val.str[0]);
+			std::string str(s + 1, s[0]);
+			delete[] s;
+
+			return str;
+		}
+
 		/*
 		OPER& operator&=(const XCHAR* str)
 		{

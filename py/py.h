@@ -96,6 +96,12 @@ R"(class OPER(Structure):
 	
 	// Excel to Python types.
 	inline std::map<xll::OPER, std::string> ctype = {
+#define PY_ARG_CTYPE(T, A, B, C, D) { xll::OPER(A), C },
+		PY_ARG_TYPE(PY_ARG_CTYPE)
+#undef PY_ARG_CTYPE
+#define PY_ARG_CTYPE(T, A, B, C, D) { xll::OPER(B), D },
+		PY_ARG_TYPE(PY_ARG_CTYPE)
+#undef PY_ARG_CTYPE
 	};
 
 } // namespace py

@@ -128,8 +128,6 @@ namespace xll {
 		return index(x, 1, i);
 	}
 
-
-
 	constexpr auto span(const XLOPER12& x)
 	{
 		return isMulti(x) ? std::span(Multi(x), count(x)) : std::span<XLOPER12>();
