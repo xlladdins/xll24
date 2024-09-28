@@ -11,12 +11,27 @@ namespace xll {
 	{
 		XLOPER12 res = { .xltype = xltypeNil };
 
-		constexpr size_t n = sizeof(Args)/ sizeof(OPER);
-		LPXLOPER12 as[n]; // array of pointers to arguments
+		pargs->moduleText = Excel(xlGetName);
+		if (pargs->procedure.val.str[1] == L'_') {
+			pargs->procedure 
+				= OPER(pargs->procedure.val.str + 2, pargs->procedure.val.str[0] - 1);
+		}
+		// C++ name mangling.
+		else if (pargs->procedure.val.str[1] != L'?') {
+			pargs->procedure = OPER(L"?") & pargs->procedure;
+		}
+
+		constexpr size_t n = offsetof(Args, argumentHelp) / sizeof(OPER);
+		const int count = n + size(pargs->argumentHelp);
 		
-		const int count = pargs->prepare();
-		for (int i = 0; i < n && i < count; ++i) {
+		LPXLOPER12 as[255]; // array of pointers to arguments
+		for (int i = 0; i < n; ++i) {
 			as[i] = (LPXLOPER12)pargs + i;
+		}
+		//LPXLOPER12 pah = (LPXLOPER12)pargs->argumentHelp.val.array.lparray;
+		LPXLOPER12 pah = Multi(pargs->argumentHelp);
+		for (int i = 0; n + i < count; ++i) {
+			as[n + i] = pah + i;
 		}
 
 		const int ret = ::Excel12v(xlfRegister, &res, count, &as[0]);

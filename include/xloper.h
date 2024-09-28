@@ -182,7 +182,7 @@ namespace xll {
 		
 		return -1;
 	}
-	// Lookup value correponding to key in two row JSON like multi.
+	// Lookup value corresponding to key in JSON like multi.
 	constexpr XLOPER12 value(const XLOPER12& x, const XLOPER12& key) noexcept
 	{
 		int i = lookup(x, key);

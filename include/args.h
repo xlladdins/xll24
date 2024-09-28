@@ -35,12 +35,12 @@ namespace xll {
 		OPER shortcutText;
 		OPER helpTopic;
 		OPER functionHelp;
-		OPER argumentHelp[max_help]; // array of individual argument help
+		OPER argumentHelp; // array of individual argument help
 		// Auxiliary arrays.
 		OPER argumentType; // array of individual argument types
 		OPER argumentName; // array of individual argument names	
 		OPER argumentInit; // array individual argument default values
-		std::string documentation;
+		OPER documentation;
 
 		bool is_hidden() const
 		{
@@ -101,14 +101,6 @@ namespace xll {
 						helpTopic &= OPER(L"!0");
 					}
 
-					// Unpack typeText, argumentText
-					OPER comma(L"");
-					for (int i = 0; i < n; ++i) {
-						typeText &= argumentType[i];
-						argumentText &= (comma & argumentName[i]);
-						comma = OPER(L", ");
-					}
-
 					// https://docs.microsoft.com/en-us/office/client-developer/excel/known-issues-in-excel-xll-development#argument-description-string-truncation-in-the-function-wizard
 					//argumentHelp[n] = OPER(L"");
 				}
@@ -119,6 +111,12 @@ namespace xll {
 			return static_cast<int>(off + n);
 		}
 		Args& Documentation(std::string_view doc)
+		{
+			documentation = doc;
+
+			return *this;
+		}
+		Args& Documentation(std::wstring_view doc)
 		{
 			documentation = doc;
 
@@ -141,11 +139,7 @@ namespace xll {
 				OPER(L"functionHelp"), functionHelp 
 			});
 			o.reshape(size(o) / 2, 2);
-			OPER ah;
-			for (int i = 0; i < count(); ++i) {
-				ah.append(argumentHelp[i]);
-			}
-			o.vstack(OPER({ OPER(L"argumentHelp"), ah}));
+			o.vstack(OPER({ OPER(L"argumentHelp"), argumentHelp }));
 			o.vstack(OPER({ OPER(L"argumentType"), argumentType }));
 			o.vstack(OPER({ OPER(L"argumentName"), argumentName }));
 			o.vstack(OPER({ OPER(L"argumentInit"), argumentInit }));
@@ -183,13 +177,17 @@ namespace xll {
 		{ }
 		Function& Arguments(const std::initializer_list<Arg>& args)
 		{
-			int i = 0;
+			OPER comma(L"");
 			for (const auto& arg : args) {
-				ensure(i < max_help);
-				argumentHelp[i++] = arg.help;
+				typeText &= arg.type;
+				argumentText &= (comma & arg.name);
+
+				argumentHelp.append(arg.help);
 				argumentType.append(arg.type);
 				argumentName.append(arg.name);
 				argumentInit.append(arg.init);
+
+				comma = OPER(L", ");
 			}
 
 			return *this;
