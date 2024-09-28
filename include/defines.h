@@ -229,6 +229,10 @@ namespace xll {
 	XLL_NULL_TYPE(XLL_NULL)
 #undef XLL_NULL
 
+	// String of length 0.
+	constexpr wchar_t EmptyStr[] = { 0 };
+	constexpr XLOPER12 Empty = Str(EmptyStr);
+
 	// https://learn.microsoft.com/en-us/office/client-developer/excel/excel-worksheet-and-expression-evaluation#returning-errors
 	// xlerrX, Excel error string, error description
 #define XLL_TYPE_ERR(X)                                                     \

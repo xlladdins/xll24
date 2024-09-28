@@ -52,7 +52,7 @@ OPER Formula(const Args* pargs)
 {
 	OPER formula = OPER(L"=") & pargs->functionText & OPER(L"(");
 	OPER comma(L"");
-	for (int i = 0; i < pargs->count(); ++i) {
+	for (int i = 0; i < size(pargs->argumentInit); ++i) {
 		formula &= comma;
 		formula &= Excel(xlfText, Uneval(pargs->argumentInit[i]), L"General");
 
@@ -159,7 +159,7 @@ int WINAPI xll_pastec()
 
 		OPER formula = OPER(L"=") & text & OPER(L"(");
 		OPER comma(L"");
-		for (int i = 0; i < pargs->count(); ++i) {
+		for (int i = 0; i < size(pargs->argumentInit); ++i) {
 			formula &= comma;
 
 			if (isNil(pargs->argumentInit[i])) {
@@ -224,7 +224,7 @@ int WINAPI xll_pasted()
 
 		OPER formula = OPER(L"=") & text & OPER(L"(");
 		OPER comma(L"");
-		for (int i = 0; i < pargs->count(); ++i) {
+		for (int i = 0; i < size(pargs->argumentName); ++i) {
 			formula &= comma;
 			const OPER& name = pargs->argumentName[i];
 			formula &= name;

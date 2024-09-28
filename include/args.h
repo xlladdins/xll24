@@ -55,61 +55,6 @@ namespace xll {
 			return macroType == 2;
 		}
 
-		// Number of initial non Nil arguments
-		int count() const
-		{
-			int i = 0;
-
-			if (is_function()) {
-				while (i < max_help && !isNil(argumentHelp[i])) {
-					++i;
-				}
-			}
-
-			return i;
-		}
-
-		// Fix up arguments for call to xlfRegister.
-		// Return count to be used in call to xlfRegister.
-		int prepare()
-		{
-			int n = count();
-
-			// idempotent
-			if (moduleText == Nil) {
-				moduleText = Excel(xlGetName); // Can only be called after xlAutoOpen.
-
-				ensure(type(procedure) == xltypeStr);
-				ensure(procedure.val.str[0] > 0);
-				// C functions start with _
-				if (procedure.val.str[1] == L'_') {
-					procedure = OPER(procedure.val.str + 2, procedure.val.str[0] - 1);
-				}
-				// C++ name mangling.
-				else if (procedure.val.str[1] != L'?') {
-					procedure = OPER(L"?") & procedure;
-				}
-
-				if (is_function()) {
-					if (helpTopic == Nil || helpTopic == L"") {
-						helpTopic = OPER(L"https://google.com/search?q="); // github???
-						helpTopic &= procedure;
-					}
-
-					const auto help = view(helpTopic);
-					if (help.starts_with(L"http") && !help.ends_with(L"!0")) {
-						helpTopic &= OPER(L"!0");
-					}
-
-					// https://docs.microsoft.com/en-us/office/client-developer/excel/known-issues-in-excel-xll-development#argument-description-string-truncation-in-the-function-wizard
-					//argumentHelp[n] = OPER(L"");
-				}
-			}
-
-			size_t off = offsetof(Args, Args::argumentHelp) / sizeof(OPER);
-
-			return static_cast<int>(off + n);
-		}
 		Args& Documentation(std::string_view doc)
 		{
 			documentation = doc;

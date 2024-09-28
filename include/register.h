@@ -5,6 +5,27 @@
 
 namespace xll {
 
+	inline void procedure(OPER& p)
+	{
+		// Strip leading underscore from C function
+		if (p.val.str[1] == L'_') {
+			p = OPER(p.val.str + 2, p.val.str[0] - 1);
+		}
+		// Prepend question mark for C++ name mangling.
+		else if (p.val.str[1] != L'?') {
+			p = OPER(L"?") & p;
+		}
+	}
+
+	// Append "!0" to url if missing.
+	inline void helpTopic(OPER& ht)
+	{
+		const auto help = view(ht);
+		if (help.starts_with(L"http") && !help.ends_with(L"!0")) {
+			ht &= OPER(L"!0");
+		}
+	}
+
 	// Register a function or macro to be called by Excel.
 	// https://learn.microsoft.com/en-us/office/client-developer/excel/xlfregister-form-1
 	inline OPER XlfRegister(Args* pargs)
@@ -12,14 +33,8 @@ namespace xll {
 		XLOPER12 res = { .xltype = xltypeNil };
 
 		pargs->moduleText = Excel(xlGetName);
-		if (pargs->procedure.val.str[1] == L'_') {
-			pargs->procedure 
-				= OPER(pargs->procedure.val.str + 2, pargs->procedure.val.str[0] - 1);
-		}
-		// C++ name mangling.
-		else if (pargs->procedure.val.str[1] != L'?') {
-			pargs->procedure = OPER(L"?") & pargs->procedure;
-		}
+		procedure(pargs->procedure);
+		helpTopic(pargs->helpTopic);
 
 		constexpr size_t n = offsetof(Args, argumentHelp) / sizeof(OPER);
 		const int count = n + size(pargs->argumentHelp);
@@ -33,6 +48,8 @@ namespace xll {
 		for (int i = 0; n + i < count; ++i) {
 			as[n + i] = pah + i;
 		}
+		// https://docs.microsoft.com/en-us/office/client-developer/excel/known-issues-in-excel-xll-development#argument-description-string-truncation-in-the-function-wizard
+		as[count] = const_cast<LPXLOPER12>(&Empty);
 
 		const int ret = ::Excel12v(xlfRegister, &res, count, &as[0]);
 

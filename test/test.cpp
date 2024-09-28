@@ -112,6 +112,10 @@ int num_test()
 int str_test()
 {
 	{
+		ensure(Excel(xlfType, Empty) == xltypeStr);
+		ensure(Excel(xlfLen, Empty) == 0);
+	}
+	{
 		constexpr XLOPER s = Str("\03abc");
 		static_assert(s.xltype == xltypeStr);
 		static_assert(s.val.str[0] == 3);
