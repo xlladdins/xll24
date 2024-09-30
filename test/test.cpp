@@ -3,10 +3,151 @@
 //#if 0
 #include <numeric>
 #include <random>
+#include <sstream>
 #include "xll.h"
 #include "excel_time.h"
 
 using namespace xll;
+
+static std::default_random_engine dre;
+
+bool rand_bool()
+{
+	std::bernoulli_distribution dist(0.5);
+
+	return dist(dre);
+}
+OPER rand_Bool()
+{
+	return Bool(rand_bool());
+}
+template<std::integral T>
+T rand_integral(T a, T b)
+{
+	std::uniform_int_distribution<T> dist(a, b);
+
+	return dist(dre);
+}
+OPER rand_Int(int a = INT_MIN, int b = INT_MAX)
+{
+	return Int(rand_integral(a, b));
+}
+// ASCII printable chars
+int rand_char()
+{
+	return rand_integral<int>(' ', '~');
+}
+// Random counted string.
+const wchar_t* rand_string(wchar_t n)
+{
+	static wchar_t s[WCHAR_MAX / 2];
+	s[0] = n;
+	for (int i = 1; i <= n; ++i) {
+		s[i] = (wchar_t)rand_char();
+	}
+
+	return s;
+}
+OPER rand_Str(wchar_t n)
+{
+	return Str(rand_string(n));
+}
+double rand_double(double a, double b)
+{
+	std::uniform_real_distribution<double> dist(a, b);
+
+	return dist(dre);
+
+}
+double slash()
+{
+	return (rand_bool() ? 1 : -1)/rand_double(0,1);
+}
+OPER rand_Num(double a, double b)
+{
+	return Num(rand_double(a, b));
+}
+OPER rand_Err()
+{
+	static int n = (int)sizeof(xlerr_array)/sizeof(xlerr_array[0]);
+
+	return OPER(xlerr_array[rand_integral<int>(0, n)]);
+}
+OPER rand_SRef(
+	int r = rand_integral(0, 255),
+	int c = rand_integral(0, 255),
+	int w = rand_integral(1, 255),
+	int h = rand_integral(1, 255))
+{
+	return SRef(REF(r, c, w, h));
+}
+int rand_type()
+{
+	static int types[] = {
+		xltypeNum,
+		xltypeStr,
+		xltypeBool, 
+		xltypeErr,
+		xltypeMulti,
+		xltypeMissing,
+		xltypeNil,
+		xltypeInt,
+	};
+
+	return types[rand_integral(0ull, sizeof(types) / sizeof(types[0]) - 1)];
+}
+
+OPER rand_OPER(int type, 
+	int r = rand_integral(1, 10),
+	int c = rand_integral(1, 10),
+	wchar_t n = (wchar_t)rand_integral(0, 255))
+{
+	switch (type) {
+	case xltypeNum:
+		return Num(slash());
+	case xltypeStr:
+		return rand_Str(n);
+	case xltypeBool:
+		return rand_Bool();
+	case xltypeErr:
+		return rand_Err();
+	case xltypeMulti: {
+		OPER o(r, c, nullptr);
+		
+		for (auto& oi : o) {
+			oi = rand_OPER(rand_type(), r, c, n);
+		}
+
+		return o;
+	}
+	case xltypeNil:
+		return Nil;
+	case xltypeMissing:
+		return Missing;
+	case xltypeSRef:
+		return rand_SRef();
+	case xltypeInt:
+		return rand_Int();
+	}
+
+	return ErrNA;
+}
+
+int rand_test()
+{
+	{
+		std::wostringstream os;
+		OPER o;
+		for (int i = 0; i < 1; ++i) {
+			o = rand_OPER(xltypeMulti, 2, 3, 4);
+			os << o << std::endl;
+			OPER oi(os.str());
+			OPER oj = Excel(xlfEvaluate, oi);
+			//(o == oj);
+		}
+	}
+	return 0;
+}
 
 int excel_time_test()
 {
@@ -191,6 +332,14 @@ int str_test()
 		ensure(Excel(xlfValue, o) == 123.0); // Int gets converted to Num
 	}
 	{
+		OPER o = Excel(xlfEvaluate, L"{\"\",2,3}");
+		ensure(type(o) == xltypeMulti);
+		//ensure(o.xltype & xlbitXLFree);
+		ensure(rows(o) == 1);
+		ensure(columns(o) == 3);
+		ensure(o == OPER({ OPER(L""),OPER(2.),OPER(3.)}));
+	}
+	{
 		OPER o = Excel(xlfEvaluate, L"{1,2,3}");
 		ensure(type(o) == xltypeMulti);
 		//ensure(o.xltype & xlbitXLFree);
@@ -213,6 +362,9 @@ int str_test()
 	{
 		//OPER o = Evaluate(OPER(L"=R[1]C[1]"));
 		//ensure(o == ErrValue);
+	}
+	{
+
 	}
 
 	return 0;
@@ -453,20 +605,6 @@ int json_test()
 	return 0;
 }
 
-int markup_test()
-{
-	{
-		ensure(AddIns().contains(OPER(L"XLL.HYPOT")));
-		auto args = AddIns()[OPER(L"XLL.HYPOT")];
-		auto mu = args->Info();
-		ensure(rows(mu) == 15);
-		ensure(columns(mu) == 2);
-		ensure(mu(10, 0) == L"argumentHelp");
-		
-	}
-	return 0;
-}
-
 int evaluate_test()
 {
 	{
@@ -670,6 +808,7 @@ int WINAPI xll_test()
 
 	try {
 		utf8::test();
+		rand_test();
 		ref_test();
 		num_test();
 		str_test();
@@ -678,7 +817,6 @@ int WINAPI xll_test()
 		bool_test();
 		multi_test();
 		json_test();
-		markup_test();
 		evaluate_test();
 		excel_test();
 		fp_test();

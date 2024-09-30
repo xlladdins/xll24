@@ -267,12 +267,27 @@ namespace xll {
 	XLL_TYPE_ERR(XLL_ENUM)
 #undef XLL_ENUM
 
+	constexpr xlerr xlerr_array[] = {
+#define XLL_ENUM(a, b, c) xlerr::a,
+	XLL_TYPE_ERR(XLL_ENUM)
+#undef XLL_ENUM
+	};
+
+	// String description of error code.
 	constexpr const char* xlerr_string(xlerr err)
 	{
 #define XLL_ERR_STRING(a, b, c) if (err == xlerr::a) return b;
 		XLL_TYPE_ERR(XLL_ERR_STRING)
-			return "unknown xlerr type";
 #undef XLL_ERR_STRING
+		return "unknown xlerr type";
+	}
+	static_assert(std::string_view(xlerr_string(xlerr::Null)) == "#NULL!");
+	constexpr const wchar_t* xlerr_wstring(xlerr err)
+	{
+#define XLL_ERR_STRING(a, b, c) if (err == xlerr::a) return L##b;
+		XLL_TYPE_ERR(XLL_ERR_STRING)
+#undef XLL_ERR_STRING
+		return L"unknown xlerr type";
 	}
 	static_assert(std::string_view(xlerr_string(xlerr::Null)) == "#NULL!");
 

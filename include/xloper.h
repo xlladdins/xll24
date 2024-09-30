@@ -1,6 +1,7 @@
 // xloper.h - XLOPER12 helpers
 // Copyright (c) KALX, LLC. All rights reserved. No warranty made.
 #pragma once
+#include <iostream>
 #include <string_view>
 #include "ref.h"
 
@@ -241,6 +242,7 @@ namespace xll {
 	//static_assert(isFalse(BigData(nullptr, 0)));
 #endif // _DEBUG
 
+
 } // namespace xll
 
 constexpr auto operator<=>(const XLOPER12& x, const XLOPER12& y)
@@ -257,4 +259,55 @@ static_assert((xll::Num(1.23) <=> xll::Num(1.23)) == 0);
 static_assert((xll::Num(1.23) <=> xll::Num(1.24)) < 0);
 static_assert((xll::Num(1.25) <=> xll::Num(1.24)) > 0);
 #endif // _DEBUG
+
+// Print XLOPER12 to stream.
+// Use xlfEvaluate to convert a string to an OPER.
+template<class T>
+	requires xll::is_char<T>::value
+inline std::basic_ostream<T>& operator<<(std::basic_ostream<T>& os, const XLOPER12& o)
+{
+	if (xll::isNum(o)) {
+		os << o.val.num;
+	}
+	else if (xll::isStr(o)) {
+		os << L"\"" << xll::view(o) << L"\"";
+	}
+	else if (xll::isBool(o)) {
+		os << (o.val.xbool ? L"TRUE" : L"FALSE");
+	}
+	// isRef
+	else if (xll::isErr(o)) {
+		os << xll::xlerr_wstring(xll::xlerr{ o.val.err });
+	}
+	else if (xll::isMulti(o)) {
+		os << L"{";
+		for (int i = 0; i < xll::rows(o); ++i) {
+			if (i > 0) {
+				os << L";";
+			}
+			os << L"{";
+			for (int j = 0; j < xll::columns(o); ++j) {
+				if (j > 0) {
+					os << L",";
+				}
+				os << xll::index(o, i, j);
+			}
+			os << L"}";
+		}
+		os << L"}";
+	}
+	// isSRef: use xlfReftext
+	else if (xll::isMissing(o) || xll::isNil(o)) {
+		os << xll::Empty;
+	}
+	else if (xll::isInt(o)) {
+		os << o.val.w;
+	}
+	// isBigData
+	else {
+		os << L"<unknown>";
+	}
+
+	return os;
+}
 

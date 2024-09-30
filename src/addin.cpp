@@ -1,6 +1,6 @@
 // addin.cpp - AddIn information.
 #include "xll.h"
-
+#if 0
 using namespace xll;
 AddIn xai_addin_info(
 	Function(XLL_LPOPER, L"xll_addin_info", L"XLL.ADDIN.INFO")
@@ -40,3 +40,4 @@ LPOPER WINAPI xll_addin_info(const LPOPER pname)
 
 	return &info;
 }
+#endif // 0

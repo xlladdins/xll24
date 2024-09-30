@@ -23,24 +23,59 @@ namespace xll {
 
 	// Arguments for xlfRegister.
 	// https://learn.microsoft.com/en-us/office/client-developer/excel/xlfregister-form-1
-	constexpr int max_help = 20;
+#define XLL_REGISTER_ARGS(X) \
+X(moduleText, xltypeStr, "The name of the DLL that contains the function.") \
+X(procedure, xltypeStr, "The name of the function to call as it appears in the DLL code.") \
+X(typeText, xltypeStr, "The type of the function.") \
+X(functionText, xltypeStr, "The name of the function as it appears in the Excel function wizard.") \
+X(argumentText, xltypeStr, "The argument text description for the function.") \
+X(macroType, xltypeInt, "The type of the function: 0 for hidden, 1 for function, 2 for macro.") \
+X(category, xltypeStr|xltypeNum, "The category of the function in the Function Wizard.") \
+X(shortcutText, xltypeStr, "A one-character, case-sensitive string that specifies the control key assigned to this command.") \
+X(helpTopic, xltypeStr, "The URL of the Help topic for the function.") \
+X(functionHelp, xltypeStr, "The help text for the function.") \
+X(argumentHelp, xltypeMulti, "The help text for each argument.") \
+X(argumentType, xltypeMulti, "The type of each argument.") \
+X(argumentName, xltypeMulti, "The name of each argument.") \
+X(argumentInit, xltypeMulti, "The default value of each argument.") \
+X(documentation, xltypeStr, "The documentation for the function.") \
+
+	enum class args {
+#define XLL_REGISTER_ARG(name, type, help) name,
+		XLL_REGISTER_ARGS(XLL_REGISTER_ARG)
+#undef XLL_REGISTER_ARG
+	};
+
+	constexpr const char* arg_name(args arg)
+	{
+		switch (arg) {
+#define XLL_REGISTER_ARG(name, type, help) case args::name: return #name;
+		XLL_REGISTER_ARGS(XLL_REGISTER_ARG)
+#undef XLL_REGISTER_ARG
+		default:
+			return nullptr;
+		}
+	}
+
 	struct Args {
-		OPER moduleText;
-		OPER procedure;
-		OPER typeText;
-		OPER functionText;
-		OPER argumentText;
-		OPER macroType;
-		OPER category;
-		OPER shortcutText;
-		OPER helpTopic;
-		OPER functionHelp;
-		OPER argumentHelp; // array of individual argument help
-		// Auxiliary arrays.
-		OPER argumentType; // array of individual argument types
-		OPER argumentName; // array of individual argument names	
-		OPER argumentInit; // array individual argument default values
-		OPER documentation;
+#define XLL_REGISTER_ARG(name, type, help) OPER name;
+		XLL_REGISTER_ARGS(XLL_REGISTER_ARG)
+#undef XLL_REGISTER_ARG
+
+		constexpr size_t size() const
+		{
+			return sizeof(Args) / sizeof(OPER);
+		}
+		// Assumes lifetime of Args
+		constexpr const XLOPER12 asMulti() const
+		{
+			return Multi((XLOPER12*)&moduleText, static_cast<int>(size()), 1);
+		}
+
+		constexpr OPER& operator[](args arg)
+		{
+			return *(&moduleText + static_cast<int>(arg));
+		}
 
 		bool is_hidden() const
 		{
@@ -66,31 +101,6 @@ namespace xll {
 			documentation = doc;
 
 			return *this;
-		}
-
-		// key-value pairs
-		OPER Info() const
-		{
-			OPER o({
-				OPER(L"moduleText"), moduleText,
-				OPER(L"procedure"), procedure,
-				OPER(L"typeText"), typeText,
-				OPER(L"functionText"), functionText,
-				OPER(L"argumentText"), argumentText,
-				OPER(L"macroType"), macroType,
-				OPER(L"category"), category,
-				OPER(L"shortcutText"), shortcutText,
-				OPER(L"helpTopic"), helpTopic,
-				OPER(L"functionHelp"), functionHelp 
-			});
-			o.reshape(size(o) / 2, 2);
-			o.vstack(OPER({ OPER(L"argumentHelp"), argumentHelp }));
-			o.vstack(OPER({ OPER(L"argumentType"), argumentType }));
-			o.vstack(OPER({ OPER(L"argumentName"), argumentName }));
-			o.vstack(OPER({ OPER(L"argumentInit"), argumentInit }));
-			o.vstack(OPER({ OPER(L"documentation"), OPER(documentation) }));
-
-			return o;
 		}
 	};
 
