@@ -1,6 +1,7 @@
 // py.cpp - Generate Python ctypes module.
 // Use Python[`ctypes`](https://docs.python.org/3/library/ctypes.html)
-// to load and specify the signature of `xll: : AddIn` functions.
+// to load and specify the signature of `xll:: AddIn` functions with .Python() to generate Python code.
+// The macro `PY` generates a Python module for import.
 #include <fstream>
 #include <map>
 #include "xll.h"
@@ -160,18 +161,18 @@ int WINAPI xll_make_py()
 		std::wofstream ofs;
 
 		ofs.open(file);
-		ofs << L"from ctypes import *\n";
-		ofs << py::install_root;
-		ofs << L"root = install_root()\n";
-		ofs << L"WinDLL(root + r'\\xlcall32.dll')\n";
-		ofs << mod << L" = WinDLL(r'" << view(module) << L"')\n\n";
+		ofs << L"from ctypes import *\n"
+			<< py::install_root
+			<< L"root = install_root()\n"
+			<< L"WinDLL(root + r'\\xlcall32.dll')\n"
+			<< mod << L" = WinDLL(r'" << view(module) << L"')\n\n"
 
-		ofs << py::XLREF12;
-		ofs << py::SRef;
-		ofs << py::MRef;
-		ofs << py::Array;
-		ofs << py::Val;
-		ofs << py::OPER;
+			<< py::XLREF12
+			<< py::SRef
+			<< py::MRef
+			<< py::Array
+			<< py::Val
+			<< py::OPER;
 
 		for (const auto& [oper, pargs] : xll::AddIns()) {
 			if (pargs->python) {
