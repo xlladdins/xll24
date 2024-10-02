@@ -15,9 +15,9 @@ import <addin>.py
 
 ```
 
-## Python
+## Python	
 
-Calling functions in an xll from Python.  
+Calling functions in an xll from Python.	 
 Must have `xlcall32.dll` in the same directory as the xll.  
 
 ```
@@ -25,7 +25,7 @@ from ctypes import *
 lib = WinDLL(<full path to xll>)
 func = lib.func
 func.restype = c_xxx
-func.argtypes = [c_xxx, ...]
+func.argtypes = [c_xxx, ...]	
 print(func(xxx, ...))
 ```
 

@@ -146,12 +146,6 @@
       <Project>{7d7375af-e7e3-42d3-a00f-d8ee22c39924}</Project>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="py.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="py.h" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

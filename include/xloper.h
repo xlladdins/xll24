@@ -94,14 +94,22 @@ namespace xll {
 		return index(x, i * columns(x) + j);
 	}
 
+	constexpr std::wstring_view view(const XLOPER12& x, size_t count) noexcept
+	{
+		return isStr(x) ? std::wstring_view(Str(x), count) : std::wstring_view();
+	}
 	constexpr std::wstring_view view(const XLOPER12& x) noexcept
 	{
-		return isStr(x) ? std::wstring_view(Str(x), count(x)) : std::wstring_view();
+		return view(x, count(x));
 	}
 
+	constexpr auto span(const XLOPER12& x, size_t count)
+	{
+		return isMulti(x) ? std::span(Multi(x), count) : std::span<XLOPER12>();
+	}
 	constexpr auto span(const XLOPER12& x)
 	{
-		return isMulti(x) ? std::span(Multi(x), count(x)) : std::span<XLOPER12>();
+		return span(x, count(x));
 	}
 
 	constexpr auto ref(const XLOPER12& x)

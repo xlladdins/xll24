@@ -863,14 +863,8 @@ const AddIn xai_hypot(Function(XLL_DOUBLE, L"xll_hypot", L"XLL.HYPOT")
 double WINAPI xll_hypot(double x, double y)
 {
 #pragma XLLEXPORT
-	const OPER o = Excel(xlfSqrt, Excel(xlfSumsq, OPER(x), OPER(y)));
+	//const OPER o = Excel(xlfSqrt, Excel(xlfSumsq, OPER(x), OPER(y)));
 	double h = std::hypot(x, y);
-	if (h != Num(o)) {
-		XLL_WARNING("This should never happen.");
-	}
-	if (o != h) {
-		XLL_WARNING("This should never happen.");
-	}
 
 	return h;
 }

@@ -139,7 +139,7 @@ X(documentation, xltypeStr, "The documentation for the function.") \
 
 				argumentHelp.append(arg.help);
 				argumentType.append(arg.type);
-				argumentName.append(arg.name);
+				argumentName.append(arg.name);	
 				argumentInit.append(arg.init);
 
 				comma = OPER(L", ");
