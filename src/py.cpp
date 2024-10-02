@@ -1,6 +1,7 @@
 // py.cpp - Generate Python ctypes module.
 // Use Python[`ctypes`](https://docs.python.org/3/library/ctypes.html)
-// to load and specify the signature of `xll: : AddIn` functions.
+// to load and specify the signature of `xll:: AddIn` functions with .Python() to generate Python code.
+// The macro `PY` generates a Python module for import.
 #include <fstream>
 #include <map>
 #include "xll.h"
