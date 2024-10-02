@@ -859,6 +859,7 @@ const AddIn xai_hypot(Function(XLL_DOUBLE, L"xll_hypot", L"XLL.HYPOT")
 	.FunctionHelp("Return the length of the hypotenuse of a right triangle with sides x and y.")
 	.HelpTopic("https://learn.microsoft.com/en-us/cpp/c-runtime-library/reference/hypot-hypotf-hypotl-hypot-hypotf-hypotl?view=msvc-170")
 	.Documentation("Optional documentation.")
+	.Python()
 );
 double WINAPI xll_hypot(double x, double y)
 {

@@ -38,7 +38,9 @@ X(argumentHelp, xltypeMulti, "The help text for each argument.") \
 X(argumentType, xltypeMulti, "The type of each argument.") \
 X(argumentName, xltypeMulti, "The name of each argument.") \
 X(argumentInit, xltypeMulti, "The default value of each argument.") \
-X(documentation, xltypeStr, "The documentation for the function.") \
+X(seeAlso,      xltypeMulti, "The names of functions that are related to this function.") \
+X(python,       xltypeBool,  "True if the function is exported to Python.") \
+X(documentation, xltypeStr,  "The documentation for the function.") \
 
 	enum class args {
 #define XLL_REGISTER_ARG(name, type, help) name,
@@ -88,19 +90,6 @@ X(documentation, xltypeStr, "The documentation for the function.") \
 		bool is_macro() const
 		{
 			return macroType == 2;
-		}
-
-		Args& Documentation(std::string_view doc)
-		{
-			documentation = doc;
-
-			return *this;
-		}
-		Args& Documentation(std::wstring_view doc)
-		{
-			documentation = doc;
-
-			return *this;
 		}
 	};
 
@@ -195,6 +184,25 @@ X(documentation, xltypeStr, "The documentation for the function.") \
 		Function& Hide()
 		{
 			macroType = OPER(0);
+
+			return *this;
+		}
+
+		Function& Documentation(std::string_view doc)
+		{
+			documentation = doc;
+
+			return *this;
+		}
+		Function& Documentation(std::wstring_view doc)
+		{
+			documentation = doc;
+
+			return *this;
+		}
+		Function& Python()
+		{
+			python = true;
 
 			return *this;
 		}

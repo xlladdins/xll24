@@ -174,7 +174,7 @@ int WINAPI xll_make_py()
 		ofs << py::OPER;
 
 		for (const auto& [oper, pargs] : xll::AddIns()) {
-			if (pargs->is_function()) {
+			if (pargs->python) {
 				OPER safe = pargs->functionText.make_safe();
 				ofs << std::format(L"{} = getattr({}, r'{}')\n", view(safe), mod, view(pargs->procedure));
 				auto res = view(pargs->typeText, 2);
@@ -190,15 +190,6 @@ int WINAPI xll_make_py()
 					ofs << py::ctype[pargs->argumentType[i]];
 				}
 				ofs << "]\n\n";
-				/*
-				ofs << view(safe) << L" = " << mod << L"." << pargs->procedure.to_wstring() << L"\n";
-				ofs << L"\n" << mod << L"." << pargs->procedure.to_wstring() << L".restype = " << py::ctype[pargs->typeText] << L"\n";
-				ofs << mod << L"." << pargs->procedure.to_wstring() << L".argtypes = [";
-				for (const auto& arg : pargs->args) {
-					ofs << py::ctype[arg] << L", ";
-				}
-				ofs << L"]\n";
-				*/
 			}
 		}
 
