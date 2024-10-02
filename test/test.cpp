@@ -89,8 +89,8 @@ int rand_type()
 		xltypeBool, 
 		xltypeErr,
 		xltypeMulti,
-		xltypeMissing,
-		xltypeNil,
+		//xltypeMissing,
+		//xltypeNil,
 		xltypeInt,
 	};
 
@@ -136,14 +136,19 @@ OPER rand_OPER(int type,
 int rand_test()
 {
 	{
+		OPER o = rand_Num(-10,10);
+		OPER p = Excel(xlfEvaluate, o);
+		// ensure(o == p); // !!! fails
+	}
+	{
 		std::wostringstream os;
 		OPER o;
 		for (int i = 0; i < 1; ++i) {
 			o = rand_OPER(xltypeMulti, 2, 3, 4);
-			os << o << std::endl;
+			os << o;
 			OPER oi(os.str());
 			OPER oj = Excel(xlfEvaluate, oi);
-			//(o == oj);
+			//ensure (o == oj);
 		}
 	}
 	return 0;

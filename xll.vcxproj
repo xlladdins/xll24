@@ -167,6 +167,7 @@
     <ClCompile Include="src\evaluate.cpp" />
     <ClCompile Include="src\fpx.c" />
     <ClCompile Include="src\paste.cpp" />
+    <ClCompile Include="src\py.cpp" />
     <ClCompile Include="src\range.cpp" />
     <ClCompile Include="src\xlauto.cpp" />
     <ClCompile Include="src\XLCALL.CPP" />

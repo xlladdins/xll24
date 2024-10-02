@@ -285,14 +285,12 @@ inline std::basic_ostream<T>& operator<<(std::basic_ostream<T>& os, const XLOPER
 			if (i > 0) {
 				os << L";";
 			}
-			os << L"{";
 			for (int j = 0; j < xll::columns(o); ++j) {
 				if (j > 0) {
 					os << L",";
 				}
 				os << xll::index(o, i, j);
 			}
-			os << L"}";
 		}
 		os << L"}";
 	}

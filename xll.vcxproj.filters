@@ -139,6 +139,9 @@
     <ClCompile Include="src\doevents.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\py.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Text Include="CMakeLists.txt" />

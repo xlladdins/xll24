@@ -1,8 +1,9 @@
-// py.h - Generate module for calling Excel add-ins from Python.
-#pragma once
-#include "../include/xll.h"
+// py.cpp - Generate Python ctypes module.
+#include <fstream>
+#include <map>
+#include "xll.h"
 
-namespace py {
+using namespace xll;
 
 // Excel to Python types.
 #define PY_ARG_TYPE(X)                              \
@@ -37,8 +38,10 @@ namespace py {
 	// Excel data types.
 	//
 
+namespace py {
+
 	constexpr const char* XLREF12 =
-R"(class XLREF12(Structure):
+		R"(class XLREF12(Structure):
 	_fields_ = [
 		("rwFirst", c_int),
 		("rwLast", c_int),
@@ -55,7 +58,7 @@ R"(class XLREF12(Structure):
 )";
 
 	constexpr const char* MRef =
-R"(class MRef(Structure):
+		R"(class MRef(Structure):
 	_fields_ = [
 		("count", c_ushort),
 		("reftbl", SRef), # only one SRef allowed
@@ -63,16 +66,16 @@ R"(class MRef(Structure):
 )";
 
 	constexpr const char* Array =
-R"(class Array(Structure):
+		R"(class Array(Structure):
 	_fields_ = [
 		("rows", c_int),
 		("cols", c_int),
 		("array", POINTER(OPER)),
 	]
-)"; 
+)";
 
-	constexpr const char* Val = 
-R"(class Val(Union):
+	constexpr const char* Val =
+		R"(class Val(Union):
 	_fields_ = [
 		("num", c_double),
 		("str", c_wchar_p),
@@ -87,21 +90,91 @@ R"(class Val(Union):
 )";
 
 	constexpr const char* OPER =
-R"(class OPER(Structure):
+		R"(class OPER(Structure):
 	_fields_ = [
 		("val", Val),
 		("xltype", c_ushort),
 	]
 )";
-	
+
 	// Excel to Python types.
 	inline std::map<xll::OPER, std::string> ctype = {
-#define PY_ARG_CTYPE(T, A, B, C, D) { xll::OPER(A), C },
-		PY_ARG_TYPE(PY_ARG_CTYPE)
-#undef PY_ARG_CTYPE
-#define PY_ARG_CTYPE(T, A, B, C, D) { xll::OPER(B), D },
-		PY_ARG_TYPE(PY_ARG_CTYPE)
-#undef PY_ARG_CTYPE
+	#define PY_ARG_CTYPE(T, A, B, C, D) { xll::OPER(A), C },
+			PY_ARG_TYPE(PY_ARG_CTYPE)
+	#undef PY_ARG_CTYPE
+	#define PY_ARG_CTYPE(T, A, B, C, D) { xll::OPER(B), D },
+			PY_ARG_TYPE(PY_ARG_CTYPE)
+	#undef PY_ARG_CTYPE
 	};
 
+	// Replace .xll% with .py.
+	inline std::wstring file_py(const xll::OPER& module)
+	{
+		std::wstring file = module.to_wstring();
+		ensure(file.ends_with(L".xll"));
+		file.replace(file.size() - 4, 4, L".py");
+
+		return file;
+	}
+	// Replace .xll% with .py.
+	inline std::wstring module_py(const xll::OPER& module)
+	{
+		std::wstring file(view(module));
+		ensure(file.ends_with(L".xll"));
+		file.replace(file.size() - 4, 4, L"");
+		auto pos = file.find_last_of(L"\\");
+		file = file.substr(pos + 1);
+
+		return file;
+	}
 } // namespace py
+
+
+AddIn xai_make_py(Macro("xll_make_py", "PY"));
+int WINAPI xll_make_py()
+{
+#pragma XLLEXPORT
+	try {
+		const xll::OPER module = Excel(xlGetName);
+		const auto file = py::file_py(module);
+		const auto mod = py::module_py(module);
+
+		std::wofstream ofs;
+
+		ofs.open(file);
+		ofs << L"from ctypes import *\n";
+		// load xlcall32.dll
+		//Computer\HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\excel.exe
+		//Path: C:\Program Files\Microsoft Office\root\Office16\EXCEL.EXE
+		/*
+		def get_office_root_path(version):
+    try:
+        key_path = f"SOFTWARE\\Microsoft\\Office\\{version}.0\\Common\\InstallRoot"
+        with winreg.OpenKey(winreg.HKEY_LOCAL_MACHINE, key_path) as key:
+            root_path, _ = winreg.QueryValueEx(key, "Path")
+            return root_path
+    except FileNotFoundError:
+        return None
+		*/
+		
+		ofs << mod << L" = WinDLL(r'" << view(module) << L"')\n\n";
+
+		ofs << py::XLREF12;
+		ofs << py::SRef;
+		ofs << py::MRef;
+		ofs << py::Array;
+		ofs << py::Val;
+		ofs << py::OPER;
+		
+
+
+		ofs.close();
+	}
+	catch (const std::exception& ex) {
+		XLL_ERROR(ex.what());
+		return 0;
+	}
+
+	return 1;
+}
+
