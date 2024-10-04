@@ -262,17 +262,20 @@ namespace xll {
 		}
 
 		// Replace non-alphanumeric characters with '_'.
-		constexpr OPER& make_safe()
+		OPER safe_name() const
 		{
 			if (isStr(*this)) {
-				for (int i = 1; i <= val.str[0]; ++i) {
-					if (!iswalnum(val.str[i])) {
-						val.str[i] = L'_';
+				OPER safe(*this);
+				for (int i = 1; i <= safe.val.str[0]; ++i) {
+					if (!iswalnum(safe.val.str[i])) {
+						safe.val.str[i] = L'_';
 					}
 				}
+
+				return safe;
 			}
 
-			return *this;
+			return ErrValue;
 		}
 
 		/*

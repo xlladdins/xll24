@@ -7,7 +7,7 @@
 
 using namespace xll;
 
-// Excel data types.
+// Python preamble to call Excel add-ins.
 constexpr wchar_t excel_py[] = LR"(
 from ctypes import *
 import winreg
@@ -74,6 +74,7 @@ OPER._fields_ = [
 	("val", Val),
 	("xltype", c_ushort),
 ]
+
 )";
 
 // Excel to Python types.
@@ -93,8 +94,8 @@ OPER._fields_ = [
 	X(BOOL_,    L, L,  c_void_p, c_void_p)  \
 	X(SHORT_,   M, M,  c_void_p, c_void_p)  \
 	X(LONG_,    N, N,  c_void_p, c_void_p)  \
-	X(LPOPER,   P, Q,  c_void_p, POINTER(OPER))    \
-	X(LPXLOPER, R, U,  c_void_p, POINTER(OPER))    \
+	X(LPOPER,   P, Q,  c_void_p, POINTER(OPER)) \
+	X(LPXLOPER, R, U,  c_void_p, POINTER(OPER)) \
 	X(UINT,     H, H,  c_uint, c_uint)      \
 	X(INT,      J, J,  c_int, c_int)        \
 	X(VOID,     >, >,  None, None)          \
@@ -133,6 +134,35 @@ namespace py {
 	}
 } // namespace py
 
+std::pair<std::wstring, std::vector<std::wstring>> signature(const Args* pargs)
+{
+	std::vector<std::wstring> args;
+
+	auto res = view(pargs->typeText, 2);
+	if (res[1] != L'%') { // not XLOPER12 type
+		res = res.substr(0, 1);
+	}
+
+	for (int i = 0; i < size(pargs->argumentType); ++i) {
+		args.push_back(py::ctype[pargs->argumentType[i]]);
+	}
+
+	return { py::ctype[res], args };
+}
+std::wstring join(const std::vector<std::wstring>& v, const std::wstring& sep = L", ")
+{
+	std::wstring s;
+
+	for (const auto& x : v) {
+		if (!s.empty()) {
+			s += sep;
+		}
+		s += x;
+	}
+
+	return s;
+}
+
 AddIn xai_py(Macro("xll_py", "PY"));
 int WINAPI xll_py()
 {
@@ -150,23 +180,14 @@ int WINAPI xll_py()
 			<< L"WinDLL(root + r'\\xlcall32.dll')\n"
 			<< module << L" = WinDLL(r'" << view(name) << L"')\n\n";
 
-		for (const auto& [oper, pargs] : xll::AddIns()) {
+		for (const auto& [func, pargs] : xll::AddIns()) {
 			if (pargs->python) {
-				OPER safe = pargs->functionText.make_safe();
+				OPER safe = func.safe_name();
 				ofs << std::format(L"{} = getattr({}, r'{}')\n", view(safe), module, view(pargs->procedure));
-				auto res = view(pargs->typeText, 2);
-				if (res[1] != L'%') { // not XLOPER12 type
-					res = res.substr(0, 1);
-				}
-				ofs << std::format(L"{}.restype = {}\n", view(safe), py::ctype[res]);
-				ofs << std::format(L"{}.argtypes = [", view(safe));
-				for (int i = 0; i < size(pargs->argumentType); ++i) {
-					if (i > 0) {
-						ofs << L", ";
-					}
-					ofs << py::ctype[pargs->argumentType[i]];
-				}
-				ofs << "]\n\n";
+
+				const auto [res, args] = signature(pargs);
+				ofs << std::format(L"{}.restype = {}\n", view(safe), res);
+				ofs << std::format(L"{}.argtypes = [{}]", view(safe), join(args));
 			}
 		}
 
