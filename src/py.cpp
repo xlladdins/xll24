@@ -9,8 +9,8 @@ using namespace xll;
 
 // Excel data types.
 constexpr wchar_t excel_py[] = LR"(
-import ctypes
-from winreg import OpenKey, HKEY_LOCAL_MACHINE, QueryValueEx
+from ctypes import *
+import winreg
 
 def install_root():
 	"""Return the root of the Excel installation on local machine."""
@@ -23,7 +23,7 @@ def install_root():
 		return None
 
 class XLREF12(Structure):
-	"""Reference to an Excel cell range.
+	"""Reference to an Excel cell range."""
 	_fields_ = [
 		("rwFirst", c_int),
 		("rwLast", c_int),
@@ -70,19 +70,6 @@ class Val(Union):
 		("bigdata", c_voidp),
 	]
 
-class Val(Union) :
-	_fields_ = [
-		("num", c_double),
-		("str", c_wchar_p),
-		("xbool", c_bool),
-		("err", c_int),
-		("w", c_int),
-		("sref", SRef),
-		("mref", MRef),
-		("array", Array),
-		("bigdata", c_voidp),
-	]
-
 OPER._fields_ = [
 	("val", Val),
 	("xltype", c_ushort),
@@ -95,9 +82,9 @@ OPER._fields_ = [
 	X(DOUBLE,   B, B,  c_double, c_double)  \
 	X(CSTRING,  C, C%, c_char_p, c_wchar_p) \
 	X(PSTRING,  D, D%, c_char_p, c_wchar_p) \
-	X(DOUBLE_,  E, E,  c_void, c_void)      \
-	X(CSTRING_, F, F%, c_void, c_void)      \
-	X(PSTRING_, G, G%, c_void, c_void)      \
+	X(DOUBLE_,  E, E,  c_void_p, c_void_p)  \
+	X(CSTRING_, F, F%, c_void_p, c_void_p)  \
+	X(PSTRING_, G, G%, c_void_p, c_void_p)  \
 	X(USHORT,   H, H,  c_ushort, c_ushort)  \
 	X(WORD,     H, H,  c_ushort, c_ushort)  \
 	X(SHORT,    I, I,  c_short, c_short)    \
@@ -124,84 +111,8 @@ namespace py {
 	#undef PY_ARG_CTYPE
 	};
 
-	//
-	// Excel data types.
-	//
-
-	constexpr const char* XLREF12 = R"(
-class XLREF12(Structure):
-	_fields_ = [
-		("rwFirst", c_int),
-		("rwLast", c_int),
-		("colFirst", c_int),
-		("colLast", c_int),
-	]
-)";
-	constexpr const char* SRef = R"(
-class SRef(Structure):
-	_fields_ = [
-		("count", c_ushort),
-		("ref", XLREF12),
-	]
-)";
-
-	constexpr const char* MRef = R"(
-class MRef(Structure):
-	_fields_ = [
-		("count", c_ushort),
-		("reftbl", SRef), # only one SRef allowed
-	]
-)";
-
-	constexpr const char* Array = R"(
-class OPER(Structure):
-	pass
-
-class Array(Structure):
-	_fields_ = [
-		("rows", c_int),
-		("cols", c_int),
-		("array", POINTER(OPER)),
-	]
-)";
-
-	constexpr const char* Val = R"(
-class Val(Union):
-	_fields_ = [
-		("num", c_double),
-		("str", c_wchar_p),
-		("xbool", c_bool),
-		("err", c_int),
-		("w", c_int),
-		("sref", SRef),
-		("mref", MRef),
-		("array", Array),
-		("bigdata", c_voidp),
-	]
-)"; // TODO: define bigdata
-
-	constexpr const char* OPER = R"(
-OPER._fields_ = [
-	("val", Val),
-	("xltype", c_ushort),
-]
-)";
-
-	constexpr char install_root[] = R"(
-import winreg
-def install_root():
-	"""Return the root of the Excel installation on local machine."""
-	try:
-		key_path = r'SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\excel.exe'
-		with winreg.OpenKey(winreg.HKEY_LOCAL_MACHINE, key_path) as key:
-			root, _ = winreg.QueryValueEx(key, "Path")
-			return root
-	except FileNotFoundError:
-		return None
-)";
-
 	// Replace .xll$ with .py.
-	inline std::wstring file_py(const xll::OPER& name)
+	inline std::wstring file(const xll::OPER& name)
 	{
 		std::wstring file = name.to_wstring();
 		ensure(file.ends_with(L".xll"));
@@ -210,7 +121,7 @@ def install_root():
 		return file;
 	}
 	// Base name of module.
-	inline std::wstring module_py(const xll::OPER& name)
+	inline std::wstring module(const xll::OPER& name)
 	{
 		std::wstring module(view(name));
 		ensure(module.ends_with(L".xll"));
@@ -222,30 +133,22 @@ def install_root():
 	}
 } // namespace py
 
-AddIn xai_make_py(Macro("xll_make_py", "PY"));
-int WINAPI xll_make_py()
+AddIn xai_py(Macro("xll_py", "PY"));
+int WINAPI xll_py()
 {
 #pragma XLLEXPORT
 	try {
 		const xll::OPER name = Excel(xlGetName);
-		const auto file = py::file_py(name);
-		const auto module = py::module_py(name);
+		const auto file = py::file(name);
+		const auto module = py::module(name);
 
 		std::wofstream ofs;
 
 		ofs.open(file);
-		ofs << L"from ctypes import *\n"
-			<< py::install_root
-			<< L"root = install_root()\n"
+		ofs << excel_py
+		    << L"root = install_root()\n"
 			<< L"WinDLL(root + r'\\xlcall32.dll')\n"
-			<< module << L" = WinDLL(r'" << view(name) << L"')\n\n"
-
-			<< py::XLREF12
-			<< py::SRef
-			<< py::MRef
-			<< py::Array
-			<< py::Val
-			<< py::OPER;
+			<< module << L" = WinDLL(r'" << view(name) << L"')\n\n";
 
 		for (const auto& [oper, pargs] : xll::AddIns()) {
 			if (pargs->python) {
