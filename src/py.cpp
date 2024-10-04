@@ -7,6 +7,88 @@
 
 using namespace xll;
 
+// Excel data types.
+constexpr wchar_t excel_py[] = LR"(
+import ctypes
+from winreg import OpenKey, HKEY_LOCAL_MACHINE, QueryValueEx
+
+def install_root():
+	"""Return the root of the Excel installation on local machine."""
+	try:
+		key_path = r'SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\excel.exe'
+		with winreg.OpenKey(winreg.HKEY_LOCAL_MACHINE, key_path) as key:
+			root, _ = winreg.QueryValueEx(key, "Path")
+			return root
+	except FileNotFoundError:
+		return None
+
+class XLREF12(Structure):
+	"""Reference to an Excel cell range.
+	_fields_ = [
+		("rwFirst", c_int),
+		("rwLast", c_int),
+		("colFirst", c_int),
+		("colLast", c_int),
+	]
+
+class SRef(Structure):
+	"""Reference to a single cell range."""
+	_fields_ = [
+		("count", c_ushort),
+		("ref", XLREF12),
+	]
+
+class MRef(Structure):
+	"""Reference to a multiple cell ranges."""
+	_fields_ = [
+		("count", c_ushort),
+		("reftbl", SRef), # only one SRef allowed
+	]
+
+class OPER(Structure):
+	"""Excel OPER data type."""
+	pass
+
+class Array(Structure):
+	"""Two dimensional array of OPERs."""
+	_fields_ = [
+		("rows", c_int),
+		("cols", c_int),
+		("array", POINTER(OPER)),
+	]
+
+class Val(Union):
+	_fields_ = [
+		("num", c_double),
+		("str", c_wchar_p),
+		("xbool", c_bool),
+		("err", c_int),
+		("w", c_int),
+		("sref", SRef),
+		("mref", MRef),
+		("array", Array),
+		("bigdata", c_voidp),
+	]
+
+class Val(Union) :
+	_fields_ = [
+		("num", c_double),
+		("str", c_wchar_p),
+		("xbool", c_bool),
+		("err", c_int),
+		("w", c_int),
+		("sref", SRef),
+		("mref", MRef),
+		("array", Array),
+		("bigdata", c_voidp),
+	]
+
+OPER._fields_ = [
+	("val", Val),
+	("xltype", c_ushort),
+]
+)";
+
 // Excel to Python types.
 #define PY_ARG_TYPE(X)                      \
 	X(BOOL,     A, A,  c_bool, c_bool)      \
@@ -28,7 +110,7 @@ using namespace xll;
 	X(LPXLOPER, R, U,  c_void_p, POINTER(OPER))    \
 	X(UINT,     H, H,  c_uint, c_uint)      \
 	X(INT,      J, J,  c_int, c_int)        \
-	X(VOID,     >, >,  None)                \
+	X(VOID,     >, >,  None, None)          \
 
 namespace py {
 
