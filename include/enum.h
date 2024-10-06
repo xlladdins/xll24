@@ -41,7 +41,7 @@ namespace xll
 	// String is name of a user defined function
 	inline bool isUDF(const XLOPER12& x)
 	{
-		return isStr(x) && AddIns().contains(x);
+		return isStr(x) && RegIds().contains(Num(Excel(xlfEvaluate, x)));
 	}
 	// UDF with no arguments
 	inline bool isEnum(const XLOPER12& x)

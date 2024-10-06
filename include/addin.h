@@ -7,12 +7,6 @@
 
 namespace xll {
 
-	inline std::map<OPER, Args*>& AddIns()
-	{
-		static std::map<OPER, Args*> addins;
-
-		return addins;
-	}
 	inline std::map<double, Args*>& RegIds()
 	{
 		static std::map<double, Args*> regids;
@@ -27,12 +21,6 @@ namespace xll {
 		// Auto<Register> function with Excel
 		void Register()
 		{
-			if (AddIns().contains(args.functionText)) {
-				const auto err = OPER(L"AddIn: ")
-					& args.functionText & OPER(L" already registered");
-				XLL_WARNING(view(err));
-			}
-			AddIns()[args.functionText] = &args;
 			const Auto<xll::Register> xao_reg([&]() -> int {
 				try {
 					OPER regid = XlfRegister(&args);
@@ -70,7 +58,6 @@ namespace xll {
 
 						return FALSE;
 					}
-					AddIns().erase(text);
 					RegIds().erase(Num(Excel(xlfEvaluate, text)));
 				}
 				catch (const std::exception& ex) {
@@ -89,21 +76,23 @@ namespace xll {
 		}
 	public:
 		// Lookup using function text or register id.
-		static inline const Args* find(const OPER& text)
+		static Args* find(const OPER& text)
 		{
-			const Args* pargs = nullptr;
+			ensure(isStr(text) || isNum(text));
 
-			if (isNum(text)) {
-				const auto i = RegIds().find(Num(text));
-				if (i != RegIds().end()) {
-					pargs = i->second;
-				}
+			Args* pargs = nullptr;
+			double regid = 0;
+
+			if (isStr(text)) {
+				regid = Num(Excel(xlfEvaluate, text));
 			}
-			else if (isStr(text)) {
-				const auto i = AddIns().find(text);
-				if (i != AddIns().end()) {
-					pargs = i->second;
-				}
+			else {
+				regid = Num(text);
+			}
+		
+			const auto i = RegIds().find(regid);
+			if (i != RegIds().end()) {
+				pargs = i->second;
 			}
 
 			return pargs;

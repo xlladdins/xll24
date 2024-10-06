@@ -127,13 +127,8 @@ xlAutoRegister12(const LPXLOPER12 pxName)
 	static XLOPER12 o;
 
 	try {
-		const auto addin = AddIns().find(OPER(*pxName));
-		if (addin != AddIns().end()) {
-			o = XlfRegister(addin->second);
-		}
-		else {
-			o = ErrValue;
-		}
+		auto addin = AddIn::find(OPER(*pxName));
+		o = addin ? XlfRegister(addin) : ErrValue;
 	}
 	catch (const std::exception& ex) {
 		XLL_ERROR(ex.what());

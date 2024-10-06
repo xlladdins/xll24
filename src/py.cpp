@@ -180,9 +180,9 @@ int WINAPI xll_py()
 			<< L"WinDLL(root + r'\\xlcall32.dll')\n"
 			<< module << L" = WinDLL(r'" << view(name) << L"')\n\n";
 
-		for (const auto& [func, pargs] : xll::AddIns()) {
+		for (const auto& [_, pargs] : xll::RegIds()) {
 			if (pargs->python) {
-				OPER safe = func.safe_name();
+				OPER safe = pargs->functionText.safe_name();
 				const auto [res, args] = signature(pargs);
 				ofs << std::format(L"{} = getattr({}, r'{}')\n", view(safe), module, view(pargs->procedure))
 				    << std::format(L"{}.restype = {}\n", view(safe), res)
