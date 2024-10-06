@@ -183,11 +183,10 @@ int WINAPI xll_py()
 		for (const auto& [func, pargs] : xll::AddIns()) {
 			if (pargs->python) {
 				OPER safe = func.safe_name();
-				ofs << std::format(L"{} = getattr({}, r'{}')\n", view(safe), module, view(pargs->procedure));
-
 				const auto [res, args] = signature(pargs);
-				ofs << std::format(L"{}.restype = {}\n", view(safe), res);
-				ofs << std::format(L"{}.argtypes = [{}]", view(safe), join(args));
+				ofs << std::format(L"{} = getattr({}, r'{}')\n", view(safe), module, view(pargs->procedure))
+				    << std::format(L"{}.restype = {}\n", view(safe), res)
+				    << std::format(L"{}.argtypes = [{}]", view(safe), join(args));
 			}
 		}
 
