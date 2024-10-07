@@ -368,6 +368,24 @@ namespace xll {
 	// Check return value of Excel4/12.
 	#define	ensure_ret(ret) ensure_message(ret == xlretSuccess, xll::xlret_description(ret));
 
+	// Register id given function text.
+	inline double RegId(const XLOPER12& name)
+	{
+		XLOPER12 res;
+
+		if (!isStr(name)) {
+			return std::numeric_limits<double>::quiet_NaN();
+		}
+		int ret = Excel12(xlfEvaluate, &res, 1, &name);
+		if (ret != xlretSuccess) {
+			return std::numeric_limits<double>::quiet_NaN();
+		}
+		if (!isNum(res)) {
+			return std::numeric_limits<double>::quiet_NaN();
+		}
+
+		return Num(res);
+	}
 } // namespace xll
 
 // Function returning a constant value.
