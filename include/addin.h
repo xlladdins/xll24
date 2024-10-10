@@ -78,21 +78,25 @@ namespace xll {
 		// Lookup using function text or register id.
 		static Args* find(const OPER& text)
 		{
-			ensure(isStr(text) || isNum(text));
+			if (!isStr(text) && !isNum(text)) {
+				return nullptr;
+			}
 
 			Args* pargs = nullptr;
 			double regid = 0;
 
 			if (isStr(text)) {
-				regid = Num(Excel(xlfEvaluate, text));
+				regid = RegId(text);
 			}
 			else {
 				regid = Num(text);
 			}
 		
-			const auto i = RegIds().find(regid);
-			if (i != RegIds().end()) {
-				pargs = i->second;
+			if (!isnan(regid)) {
+				const auto i = RegIds().find(regid);
+				if (i != RegIds().end()) {
+					pargs = i->second;
+				}
 			}
 
 			return pargs;
