@@ -134,21 +134,20 @@ namespace py {
 	}
 } // namespace py
 
+// Return type and argument types for ctypes.
 std::pair<std::wstring, std::vector<std::wstring>> signature(const Args* pargs)
 {
 	std::vector<std::wstring> args;
 
-	auto res = view(pargs->typeText, 2);
-	if (res[1] != L'%') { // not XLOPER12 type
-		res = res.substr(0, 1);
+	auto res = py::ctype[pargs->resultType()];
+
+	for (const auto& argi : pargs->argumentType) {
+		args.push_back(py::ctype[argi]);
 	}
 
-	for (int i = 0; i < size(pargs->argumentType); ++i) {
-		args.push_back(py::ctype[pargs->argumentType[i]]);
-	}
-
-	return { py::ctype[res], args };
+	return { res, args };
 }
+// Join strings with separator.
 std::wstring join(const std::vector<std::wstring>& v, const std::wstring& sep = L", ")
 {
 	std::wstring s;

@@ -24,23 +24,23 @@ namespace xll {
 	// Arguments for xlfRegister.
 	// https://learn.microsoft.com/en-us/office/client-developer/excel/xlfregister-form-1
 #define XLL_REGISTER_ARGS(X) \
-X(moduleText, xltypeStr, "The name of the DLL that contains the function.") \
-X(procedure, xltypeStr, "The name of the function to call as it appears in the DLL code.") \
-X(typeText, xltypeStr, "The type of the function.") \
-X(functionText, xltypeStr, "The name of the function as it appears in the Excel function wizard.") \
-X(argumentText, xltypeStr, "The argument text description for the function.") \
-X(macroType, xltypeInt, "The type of the function: 0 for hidden, 1 for function, 2 for macro.") \
-X(category, xltypeStr|xltypeNum, "The category of the function in the Function Wizard.") \
-X(shortcutText, xltypeStr, "A one-character, case-sensitive string that specifies the control key assigned to this command.") \
-X(helpTopic, xltypeStr, "The URL of the Help topic for the function.") \
-X(functionHelp, xltypeStr, "The help text for the function.") \
-X(argumentHelp, xltypeMulti, "The help text for each argument.") \
-X(argumentType, xltypeMulti, "The type of each argument.") \
-X(argumentName, xltypeMulti, "The name of each argument.") \
-X(argumentInit, xltypeMulti, "The default value of each argument.") \
-X(seeAlso,      xltypeMulti, "The names of functions that are related to this function.") \
-X(python,       xltypeBool,  "True if the function is exported to Python.") \
-X(documentation, xltypeStr,  "The documentation for the function.") \
+X(moduleText,    xltypeStr, "Name of the DLL that contains the function.") \
+X(procedure,     xltypeStr, "Name of the function to call as it appears in the DLL code.") \
+X(typeText,      xltypeStr, "Signature of result type and function arguments.") \
+X(functionText,  xltypeStr, "Name of the function as it appears in the Excel function wizard.") \
+X(argumentText,  xltypeStr, "Argument text description for the function.") \
+X(macroType,     xltypeInt, "Type of function: 0 for hidden, 1 for function, 2 for macro.") \
+X(category,      xltypeStr|xltypeNum, "Category of the function in the Function Wizard.") \
+X(shortcutText,  xltypeStr, "A one-character, case-sensitive string that specifies the control key assigned to this command.") \
+X(helpTopic,     xltypeStr, "URL of the Help topic for the function.") \
+X(functionHelp,  xltypeStr, "Telp text for the function.") \
+X(argumentHelp,  xltypeMulti, "Help text for each argument.") \
+X(argumentType,  xltypeMulti, "Type of each argument.") \
+X(argumentName,  xltypeMulti, "Name of each argument.") \
+X(argumentInit,  xltypeMulti, "Default value of each argument.") \
+X(seeAlso,       xltypeMulti, "Names of functions that are related to this function.") \
+X(python,        xltypeBool,  "True if the function is exported to Python.") \
+X(documentation, xltypeStr,  "Documentation for the function.") \
 
 	enum class args {
 #define XLL_REGISTER_ARG(name, type, help) name,
@@ -90,6 +90,12 @@ X(documentation, xltypeStr,  "The documentation for the function.") \
 		bool is_macro() const
 		{
 			return macroType == 2;
+		}
+
+		// Type of function result.
+		constexpr auto resultType() const
+		{
+			return view(typeText, typeText.val.str[2] == '%' ? 2 : 1);
 		}
 	};
 
