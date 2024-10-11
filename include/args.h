@@ -93,7 +93,7 @@ X(documentation, xltypeStr,  "Documentation for the function.") \
 		}
 
 		// Type of function result.
-		constexpr auto resultType() const
+		constexpr std::wstring_view resultType() const
 		{
 			return view(typeText, typeText.val.str[2] == '%' ? 2 : 1);
 		}
