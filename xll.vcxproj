@@ -153,8 +153,10 @@
     <ClInclude Include="include\ref.h" />
     <ClInclude Include="include\register.h" />
     <ClInclude Include="include\utf8.h" />
+    <ClInclude Include="include\win_mem_view.h" />
     <ClInclude Include="include\XLCALL.H" />
     <ClInclude Include="include\xll.h" />
+    <ClInclude Include="include\xll_mem_oper.h" />
     <ClInclude Include="include\xloper.h" />
   </ItemGroup>
   <ItemGroup>

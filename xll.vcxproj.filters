@@ -101,6 +101,12 @@
     <ClInclude Include="include\type.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\xll_mem_oper.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\win_mem_view.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\addin.cpp">
