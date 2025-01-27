@@ -73,10 +73,11 @@ namespace xll {
 				alloc(x);
 			}
 		}
+		
 		constexpr OPER(const OPER& o)
 			: OPER(static_cast<const XLOPER12&>(o))
 		{ }
-
+		
 		OPER& operator=(const XLOPER12& x) noexcept
 		{
 			if (this != &x) {
@@ -87,10 +88,12 @@ namespace xll {
 
 			return *this;
 		}
+		
 		OPER& operator=(const OPER& o)
 		{
 			return operator=(static_cast<const XLOPER12&>(o));
 		}
+		
 		OPER(OPER&& o) noexcept
 			: XLOPER12{ o }
 		{
@@ -572,7 +575,9 @@ namespace xll {
 				delete[] static_cast<OPER*>(Multi(*this));
 			}
 			else if (xltype == xltypeBigData) {
-				delete[] BigData(*this);
+				if (count(*this)) {
+					delete[] BigData(*this);
+				}
 			}
 			else if (xltype == xltypeNum) {
 				OPER* po = handles::find(val.num);
@@ -625,8 +630,10 @@ namespace xll {
 		{
 			xltype = xltypeBigData;
 			val.bigdata.cbData = len;
-			val.bigdata.h.lpbData = new BYTE[len];
-			std::copy_n(data, len, val.bigdata.h.lpbData);
+			if (len) {
+				val.bigdata.h.lpbData = new BYTE[len];
+				std::copy_n(data, len, val.bigdata.h.lpbData);
+			}
 		}
 		constexpr void alloc(const XLOPER12& x)
 		{
@@ -639,7 +646,12 @@ namespace xll {
 				alloc(rows(x), columns(x), Multi(x));
 				break;
 			case xltypeBigData:
-				alloc(BigData(x), count(x));
+				if (count(x)) {
+					alloc(BigData(x), count(x));
+				}
+				else { // handle
+					val.bigdata.h.hdata = x.val.bigdata.h.hdata;
+				}
 				break;
 			default:
 				val = x.val;

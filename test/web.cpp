@@ -7,7 +7,7 @@
 using namespace xll;
 
 // Function to perform the computation
-DWORD WINAPI PerformComputation(XLOPER12 asyncHandle, double input) {
+void WINAPI PerformComputation(OPER asyncHandle, double input) {
     // Simulate a time-consuming computation
     std::this_thread::sleep_for(std::chrono::seconds((int)input));
     double result = input * 2; // Example computation
@@ -19,8 +19,6 @@ DWORD WINAPI PerformComputation(XLOPER12 asyncHandle, double input) {
 
     // Return the result to Excel
     Excel12(xlAsyncReturn, 0, 2, &asyncHandle, &xlResult);
-
-    return 0;
 }
 
 // Function implementation
@@ -32,7 +30,7 @@ AddIn xai_MyAsyncFunction(
     .Asynchronous()
     .FunctionHelp("An example asynchronous function.")
 );
-void WINAPI MyAsyncFunction(double input, LPXLOPER12 asyncHandle)
+void WINAPI MyAsyncFunction(double input, LPOPER asyncHandle)
 {
 #pragma XLLEXPORT
     std::jthread t(PerformComputation, *asyncHandle, input);
