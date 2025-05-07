@@ -19,7 +19,17 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
-  <PropertyGroup Label="UserMacros" />
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+		<LocalDebuggerCommand>$(registry:HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\excel.exe)</LocalDebuggerCommand>
+		<LocalDebuggerCommandArguments>"$(TargetPath)" /p "$(ProjectDir)"</LocalDebuggerCommandArguments>
+		<DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+		<LocalDebuggerCommand>$(registry:HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\excel.exe)</LocalDebuggerCommand>
+		<DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
+		<LocalDebuggerCommandArguments>"$(TargetPath)" /p "$(ProjectDir)"</LocalDebuggerCommandArguments>
+	</PropertyGroup>
+	<PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
