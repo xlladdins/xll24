@@ -122,7 +122,8 @@
       <AdditionalDependencies>XLCALL32.LIB</AdditionalDependencies>
     </Lib>
     <PostBuildEvent>
-      <Command>xll.bat</Command>
+      <Command>
+      </Command>
     </PostBuildEvent>
     <PostBuildEvent>
       <Message>

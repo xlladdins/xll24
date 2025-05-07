@@ -323,6 +323,8 @@ namespace xll {
 
 	};
 
+	using FP12 = FPX;
+
 	// Fixed size array.
 	template<size_t N, size_t M>
 	struct fp12 {
