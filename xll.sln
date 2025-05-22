@@ -7,12 +7,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "xll", "xll.vcxproj", "{7D73
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "test", "test\test.vcxproj", "{C907C09D-CA18-41E7-BF71-0E71AC52CFE9}"
 EndProject
-Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "setup", "setup\setup.vdproj", "{3A13E244-0F44-442E-9A0D-D35CAB06ECA9}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{ADE9721C-1721-45A0-8828-91E40A81E294}"
-	ProjectSection(SolutionItems) = preProject
-		xll.bat = xll.bat
-	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -43,17 +38,6 @@ Global
 		{C907C09D-CA18-41E7-BF71-0E71AC52CFE9}.Release|Win32.Build.0 = Release|Win32
 		{C907C09D-CA18-41E7-BF71-0E71AC52CFE9}.Release|x64.ActiveCfg = Release|x64
 		{C907C09D-CA18-41E7-BF71-0E71AC52CFE9}.Release|x86.ActiveCfg = Release|x64
-		{3A13E244-0F44-442E-9A0D-D35CAB06ECA9}.Debug|Win32.ActiveCfg = Debug
-		{3A13E244-0F44-442E-9A0D-D35CAB06ECA9}.Debug|x64.ActiveCfg = Debug
-		{3A13E244-0F44-442E-9A0D-D35CAB06ECA9}.Debug|x64.Build.0 = Debug
-		{3A13E244-0F44-442E-9A0D-D35CAB06ECA9}.Debug|x86.ActiveCfg = Debug
-		{3A13E244-0F44-442E-9A0D-D35CAB06ECA9}.Debug|x86.Build.0 = Debug
-		{3A13E244-0F44-442E-9A0D-D35CAB06ECA9}.Release|Win32.ActiveCfg = Release
-		{3A13E244-0F44-442E-9A0D-D35CAB06ECA9}.Release|Win32.Build.0 = Release
-		{3A13E244-0F44-442E-9A0D-D35CAB06ECA9}.Release|x64.ActiveCfg = Release
-		{3A13E244-0F44-442E-9A0D-D35CAB06ECA9}.Release|x64.Build.0 = Release
-		{3A13E244-0F44-442E-9A0D-D35CAB06ECA9}.Release|x86.ActiveCfg = Release
-		{3A13E244-0F44-442E-9A0D-D35CAB06ECA9}.Release|x86.Build.0 = Release
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

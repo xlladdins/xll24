@@ -150,9 +150,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <Text Include="CMakeLists.txt" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="README.md" />
     <None Include="xll.props" />
     <None Include="xll.bat">

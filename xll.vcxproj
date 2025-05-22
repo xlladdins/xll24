@@ -176,9 +176,6 @@
     <ClCompile Include="src\XLCALL.CPP" />
   </ItemGroup>
   <ItemGroup>
-    <Text Include="CMakeLists.txt" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="README.md" />
     <None Include="xll.bat" />
     <None Include="xll.props" />
