@@ -31,9 +31,7 @@ show up when you create a new project in Visual Studio.
 
 ## Use
 
-Create a new xll project in Visual Studio.
-
-...video...
+Create a new [xll project](video/xll_setup.mp4) in Visual Studio.
 
 ## Add-In
 
