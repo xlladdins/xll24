@@ -33,6 +33,5 @@ AddIn xai_MyAsyncFunction(
 void WINAPI MyAsyncFunction(double input, LPOPER asyncHandle)
 {
 #pragma XLLEXPORT
-    std::jthread t(PerformComputation, *asyncHandle, input);
-    t.detach();
+    std::thread(PerformComputation, *asyncHandle, input).detach();
 }
