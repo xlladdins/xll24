@@ -11,7 +11,7 @@ struct CrtDbg {
 	CrtDbg(int flags = _CRTDBG_ALLOC_MEM_DF /* | _CRTDBG_LEAK_CHECK_DF | _CRTDBG_CHECK_ALWAYS_DF*/) noexcept
 	{
 		_CrtSetDbgFlag(_CrtSetDbgFlag(_CRTDBG_REPORT_FLAG) | flags);
-		// _crtBreakAlloc = 2239;
+		//_crtBreakAlloc = 2284;
 	}
 	// When information about a memory block is reported by one of the debug 
 	// dump functions, this number is enclosed in braces, such as {36}.

@@ -79,19 +79,34 @@ X(documentation, xltypeStr,  "Documentation for the function.") \
 			return *(&moduleText + static_cast<int>(arg));
 		}
 
-		bool is_hidden() const
+		bool Hidden() const
 		{
 			return macroType == 0;
 		}
-		bool is_function() const
+		Args& Hide()
+		{
+			macroType = 0;
+
+			return *this;
+		}
+		/*
+		bool function() const
 		{
 			return macroType == 0 || macroType == 1;
 		}
-		bool is_macro() const
+		void function(bool f)
+		{
+			macroType = 1;
+		}
+		bool macro() const
 		{
 			return macroType == 2;
 		}
-
+		void macro(bool m)
+		{
+			macroType = 2;
+		}
+		*/
 		// Type of function result.
 		constexpr std::wstring_view resultType() const
 		{

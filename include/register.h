@@ -5,6 +5,24 @@
 
 namespace xll {
 
+	// Define hidden name procedure pointing to array of arguments
+	inline int RegProcedure(const Args& args)
+	{
+		XLOPER12 res, multi = args.asMulti();
+		int ret = Excel12(xlcDefineName, &res, 5,
+			(XLOPER12*)&args.procedure,
+			&multi, // refers to
+			&Nil,   // macro type
+			&Nil,   // shortcut
+			&True); // hidden
+
+		auto rrr = Excel(xlcDefineName, args.procedure, multi, Missing, Missing, Missing, Missing, true);
+
+		return ret;
+	}
+
+
+
 	inline void procedure(OPER& p)
 	{
 		// Strip leading underscore from C function
