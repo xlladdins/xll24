@@ -5,14 +5,15 @@
 #include <vector>
 
 // Use Auto<XXX> xao_foo(xll_foo) to run xll_foo when xlAutoXXX is called.
+// https://learn.microsoft.com/en-us/office/client-developer/excel/add-in-manager-and-xll-interface-functions
 namespace xll {
 
-	class Open {};
+	class Open {};        // functions to be called in xlAutoOpen before Register
 	class Register {};
-	class OpenAfter {};
-	class CloseBefore {};
+	class OpenAfter {};   // functions to be called in xlAutoOpen after Register
+	class CloseBefore {}; // functions to be called in xlAutoClose before Unregister
 	class Unregister {};
-	class Close {};
+	class Close {};       // functions to be called in xlAutoClose after Unregister
 	class Add {};
 	class Remove {};
 

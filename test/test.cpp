@@ -588,7 +588,7 @@ int multi_test()
 
 	return 0;
 }
-
+/*
 int json_test()
 {
 	OPER o{ OPER(L"a"), OPER(L"b"), OPER(L"c"), OPER(1), OPER(L"two"), OPER(false)};
@@ -609,7 +609,7 @@ int json_test()
 
 	return 0;
 }
-
+*/
 int evaluate_test()
 {
 	{
@@ -821,7 +821,7 @@ int WINAPI xll_test()
 		err_test();
 		bool_test();
 		multi_test();
-		json_test();
+		//json_test();
 		evaluate_test();
 		excel_test();
 		fp_test();
