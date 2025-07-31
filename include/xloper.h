@@ -9,7 +9,7 @@ namespace xll {
 
 	// return XLFree(x) in thread-safe functions
 	// Freed by Excel when no longer needed.
-	constexpr LPXLOPER12 XLFree(XLOPER12& x) noexcept
+	constexpr LPXLOPER12 XLFree(XLOPER12& x)
 	{
 		if (isAlloc(x)) {
 			x.xltype |= xlbitXLFree;
@@ -19,7 +19,7 @@ namespace xll {
 	}
 	// return DLLFree(x) in thread-safe functions
 	// Excel calls xlAutoFree12 when no longer needed.
-	constexpr LPXLOPER12 DLLFree(XLOPER12& x) noexcept
+	constexpr LPXLOPER12 DLLFree(XLOPER12& x)
 	{
 		if (isAlloc(x)) {
 			x.xltype |= xlbitDLLFree;
@@ -61,14 +61,22 @@ namespace xll {
 		return rows(x) * columns(x);
 	}
 
-	// i-th row assuming lifetime of x.
-	constexpr XLOPER12 row(const XLOPER12& x, int r) noexcept
+	// STL friendly
+	constexpr const XLOPER12* begin(const XLOPER12& x) noexcept
 	{
-		if (isMulti(x) && r < rows(x)) {
-			return Multi(Multi(x) + r * columns(x), 1, columns(x));
-		}
-
-		return ErrValue;
+		return isMulti(x) ? x.val.array.lparray : &x;
+	}
+	constexpr XLOPER12* begin(XLOPER12& x) noexcept
+	{
+		return isMulti(x) ? x.val.array.lparray : &x;
+	}
+	constexpr const XLOPER12* end(const XLOPER12& x) noexcept
+	{
+		return isMulti(x) ? x.val.array.lparray + size(x) : &x + 1;
+	}
+	constexpr XLOPER12* end(XLOPER12& x) noexcept
+	{
+		return isMulti(x) ? x.val.array.lparray + size(x) : &x + 1;
 	}
 
 	// Either one row or one column Multi
@@ -160,51 +168,36 @@ namespace xll {
 
 		return std::partial_ordering::equivalent;
 	}
-
-	// Index of value in JSON like multi corresponding to key.
-	constexpr int lookup(const XLOPER12& x, const XLOPER12& key) noexcept
+	/*
+	XLOPER12* lookup(XLOPER12* x, const XLOPER12& key)
 	{
-		if (!isMulti(x)) {
-			return -1;
+		if (!isMulti(*x) || rows(*x) != 2) {
+			return nullptr;
 		}
 
-		if (rows(x) == 2) {
-			for (int j = 0; j < columns(x); ++j) {
-				const auto& xj = index(x, 0, j);
-				if (compare(xj, key) == 0) {
-					return columns(x) + j;
-				}
-			}
+		XLOPER12* b = xll::begin(*x);
+		auto c = xll::columns(*x);
+        XLOPER12* i = std::find_if(b, b + c, [&](const XLOPER12& elem) {
+            return xll::compare(elem, key) == std::partial_ordering::equivalent;
+        });
 
-			return -1;
-		}
-		else if (columns(x) == 2) {
-			for (int i = 0; i < rows(x); ++i) {
-				const auto& xi = index(x, i, 0);
-				if (compare(xi, key) == 0) {
-					return 2 * i + 1;
-				}
-			}
-
-			return -1;
-		}
-		
-		return -1;
+		return i == b + c ? nullptr: i + c;
 	}
 	// Lookup value corresponding to key in JSON like multi.
-	constexpr XLOPER12 value(const XLOPER12& x, const XLOPER12& key) noexcept
+	constexpr XLOPER12 value(const XLOPER12& x, const XLOPER12& key)
 	{
-		int i = lookup(x, key);
+		const XLOPER12* pi = lookup(&x, key);
 
-		return i == -1 ? ErrValue : index(x, i);
-	}
-	constexpr XLOPER12& value(XLOPER12& x, const XLOPER12& key) noexcept
+		return pi == nullptr ? ErrValue : *pi;
+	
+	constexpr XLOPER12& value(XLOPER12& x, const XLOPER12& key) 
 	{
-		int i = lookup(x, key);
+		XLOPER12* pi = lookup(&x, key);
+		ensure(pi);
 
-		return index(x, i);
+		return *pi;
 	}
-
+	*/
 	// False-like value.
 	constexpr bool isFalse(const XLOPER12& x)
 	{
