@@ -149,7 +149,7 @@ namespace xll {
 		case xltypeBool:
 			return x.val.xbool <=> y.val.xbool;
 		case xltypeErr:
-			return x.val.err <=> y.val.err;
+			return x.val.err <=> y.val.err; // ??? always false like NaN
 		case xltypeMulti:
 			return rows(x) != rows(y) ? rows(x) <=> rows(y)
 				: columns(x) != columns(y) ? columns(x) <=> columns(y)
@@ -168,36 +168,23 @@ namespace xll {
 
 		return std::partial_ordering::equivalent;
 	}
-	/*
-	XLOPER12* lookup(XLOPER12* x, const XLOPER12& key)
+
+	// Lookup value corresponding to key in JSON like multi.
+	constexpr const XLOPER12 value(const XLOPER12& x, const XLOPER12& key)
 	{
-		if (!isMulti(*x) || rows(*x) != 2) {
-			return nullptr;
+		if (!isMulti(x) || rows(x) != 2) {
+			return ErrNA;
 		}
 
-		XLOPER12* b = xll::begin(*x);
-		auto c = xll::columns(*x);
-        XLOPER12* i = std::find_if(b, b + c, [&](const XLOPER12& elem) {
-            return xll::compare(elem, key) == std::partial_ordering::equivalent;
-        });
+		for (int i = 0; i < columns(x); ++i) {
+			if (xll::compare(index(x, 0, i), key) == std::partial_ordering::equivalent) {
+				return index(x, 1, i);
+			}
+		}
 
-		return i == b + c ? nullptr: i + c;
+		return ErrNA;
 	}
-	// Lookup value corresponding to key in JSON like multi.
-	constexpr XLOPER12 value(const XLOPER12& x, const XLOPER12& key)
-	{
-		const XLOPER12* pi = lookup(&x, key);
-
-		return pi == nullptr ? ErrValue : *pi;
 	
-	constexpr XLOPER12& value(XLOPER12& x, const XLOPER12& key) 
-	{
-		XLOPER12* pi = lookup(&x, key);
-		ensure(pi);
-
-		return *pi;
-	}
-	*/
 	// False-like value.
 	constexpr bool isFalse(const XLOPER12& x)
 	{

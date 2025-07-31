@@ -444,7 +444,7 @@ namespace xll {
 		{
 			return static_cast<OPER&>(value(*this, OPER(key)));
 		}
-
+		*/
 		const OPER& operator[](const OPER& key) const
 		{
 			return value(*this, key);
@@ -457,7 +457,7 @@ namespace xll {
 		{
 			return value(*this, OPER(key));
 		}
-		*/
+		
 		// Promote to 1 x 1 multi.
 		OPER& enlist()
 		{
