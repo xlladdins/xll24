@@ -231,7 +231,7 @@ namespace xll {
 			else {
 				if (type(*this) != xltypeStr || type(o) != xltypeStr) {
 					dealloc();
-					*this = ErrNA;
+					*this = ErrValue;
 				}
 				else {
 					XCHAR len = val.str[0];
