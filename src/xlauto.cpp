@@ -147,18 +147,21 @@ xlAutoRegister12(const LPXLOPER12 pxName)
 // https://learn.microsoft.com/en-us/office/client-developer/excel/xladdinmanagerinfo-xladdinmanagerinfo12
 // Called by Microsoft Excel when the Add-in Manager is invoked for the first time.
 // This function is used to provide the Add-In Manager with information about your add-in.
-extern "C" LPXLOPER12 WINAPI 
+extern "C" const XLOPER12* WINAPI 
 xlAddInManagerInfo12(LPXLOPER12 pxAction)
 {
 	XLL_TRACE;
-	XLOPER12 xIntAction, xInfo = { .val.num = 1, .xltype = xltypeNum }, xInt = { .val.w = 1, .xltype = xltypeInt };
+	static OPER xInfo;
 
 	// Coerce to int and check if action is 1.
 	if (Excel(xlCoerce, *pxAction, OPER(xltypeInt)) == 1) {
-		return AddInManagerInfo();
+		xInfo = AddInManagerInfo();
+	}
+	else {
+		xInfo = ErrValue;
 	}
 	
-	return &errValue;
+	return &xInfo;
 }
 // https://learn.microsoft.com/en-us/office/client-developer/excel/xladdinmanagerinfo-xladdinmanagerinfo12
 // Called by Microsoft Excel when the Add-in Manager is invoked for the first time.
