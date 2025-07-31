@@ -8,6 +8,33 @@
 
 using namespace xll;
 
+// Define names for all AddIn Args using __procedure as key.
+AddIn xai_register(Macro(L"?xll_register", L"XLL.REGISTER").Hide());
+int WINAPI xll_register(void)
+{
+#pragma XLLEXPORT
+	try {
+		for (const auto& [regid, pargs] : RegIds()) {
+			OPER args = compress(pargs->asMulti());
+			OPER proc = OPER(L"__") & pargs->procedure;
+			Excel(xlcDefineName, proc, args);// , Nil, Nil, true);
+		}
+		// Turn off OnSheet.
+		Excel(xlcOnSheet, Missing, Missing);
+	}
+	catch (const std::exception& ex) {
+		XLL_ERROR(ex.what());
+		return FALSE;
+	}
+	catch (...) {
+		XLL_ERROR("Unknown exception in xll_register");
+		return FALSE;
+	}
+
+	return TRUE;
+}
+
+
 // https://learn.microsoft.com/en-us/office/client-developer/excel/xlautoopen
 // Called by Excel when the xll is opened.
 extern "C" int __declspec(dllexport) WINAPI
@@ -18,6 +45,8 @@ xlAutoOpen(void)
 		ensure(Auto<xll::Open>::Call());
 		ensure(Auto<xll::Register>::Call());
 		ensure(Auto<xll::OpenAfter>::Call());
+
+		// Excel(xlcOnSheet, Missing, OPER(L"XLL.REGISTER"), true);
 	}
 	catch (const std::exception& ex) {
 		XLL_ERROR(ex.what());
@@ -177,3 +206,30 @@ xlAddInManagerInfo12(LPXLOPER12 pxAction)
 //
 //	return &x;
 //}
+/*
+xll::AddIn xai_register(xll::Macro(L"?xll_register", L"XLL.REGISTER").Hide());
+int WINAPI xll_register(void)
+{
+#pragma XLLEXPORT
+	try {
+		OPER reg = Excel(xlfGetName, OPER(L"_xll_register"));
+		// Define hidden name procedure poining at arguments.
+		OPER key(L"_xll_register");
+		//OPER key = OPER("_") & pargs->procedure;
+		//OPER value = compress(pargs->asMulti());
+		OPER value = OPER("foo");
+		Excel(xlcDefineName, key, value);// , Nil, Nil, true);
+
+	}
+	catch (const std::exception& ex) {
+		XLL_ERROR(ex.what());
+		return FALSE;
+	}
+	catch (...) {
+		XLL_ERROR("Unknown exception in xll_register");
+		return FALSE;
+	}
+
+	return TRUE;
+}
+*/
