@@ -151,7 +151,7 @@ extern "C" LPXLOPER12 WINAPI
 xlAddInManagerInfo12(LPXLOPER12 pxAction)
 {
 	XLL_TRACE;
-	static XLOPER12 errValue{ Err(xlerrValue) };
+	XLOPER12 xIntAction, xInfo = { .val.num = 1, .xltype = xltypeNum }, xInt = { .val.w = 1, .xltype = xltypeInt };
 
 	// Coerce to int and check if action is 1.
 	if (Excel(xlCoerce, *pxAction, OPER(xltypeInt)) == 1) {
