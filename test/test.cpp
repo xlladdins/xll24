@@ -50,7 +50,7 @@ const wchar_t* rand_string(wchar_t n)
 }
 OPER rand_Str(wchar_t n)
 {
-	return Str(rand_string(n));
+	return OPER(rand_string(n));
 }
 double rand_double(double a, double b)
 {
@@ -262,12 +262,12 @@ int str_test()
 		ensure(Excel(xlfLen, Empty) == 0);
 	}
 	{
-		constexpr XLOPER s = Str("\03abc");
+		constexpr XLOPER s = PStr("\03abc");
 		static_assert(s.xltype == xltypeStr);
 		static_assert(s.val.str[0] == 3);
 	}
 	{
-		constexpr XLOPER12 s = Str(L"\03abc");
+		constexpr XLOPER12 s = PStr(L"\03abc");
 		static_assert(s.xltype == xltypeStr);
 		static_assert(s.val.str[0] == 3);
 	}

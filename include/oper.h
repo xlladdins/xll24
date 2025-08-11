@@ -140,6 +140,14 @@ namespace xll {
 		constexpr explicit OPER(double num) noexcept
 			: XLOPER12{ Num(num) }
 		{ }
+		constexpr explicit OPER(long num) noexcept
+			: XLOPER12{ Num(num) }
+		{
+		}
+		constexpr explicit OPER(long long num) noexcept
+			: XLOPER12{ Num(static_cast<double>(num)) }
+		{
+		}
 		OPER& operator=(double num)
 		{
 			dealloc();
@@ -391,20 +399,20 @@ namespace xll {
 		OPER& operator[](int i)
 		{
 			if (type(*this) == xltypeMulti) {
-				return static_cast<OPER&>(Multi(*this)[i]);
+				return static_cast<OPER&>(val.array.lparray[i]);
 			}
 			else {
-				//ensure(i == 0);
+				ensure(i == 0);
 				return *this;
 			}
 		}
 		const OPER& operator[](int i) const
 		{
 			if (type(*this) == xltypeMulti) {
-				return static_cast<OPER&>(Multi(*this)[i]);
+				return static_cast<OPER&>(val.array.lparray[i]);
 			}
 			else {
-				//ensure(i == 0);
+				ensure(i == 0);
 				return *this;
 			}
 		}
@@ -696,8 +704,14 @@ namespace xll {
 		}
 
 		return o;
-
-
+	}
+	inline OPER Str(const char* s)
+	{
+		return OPER(s);
+	}
+	inline OPER Str(const wchar_t* s)
+	{
+		return OPER(s);
 	}
 
 } // namespace xll

@@ -53,6 +53,7 @@ namespace xll {
 #define XLL_SCALAR(a, b, c, d) constexpr XLOPER12 a(c x) { XLOPER12 o; o.xltype = xltype##a; o.val.b = x; return o; }
 	XLL_TYPE_SCALAR(XLL_SCALAR)
 #undef XLL_SCALAR
+
 #ifdef _DEBUG
 	static_assert(Num(1.23).xltype == xltypeNum);
 	static_assert(Num(1.23).val.num == 1.23);
@@ -169,11 +170,11 @@ namespace xll {
 #undef XLL_ALLOC
 
 	// From counted string.
-	constexpr XLOPER Str(const char* s)
+	constexpr XLOPER PStr(const char* s)
 	{
 		return XLOPER{ .val = {.str = const_cast<char*>(s)}, .xltype = xltypeStr };
 	}
-	constexpr XLOPER12 Str(const wchar_t* s)
+	constexpr XLOPER12 PStr(const wchar_t* s)
 	{
 		return XLOPER12{.val = {.str = const_cast<XCHAR*>(s)}, .xltype = xltypeStr};
 	}
@@ -231,7 +232,7 @@ namespace xll {
 
 	// String of length 0.
 	constexpr wchar_t EmptyStr[] = { 0 };
-	constexpr XLOPER12 Empty = Str(EmptyStr);
+	constexpr XLOPER12 Empty = PStr(EmptyStr);
 
 	// https://learn.microsoft.com/en-us/office/client-developer/excel/excel-worksheet-and-expression-evaluation#returning-errors
 	// xlerrX, Excel error string, error description

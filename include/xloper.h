@@ -210,8 +210,8 @@ namespace xll {
 	static_assert(isFalse(Num(0)));
 	static_assert(isTrue(Num(1)));
 	static_assert(isFalse(Num(std::numeric_limits<double>::quiet_NaN())));
-	static_assert(isFalse(Str(L"")));
-	static_assert(isTrue(Str(L"1")));
+	static_assert(isFalse(PStr(L"")));
+	static_assert(isTrue(PStr(L"1")));
 	static_assert(isFalse(Bool(false)));
 	static_assert(isTrue(Bool(true)));
 	static_assert(isFalse(ErrNA));

@@ -31,11 +31,11 @@ namespace xll
 		return StartsWith(x, '\\');
 	}
 #ifdef _DEBUG
-	static_assert(StartsWith(Str(L"\x03=A1"), '='));
-	static_assert(EndsWith(Str(L"\x03=A1"), '1'));
-	static_assert(isFormula(Str(L"\x03=A1")));
-	static_assert(!isFunction(Str(L"\x03=A1")));
-	static_assert(isHandle(Str(L"\x03\\A1")));
+	static_assert(StartsWith(PStr(L"\x03=A1"), '='));
+	static_assert(EndsWith(PStr(L"\x03=A1"), '1'));
+	static_assert(isFormula(PStr(L"\x03=A1")));
+	static_assert(!isFunction(PStr(L"\x03=A1")));
+	static_assert(isHandle(PStr(L"\x03\\A1")));
 #endif // _DEBUG
 
 	// String is name of a user defined function
