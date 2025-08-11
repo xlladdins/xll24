@@ -420,15 +420,15 @@ namespace xll {
 		*/
 		const OPER& operator[](const OPER& key) const
 		{
-			return value(*this, key);
+			return value(key, *this);
 		}
 		const OPER& operator[](const std::string_view& key) const
 		{
-			return value(*this, OPER(key));
+			return value(OPER(key), *this);
 		}
 		const OPER& operator[](const std::wstring_view& key) const
 		{
-			return value(*this, OPER(key));
+			return value(OPER(key), *this);
 		}
 		
 		// Promote to 1 x 1 multi.

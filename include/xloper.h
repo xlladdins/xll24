@@ -171,7 +171,7 @@ namespace xll {
 
 	// Lookup value corresponding to key in JSON like multi.
 	// If s is 2x2 then it is row oriented.
-	constexpr const XLOPER12 value(const XLOPER12& x, const XLOPER12& key)
+	constexpr const XLOPER12 value(const XLOPER12& key, const XLOPER12& x)
 	{
 		if (rows(x) != 2 || columns(x) != 2) {
 			return ErrNA;
