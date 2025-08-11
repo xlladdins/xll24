@@ -289,25 +289,6 @@ namespace xll {
 			return ErrValue;
 		}
 
-		/*
-		OPER& operator&=(const XCHAR* str)
-		{
-			return operator&=(OPER(str));
-		}
-		OPER& operator&=(const char* str)
-		{
-			return operator&=(OPER(str));
-		}
-		OPER& operator&=(const std::wstring_view& str)
-		{
-			return operator&=(OPER(str));
-		}
-		OPER& operator&=(const char* str)
-		{
-			return operator&=(OPER(str));
-		}
-		*/
-
 		// Bool
 		constexpr explicit OPER(bool xbool)
 			: XLOPER12{ Bool(xbool) }

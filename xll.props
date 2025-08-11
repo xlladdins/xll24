@@ -13,13 +13,13 @@
   </ItemGroup>
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
 		<LocalDebuggerCommand>$(registry:HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\excel.exe)</LocalDebuggerCommand>
-		<LocalDebuggerCommandArguments>"$(TargetPath) /p $(ProjectDir)"</LocalDebuggerCommandArguments>
+		<LocalDebuggerCommandArguments>"$(TargetPath)" /p "$(ProjectDir)"</LocalDebuggerCommandArguments>
 		<DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
 	</PropertyGroup>
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
 		<LocalDebuggerCommand>$(registry:HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\excel.exe)</LocalDebuggerCommand>
 		<DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
-		<LocalDebuggerCommandArguments>"$(TargetPath) /p $(ProjectDir)"</LocalDebuggerCommandArguments>
+		<LocalDebuggerCommandArguments>"$(TargetPath)" /p "$(ProjectDir)"</LocalDebuggerCommandArguments>
 	</PropertyGroup>
 	<PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
