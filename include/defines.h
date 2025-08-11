@@ -139,7 +139,7 @@ namespace xll {
 	// types requiring allocation where xX is pointer to data
 	// xltypeX, XLOPERX::val.X, xX, description
 #define XLL_TYPE_ALLOC(X) \
-    X(Str,     str + 1,             XCHAR*,    "Counted string")                          \
+    X(Str,     str + 1,             XCHAR*,    "Pascal counted string")                          \
     X(Multi,   array.lparray,       XLOPER12*, "Two dimensional array of XLOPER12 types") \
     X(Ref,     mref.lpmref->reftbl, XLREF12*,  "Array of single references")              \
     X(BigData, bigdata.h.lpbData,   BYTE*,     "Blob of binary data")                     \
@@ -149,6 +149,7 @@ namespace xll {
 	XLL_TYPE_ALLOC(XLL_IS)
 #undef XLL_IS
 
+	// Check if type requires allocation.
 	constexpr bool isAlloc(const XLOPER12& x)
 	{
 		switch (type(x)) {
