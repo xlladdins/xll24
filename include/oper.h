@@ -694,6 +694,10 @@ namespace xll {
 	{
 		return OPER(s);
 	}
+	inline OPER Str(const std::string_view s)
+	{
+		return OPER(s);
+	}
 	inline OPER Str(const std::wstring_view s)
 	{
 		return OPER(s);
