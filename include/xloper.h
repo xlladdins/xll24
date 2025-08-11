@@ -170,15 +170,25 @@ namespace xll {
 	}
 
 	// Lookup value corresponding to key in JSON like multi.
+	// If s is 2x2 then it is row oriented.
 	constexpr const XLOPER12 value(const XLOPER12& x, const XLOPER12& key)
 	{
-		if (!isMulti(x) || rows(x) != 2) {
+		if (rows(x) != 2 || columns(x) != 2) {
 			return ErrNA;
 		}
 
-		for (int i = 0; i < columns(x); ++i) {
-			if (xll::compare(index(x, 0, i), key) == std::partial_ordering::equivalent) {
-				return index(x, 1, i);
+		if (rows(x) == 2) {
+			for (int i = 0; i < columns(x); ++i) {
+				if (xll::compare(index(x, 0, i), key) == std::partial_ordering::equivalent) {
+					return index(x, 1, i);
+				}
+			}
+		}
+		else {
+			for (int i = 0; i < rows(x); ++i) {
+				if (xll::compare(index(x, i, 0), key) == std::partial_ordering::equivalent) {
+					return index(x, i, 1);
+				}
 			}
 		}
 
@@ -189,7 +199,7 @@ namespace xll {
 	constexpr bool isFalse(const XLOPER12& x)
 	{
 		return (isNum(x) && (Num(x) != Num(x) || Num(x) == 0))
-			|| (isStr(x) && count(x) == 0)
+			|| (isStr(x) && (count(x) == 0 || x.val.str[1] == 0))
 			|| (isBool(x) && Bool(x) == false)
 			|| (isRef(x) && count(x) == 0)
 			|| isErr(x)
@@ -211,7 +221,7 @@ namespace xll {
 	static_assert(isTrue(Num(1)));
 	static_assert(isFalse(Num(std::numeric_limits<double>::quiet_NaN())));
 	static_assert(isFalse(PStr(L"")));
-	static_assert(isTrue(PStr(L"1")));
+	static_assert(isFalse(PStr(L"\0x1")));
 	static_assert(isFalse(Bool(false)));
 	static_assert(isTrue(Bool(true)));
 	static_assert(isFalse(ErrNA));

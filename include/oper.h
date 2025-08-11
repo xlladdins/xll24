@@ -366,7 +366,7 @@ namespace xll {
 			alloc(r, c, a);
 		}
 		// One row multi.
-		constexpr OPER(std::initializer_list<XLOPER12> a)
+		constexpr OPER(std::initializer_list<const XLOPER12> a)
 			: OPER(1, static_cast<int>(a.size()), a.begin())
 		{ }
 
