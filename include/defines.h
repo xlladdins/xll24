@@ -25,6 +25,24 @@ namespace xll {
 		return x.xltype & (~xlbitFree);
 	}
 
+	// Convert to number.
+	constexpr double asNum(const XLOPER12& x) noexcept
+	{
+		switch (type(x)) {
+		case xltypeNum:
+			return x.val.num;
+		case xltypeBool:
+			return x.val.xbool;
+		case xltypeInt:
+			return x.val.w;
+		case xltypeMissing:
+		case xltypeNil:
+			return 0;
+		default:
+			return std::numeric_limits<double>::quiet_NaN();
+		}
+	}
+
 	// Either char or wchar_t.
 #define XLL_IS_CHAR(S,T) std::is_same<S, typename std::remove_cv<T>::type>::value
 	template<class T>
@@ -38,7 +56,8 @@ namespace xll {
     X(Num,  num,   double, "IEEE 64-bit floating point") \
     X(Bool, xbool, BOOL,   "Boolean value")              \
     X(Err,  err,   int,    "Error type")                 \
-    X(Int,  w,     int,    "32-bit signed integer")      \
+ 
+	//X(Int,  w,     int,    "32-bit signed integer")      \
 
 #define XLL_SCALAR(a, b, c, d) | xltype##a
 	constexpr int xltypeScalar = 0 
@@ -54,6 +73,13 @@ namespace xll {
 #define XLL_SCALAR(a, b, c, d) constexpr XLOPER12 a(c x) { XLOPER12 o; o.xltype = xltype##a; o.val.b = x; return o; }
 	XLL_TYPE_SCALAR(XLL_SCALAR)
 #undef XLL_SCALAR
+	constexpr XLOPER12 Int(int x) noexcept
+	{
+		XLOPER12 o;
+		o.xltype = xltypeInt;
+		o.val.w = x;
+		return o;
+	}
 
 #ifdef _DEBUG
 	static_assert(Num(1.23).xltype == xltypeNum);
@@ -75,10 +101,18 @@ namespace xll {
 #define XLL_SCALAR(a, b, c, d) constexpr c a(const XLOPER12& x) { return x.val.b; }
 	XLL_TYPE_SCALAR(XLL_SCALAR)
 #undef XLL_SCALAR
-		// inline double& Num(XLOPER12& x) { return x.val.num; }
+		// constexpr double& Num(XLOPER12& x) { return x.val.num; }
 #define XLL_SCALAR(a, b, c, d) constexpr c& a(XLOPER12& x) { return x.val.b; }
 		XLL_TYPE_SCALAR(XLL_SCALAR)
 #undef XLL_SCALAR
+	constexpr int Int(const XLOPER12& x) noexcept
+	{
+		return static_cast<int>(asNum(x));
+	}
+	constexpr int Long(const XLOPER12& x) noexcept
+	{
+		return static_cast<long>(asNum(x));
+	}
 #ifdef _DEBUG
 	static_assert(Num(Num(1.23)) == 1.23);
 	static_assert(Num(Num(Num(1.23))).xltype == xltypeNum);
@@ -92,30 +126,16 @@ namespace xll {
 #define XLL_IS(a, b, c, d) constexpr bool is##a(const XLOPER12& x) { return type(x) == xltype##a; }
 	XLL_TYPE_SCALAR(XLL_IS)
 #undef XLL_IS
+	constexpr bool isInt(const XLOPER12& x) noexcept
+	{
+		return type(x) == xltypeInt;
+	}
 #ifdef _DEBUG
 	static_assert(isNum(Num(1.23)));
 	static_assert(isBool(Bool(true)));
 	static_assert(isErr(Err(xlerrNA)));
 	static_assert(isInt(Int(123)));
 #endif // _DEBUG
-
-	// Convert to number.
-	constexpr double asNum(const XLOPER12& x) noexcept
-	{
-		switch (type(x)) {
-		case xltypeNum:
-			return x.val.num;
-		case xltypeBool:
-			return x.val.xbool;
-		case xltypeInt:
-			return x.val.w;
-		case xltypeMissing:
-		case xltypeNil:
-			return 0;
-		default:
-			return std::numeric_limits<double>::quiet_NaN();
-		}
-	}
 
 	// Must set count to 1.
 	constexpr XLOPER12 SRef(const XLREF12& ref) noexcept
