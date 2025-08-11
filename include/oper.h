@@ -671,27 +671,27 @@ namespace xll {
 		return o;
 	}
 
-	inline OPER Str(const char* s)
+	inline OPER String(const char* s)
 	{
 		return OPER(s);
 	}
-	inline OPER Str(const wchar_t* s)
+	inline OPER String(const wchar_t* s)
 	{
 		return OPER(s);
 	}
-	inline OPER Str(const std::string_view s)
+	inline OPER String(const std::string_view s)
 	{
 		return OPER(s);
 	}
-	inline OPER Str(const std::string& s)
+	inline OPER String(const std::string& s)
 	{
 		return OPER(std::string_view(s));
 	}
-	inline OPER Str(const std::wstring_view s)
+	inline OPER String(const std::wstring_view s)
 	{
 		return OPER(s);
 	}
-	inline OPER Str(const std::wstring& s)
+	inline OPER String(const std::wstring& s)
 	{
 		return OPER(std::wstring_view(s));
 	}
