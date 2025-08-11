@@ -173,7 +173,7 @@ namespace xll {
 	// If s is 2x2 then it is row oriented.
 	constexpr const XLOPER12 value(const XLOPER12& key, const XLOPER12& x)
 	{
-		if (rows(x) != 2 || columns(x) != 2) {
+		if (rows(x) != 2 && columns(x) != 2) {
 			return ErrNA;
 		}
 
