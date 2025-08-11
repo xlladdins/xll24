@@ -10,6 +10,7 @@ extern "C" {
 #include "XLCALL.H" // NOLINT
 }
 #include "ensure.h"
+#include "utf8.h"
 
 namespace xll {
 
@@ -144,10 +145,26 @@ namespace xll {
     X(Ref,     mref.lpmref->reftbl, XLREF12*,  "Array of single references")              \
     X(BigData, bigdata.h.lpbData,   BYTE*,     "Blob of binary data")                     \
 
-// isStr, ...
+	// isStr, ...
 #define XLL_IS(a, b, c, d) constexpr bool is##a(const XLOPER12& x) { return type(x) == xltype##a; }
 	XLL_TYPE_ALLOC(XLL_IS)
 #undef XLL_IS
+
+	// s must be counted string with lifetime.
+	constexpr XLOPER PStr(const char* s)
+	{
+		return XLOPER{
+			.val = {.str = const_cast<char*>(s)},
+			.xltype = xltypeStr
+		};
+	}
+	constexpr XLOPER12 PStr(const wchar_t* s)
+	{
+		return XLOPER12{
+			.val = {.str = const_cast<wchar_t*>(s)},
+			.xltype = xltypeStr
+		};
+	}
 
 	// Check if type requires allocation.
 	constexpr bool isAlloc(const XLOPER12& x)
@@ -170,14 +187,18 @@ namespace xll {
 	XLL_TYPE_ALLOC(XLL_ALLOC)
 #undef XLL_ALLOC
 
-	// From counted string.
-	constexpr XLOPER PStr(const char* s)
+	constexpr std::string String(const XLOPER12& x)
 	{
-		return XLOPER{ .val = {.str = const_cast<char*>(s)}, .xltype = xltypeStr };
+		ensure(type(x) == xltypeStr);
+
+		const auto s = std::unique_ptr<const char>(utf8::wcstombs(x.val.str + 1, x.val.str[0]));
+		return std::string(s.get() + 1, s.get()[0]);
 	}
-	constexpr XLOPER12 PStr(const wchar_t* s)
+	constexpr std::wstring WString(const XLOPER12& x)
 	{
-		return XLOPER12{.val = {.str = const_cast<XCHAR*>(s)}, .xltype = xltypeStr};
+		ensure(type(x) == xltypeStr);
+
+		return std::wstring(x.val.str + 1, x.val.str[0]);
 	}
 
 	// Assumes lifetime of array.

@@ -115,7 +115,7 @@ namespace py {
 	// Replace .xll$ with .py.
 	inline std::wstring file(const xll::OPER& name)
 	{
-		std::wstring file = name.to_wstring();
+		std::wstring file = WString(name);
 		ensure(file.ends_with(L".xll"));
 		file.replace(file.size() - 4, 4, L".py");
 
