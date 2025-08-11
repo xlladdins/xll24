@@ -6,7 +6,7 @@
 #endif // _DEBUG
 #include <initializer_list>
 #include <map>
-#include "xloper.h"
+#include "defines.h"
 #include "utf8.h"
 
 namespace xll {

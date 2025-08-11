@@ -10,12 +10,12 @@ namespace xll {
 		OPER type, name, help, init;
 
 		template<class T>
-			requires xll::is_char<T>::value
+			requires std::is_same<T, wchar_t>::value || std::is_same<T, char>::value
 		Arg(const wchar_t* type, const T* name, const T* help)
 			: type(type), name(name), help(help), init(OPER())
 		{ }
 		template<class T, class U>
-			requires xll::is_char<T>::value
+			requires std::is_same<T, wchar_t>::value || std::is_same<T, char>::value
 		Arg(const wchar_t* type, const T* name, const T* help, U init)
 			: type(type), name(name), help(help), init(init)
 		{ }
@@ -115,7 +115,7 @@ X(documentation, xltypeStr,  "Documentation for the function.") \
 	};
 
 	struct Macro : public Args {
-		template<class T> requires xll::is_char<T>::value
+		template<class T> requires std::is_same<T, wchar_t>::value || std::is_same<T, char>::value
 			Macro(const T* procedure, const T* functionText, const T* shortcut = nullptr)
 			: Args{ .procedure = OPER(procedure),
 					.functionText = OPER(functionText),
@@ -129,7 +129,7 @@ X(documentation, xltypeStr,  "Documentation for the function.") \
 	};
 
 	struct Function : public Args {
-		template<class T> requires is_char<T>::value
+		template<class T> requires std::is_same<T, wchar_t>::value || std::is_same<T, char>::value
 		Function(const wchar_t* type, const T* procedure, const T* functionText)
 			: Args{ .procedure = OPER(procedure),
 					.typeText = OPER(type),
@@ -157,21 +157,21 @@ X(documentation, xltypeStr,  "Documentation for the function.") \
 
 			return *this;
 		}
-		template<class T> requires is_char<T>::value
+		template<class T> requires std::is_same<T, wchar_t>::value || std::is_same<T, char>::value
 		Function& Category(const T* category_)
 		{
 			category = category_;
 
 			return *this;
 		}
-		template<class T> requires xll::is_char<T>::value
+		template<class T> requires std::is_same<T, wchar_t>::value || std::is_same<T, char>::value
 		Function& FunctionHelp(const T* functionHelp_)
 		{
 			functionHelp = functionHelp_;
 
 			return *this;
 		}
-		template<class T> requires xll::is_char<T>::value
+		template<class T> requires std::is_same<T, wchar_t>::value || std::is_same<T, char>::value
 		Function& HelpTopic(const T* helpTopic_)
 		{
 			helpTopic = helpTopic_;

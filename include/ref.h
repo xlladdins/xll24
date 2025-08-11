@@ -1,8 +1,14 @@
 // ref.h - REF class to construct XLREF12 type
 // Copyright (c) KALX, LLC. All rights reserved. No warranty made.
 #pragma once
+#define WIN32_LEAN_AND_MEAN
+#define NOMINMAX
+#include <Windows.h>
+extern "C" {
+#include "XLCALL.H" // NOLINT
+}
 #include <compare>
-#include "defines.h"
+#include "ensure.h"
 
 namespace xll {
 
