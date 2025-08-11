@@ -239,6 +239,26 @@ namespace xll {
 	static_assert(isTrue(Int(1)));
 	//static_assert(isFalse(BigData(nullptr, 0)));
 #endif // _DEBUG
+	constexpr std::string String(const XLOPER12& x)
+	{
+		if (isFalse(x)) {
+			return {};
+		}
+		ensure(type(x) == xltypeStr);
+
+		const auto s = std::unique_ptr<const char>(utf8::wcstombs(x.val.str + 1, x.val.str[0]));
+		return std::string(s.get() + 1, s.get()[0]);
+	}
+	constexpr std::wstring WString(const XLOPER12& x)
+	{
+		if (isFalse(x)) {
+			return {};
+		}
+		ensure(type(x) == xltypeStr);
+
+		return std::wstring(x.val.str + 1, x.val.str[0]);
+	}
+
 
 
 } // namespace xll

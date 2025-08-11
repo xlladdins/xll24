@@ -187,20 +187,6 @@ namespace xll {
 	XLL_TYPE_ALLOC(XLL_ALLOC)
 #undef XLL_ALLOC
 
-	constexpr std::string String(const XLOPER12& x)
-	{
-		ensure(type(x) == xltypeStr);
-
-		const auto s = std::unique_ptr<const char>(utf8::wcstombs(x.val.str + 1, x.val.str[0]));
-		return std::string(s.get() + 1, s.get()[0]);
-	}
-	constexpr std::wstring WString(const XLOPER12& x)
-	{
-		ensure(type(x) == xltypeStr);
-
-		return std::wstring(x.val.str + 1, x.val.str[0]);
-	}
-
 	// Assumes lifetime of array.
 	constexpr XLOPER12 Multi(XLOPER12* array, int rows, int columns)
 	{
