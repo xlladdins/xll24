@@ -73,11 +73,18 @@ namespace xll {
 #define XLL_SCALAR(a, b, c, d) constexpr XLOPER12 a(c x) { XLOPER12 o; o.xltype = xltype##a; o.val.b = x; return o; }
 	XLL_TYPE_SCALAR(XLL_SCALAR)
 #undef XLL_SCALAR
-	constexpr XLOPER12 Int(int x) noexcept
+	constexpr XLOPER12 Int(int i) noexcept
 	{
 		XLOPER12 o;
 		o.xltype = xltypeInt;
-		o.val.w = x;
+		o.val.w = i;
+		return o;
+	}
+	constexpr XLOPER12 Long(long l) noexcept
+	{
+		XLOPER12 o;
+		o.xltype = xltypeNum;
+		o.val.num = l;
 		return o;
 	}
 
@@ -109,7 +116,7 @@ namespace xll {
 	{
 		return static_cast<int>(asNum(x));
 	}
-	constexpr int Long(const XLOPER12& x) noexcept
+	constexpr long Long(const XLOPER12& x) noexcept
 	{
 		return static_cast<long>(asNum(x));
 	}
