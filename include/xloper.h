@@ -87,11 +87,11 @@ namespace xll {
 
 	constexpr XLOPER12 index(const XLOPER12& x, int i) noexcept
 	{
-		return type(x) != xltypeMulti ? x : Multi(x)[i];
+		return type(x) != xltypeMulti ? x : x.val.array.lparray[i];
 	}
 	constexpr XLOPER12& index(XLOPER12& x, int i) noexcept
 	{
-		return type(x) != xltypeMulti ? x : Multi(x)[i];
+		return type(x) != xltypeMulti ? x : x.val.array.lparray[i];
 	}
 	constexpr XLOPER12 index(const XLOPER12& x, int i, int j) noexcept
 	{
