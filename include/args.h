@@ -89,6 +89,36 @@ X(documentation, xltypeStr,  "Documentation for the function.") \
 
 			return *this;
 		}
+
+
+		Args& Documentation(std::string_view doc)
+		{
+			documentation = doc;
+
+			return *this;
+		}
+		Args& Documentation(std::wstring_view doc)
+		{
+			documentation = doc;
+
+			return *this;
+		}
+
+		Args& SeeAlso(const std::initializer_list<std::string_view>& see_also)
+		{
+			for (const auto& s : see_also) {
+				seeAlso.append(OPER(s));
+			}
+			return *this;
+		}
+		Args& SeeAlso(const std::initializer_list<std::wstring_view>& see_also)
+		{
+			for (const auto& s : see_also) {
+				seeAlso.append(OPER(s));
+			}
+			return *this;
+		}
+
 		/*
 		bool function() const
 		{
@@ -205,19 +235,6 @@ X(documentation, xltypeStr,  "Documentation for the function.") \
 		Function& Hide()
 		{
 			macroType = OPER(0);
-
-			return *this;
-		}
-
-		Function& Documentation(std::string_view doc)
-		{
-			documentation = doc;
-
-			return *this;
-		}
-		Function& Documentation(std::wstring_view doc)
-		{
-			documentation = doc;
 
 			return *this;
 		}
