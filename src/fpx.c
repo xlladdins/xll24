@@ -4,12 +4,18 @@
 #include <string.h>
 #include "fpx.h"
 
-int fpx_index(struct fpx* p, int i, int j)
+void swap_double(double* x, double* y) {
+	double t = *x;
+	*x = *y;
+	*y = t;
+}
+
+int32_t fpx_index(struct fpx* p, int32_t i, int32_t j)
 {
 	return p->columns * i + j;
 }
 
-struct fpx* fpx_malloc(int r, int c)
+struct fpx* fpx_malloc(int32_t r, int32_t c)
 {
 	struct fpx* fpx = malloc(sizeof(struct fpx) + (size_t)r * (size_t)c * sizeof(double));
 
@@ -21,7 +27,7 @@ struct fpx* fpx_malloc(int r, int c)
 	return fpx;
 }
 
-struct fpx* fpx_realloc(struct fpx* p, int r, int c)
+struct fpx* fpx_realloc(struct fpx* p, int32_t r, int32_t c)
 {
 	struct fpx* _p = realloc(p, sizeof(struct fpx) + (size_t)r * (size_t)c * sizeof(double));
 
@@ -41,20 +47,32 @@ void fpx_free(struct fpx* p)
 // TODO: use dimatcopy
 struct fpx* fpx_transpose(struct fpx* fpx)
 {
-	int r = fpx_rows(fpx);
-	int c = fpx_columns(fpx);
-	int n = fpx_size(fpx);
+	int32_t r = fpx_rows(fpx);
+	int32_t c = fpx_columns(fpx);
+	if (r * c <= 1) {
+		return fpx;
+	}
 
 	if (r > 1 && c > 1) {
-		struct fpx* fpx_ = fpx_malloc(c, r);
-		if (fpx_) {
-			memcpy(fpx_->array, fpx->array, n * sizeof(double));
-			for (int k = 1; k < n - 1; ++k) {
-				// if 0 < k < n - 1 and k = c j + i then
-				// r k % (n - 1) = (r c j + r i) % (n - 1) = j + (n - 1) j + r i % (n - 1) = j + r i
-				fpx->array[(r * k) % (n - 1)] = fpx_->array[k];
+		if (r == c) { // in-place transpose if square			
+			for (int32_t i = 0; i < r; ++i) {
+				for (int32_t j = i + 1; j < c; ++j) {
+					swap_double(fpx->array + fpx_index(fpx, i, j), fpx->array + fpx_index(fpx, j, i));
+				}
 			}
-			fpx_free(fpx_);
+		}
+		else {
+			struct fpx* _fpx = fpx_malloc(c, r);
+			if (!_fpx) {
+				return (struct fpx*)0;
+			}
+			for (int32_t i = 0; i < r; ++i) {
+				for (int32_t j = i + 1; j < c; ++j) {
+					swap_double(fpx->array + fpx_index(fpx, i, j), fpx->array + fpx_index(fpx, j, i));
+				}
+			}
+			fpx_free(fpx);
+			fpx = _fpx;
 		}
 	}
 	fpx->rows = c;

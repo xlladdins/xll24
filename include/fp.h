@@ -1,6 +1,7 @@
 // fp.h - FP12 data type
 // Copyright (c) KALX, LLC. All rights reserved. No warranty made.
 #pragma once
+#include <cstdint>
 #include <algorithm>
 #include <initializer_list>
 //#include <mdspan>
@@ -13,77 +14,77 @@ extern "C" {
 
 namespace xll {
 
-	constexpr int rows(const FP12& a) noexcept
+	constexpr int32_t rows(const _FP12& a) noexcept
 	{
 		return a.rows;
 	}
-	constexpr int columns(const FP12& a) noexcept
+	constexpr int32_t columns(const _FP12& a) noexcept
 	{
 		return a.columns;
 	}
-	constexpr int size(const FP12& a) noexcept
+	constexpr int32_t size(const _FP12& a) noexcept
 	{
 		return a.rows * a.columns;
 	}
 
-	constexpr double* array(FP12& a) noexcept
+	constexpr double* array(_FP12& a) noexcept
 	{
 		return a.array;
 	}
-	constexpr const double* array(const FP12& a) noexcept
+	constexpr const double* array(const _FP12& a) noexcept
 	{
 		return a.array;
 	}
 
-	constexpr double& index(FP12& a, int i, int j) noexcept
+	constexpr double& index(_FP12& a, int32_t i, int32_t j) noexcept
 	{
 		return a.array[i * columns(a) + j];
 	}
-	constexpr double index(const FP12& a, int i, int j) noexcept
+	constexpr double index(const _FP12& a, int32_t i, int32_t j) noexcept
 	{
 		return a.array[i * columns(a) + j];
 	}
 
-	constexpr auto span(FP12& a) noexcept
+	constexpr auto span(_FP12& a) noexcept
 	{
 		return std::span<double>(array(a), size(a));
 	}
-	constexpr auto span(const FP12& a) noexcept
+	constexpr auto span(const _FP12& a) noexcept
 	{
 		return std::span<const double>(array(a), size(a));
 	}
 
-	constexpr auto row(FP12& a, int i) noexcept
+	constexpr auto row(_FP12& a, int32_t i) noexcept
 	{
 		return std::span<double>(array(a) + i * columns(a), columns(a));
 	}
-	constexpr auto row(const FP12& a, int i) noexcept
+	constexpr auto row(const _FP12& a, int32_t i) noexcept
 	{
 		return std::span<const double>(array(a) + i * columns(a), columns(a));
 	}
 	/*
-	constexpr auto column(FP12& a, int j) noexcept
+	constexpr auto column(_FP12& a, int32_t j) noexcept
 	{
 		return std::mdspan<double>(array(a) + j, rows(a));
 	}
-	constexpr auto column(const FP12& a, int j) noexcept
+	constexpr auto column(const _FP12& a, int32_t j) noexcept
 	{
 		return std::mdspan<const double>(array(a) + j, rows(a));
 	}
 	*/
-	constexpr double* begin(FP12& a) noexcept
+	constexpr double* begin(_FP12& a) noexcept
 	{
 		return array(a);
 	}
-	constexpr const double* begin(const FP12& a) noexcept
+	constexpr const double* begin(const _FP12& a) noexcept
 	{
 		return array(a);
 	}
-	constexpr double* end(FP12& a) noexcept
+	constexpr double* end(_FP12& a) noexcept
 	{
 		return array(a) + size(a);
 	}
-	constexpr const double* end(const FP12& a) noexcept
+	constexpr const double* end(const _FP12& a) noexcept
 	{
 		return array(a) + size(a);
 	}
@@ -95,17 +96,16 @@ namespace xll {
 		return x;
 	}
 
-
 	class FPX {
 		struct fpx* fpx_;
 	public:
-		FPX(int r = 0, int c = 0)
+		FPX(int32_t r = 0, int32_t c = 0)
 			: fpx_(fpx_malloc(r, c))
 		{
 			ensure(fpx_);
 		}
 		// Copy from array having at least r*c elements.
-		FPX(int r, int c, const double* a)
+		FPX(int32_t r, int32_t c, const double* a)
 			: FPX(r, c)
 		{
 			std::copy_n(a, r * c, fpx_->array);
@@ -115,11 +115,11 @@ namespace xll {
 		{ }
 		// One row array.
 		FPX(std::initializer_list<double> a)
-			: FPX(1, static_cast<int>(a.size()), a.begin())
+			: FPX(1, static_cast<int32_t>(a.size()), a.begin())
 		{ }
 		template<size_t N>
 		FPX(const double(&a)[N])
-			: FPX(1, static_cast<int>(N), a)
+			: FPX(1, static_cast<int32_t>(N), a)
 		{ }
 		FPX(const FPX& a)
 			: FPX(a.rows(), a.columns(), a.array())
@@ -171,15 +171,15 @@ namespace xll {
 			fpx_free(fpx_);
 		}
 
-		int rows() const noexcept
+		int32_t rows() const noexcept
 		{
 			return fpx_ ? fpx_->rows : 0;
 		}
-		int columns() const noexcept
+		int32_t columns() const noexcept
 		{
 			return fpx_ ? fpx_->columns : 0;
 		}
-		int size() const noexcept
+		int32_t size() const noexcept
 		{
 			return rows() * columns();
 		}
@@ -210,24 +210,24 @@ namespace xll {
 			return reinterpret_cast<const _FP12&>(*fpx_);
 		}
 
-		double& operator[](int i) noexcept
+		double& operator[](int32_t i) noexcept
 		{
 			return array()[i];
 		}
-		double operator[](int i) const noexcept
+		double operator[](int32_t i) const noexcept
 		{
 			return array()[i];
 		}
-		double& operator()(int i, int j) noexcept
+		double& operator()(int32_t i, int32_t j) noexcept
 		{
 			return xll::index(*get(), i, j);
 		}
-		double operator()(int i, int j) const noexcept
+		double operator()(int32_t i, int32_t j) const noexcept
 		{
 			return xll::index(*get(), i, j);
 		}
 
-		FPX& resize(int r, int c)
+		FPX& resize(int32_t r, int32_t c)
 		{
 			if (r * c != size()) {
 				auto _fpx = fpx_realloc(fpx_, r, c);
@@ -264,7 +264,7 @@ namespace xll {
 			else {
 				ensure(columns() == a.columns);
 
-				int n = size();
+				int32_t n = size();
 				resize(rows() + a.rows, columns());
 				std::copy_n(a.array, a.rows * a.columns, fpx_->array + n);
 			}
@@ -326,12 +326,12 @@ namespace xll {
 	using FP12 = FPX;
 
 	// Fixed size array.
-	template<size_t N, size_t M>
+	template<int32_t N, int32_t M>
 	struct fp12 {
-		int rows = static_cast<int>(N);
-		int columns = static_cast<int>(M);
+		int32_t rows = N;
+		int32_t columns = M;
 		double array[N * M];
-		fp12& reshape(int r, int c)
+		fp12& reshape(int32_t r, int c)
 		{
 			if (r * c != rows * columns) {
 				rows = 0;
