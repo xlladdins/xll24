@@ -61,6 +61,7 @@ namespace xll {
 	};
 
 	struct OPER : public XLOPER12 {
+		using value_type = OPER;
 		// xltypeNil
 		constexpr OPER() noexcept
 			: XLOPER12{ Nil }
