@@ -244,8 +244,8 @@ having the same bits as the pointer to the underlying C++ object.
 
 ### [Range](src/range.cpp)
 
-The `\RANGE` function returns a handle to a range of cells.
-The `RANGE` function returns the range corresponding to the handle.
+The `\RANGE(cells)` function returns a handle to a range of cells.
+The `RANGE(handle)` function returns the range corresponding to the handle.
 
 ## JSON
 
