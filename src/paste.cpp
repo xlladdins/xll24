@@ -42,7 +42,7 @@ On<xlcOnSheet> xlos_handle_style("", "XLL.HANDLE.STYLE", true);
 OPER Uneval(const XLOPER12& val)
 {
 	return isMissing(val) || isNil(val) ? OPER(L"")
-		: StartsWith(val, L'=') ? OPER(view(val).substr(1))
+		: isFormula(val) ? OPER(view(val).substr(1))
 		: isUDF(val) ? val & OPER(L"()")
 		: val;
 }

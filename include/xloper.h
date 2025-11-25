@@ -275,7 +275,6 @@ namespace xll {
 		return type(x) == xltypeInt;
 	}
 	
-
 	// Return scalar from XLOPER12.
 // inline double Num(const XLOPER12& x) { return x.val.num; }
 #define XLL_SCALAR(a, b, c, d) constexpr c a(const XLOPER12& x) { return x.val.b; }
