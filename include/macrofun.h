@@ -172,23 +172,6 @@ namespace xll {
 	class Alignment {
 		bool set;
 	public:
-		OPER horiz_align = Missing;   // Horizontal alignment
-		OPER wrap = Missing;          // boolean
-		OPER vert_align = Missing;    // Vertical alignment
-		OPER orientation = Missing;   // Text rotation
-		OPER add_indent = Missing;    // boolean
-		OPER shrink_to_fit = Missing; // boolean
-		OPER merge_cells = Missing;   // boolean
-
-		Alignment(bool set = true)
-			: set(set)
-		{ }
-		~Alignment()
-		{
-			if (set) {
-				Excel(xlcAlignment, horiz_align, wrap, vert_align, orientation, add_indent, shrink_to_fit, merge_cells);
-			}
-		}
 
 		enum class Horizontal {
 			General = 1,
@@ -212,6 +195,24 @@ namespace xll {
 			Downward = 3,
 			Automatic = 4
 		};
+
+		OPER horiz_align = Missing;   // Horizontal alignment
+		OPER wrap = Missing;          // boolean
+		OPER vert_align = Missing;    // Vertical alignment
+		OPER orientation = Missing;   // Text rotation
+		OPER add_indent = Missing;    // boolean
+		OPER shrink_to_fit = Missing; // boolean
+		OPER merge_cells = Missing;   // boolean
+
+		Alignment(bool set = true)
+			: set(set)
+		{ }
+		~Alignment()
+		{
+			if (set) {
+				Excel(xlcAlignment, horiz_align, wrap, vert_align, orientation, add_indent, shrink_to_fit, merge_cells);
+			}
+		}
 		Alignment& Horizontal(Alignment::Horizontal horiz)
 		{
 			horiz_align = OPER(static_cast<int>(horiz));
@@ -381,6 +382,7 @@ namespace xll {
 			return *this;
 		}
 	};
+
 	// https://xlladdins.github.io/Excel4Macros/edit.color.html
 	// Equivalent to clicking the Modify button on the Color tab, 
 	// Defines the color for one of the 56 color palette boxes.
