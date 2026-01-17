@@ -21,15 +21,23 @@ namespace xll {
 
 	constexpr int xltypeScalar = xltypeNum | xltypeErr | xltypeBool | xltypeInt;
 	// Type does not use allocation.
+	constexpr bool isScalar(int type)
+	{
+		return type != xltypeBigData && (type & xltypeScalar) != 0; // xltypeBigData is (xltypeStr | xltypeInt)
+	}
+	constexpr bool isScalar(const XLOPER& x)
+	{
+		return isScalar(type(x));
+	}
 	constexpr bool isScalar(const XLOPER12& x)
 	{
-		return type(x) != xltypeBigData && (type(x) & xltypeScalar) != 0; // xltypeBigData is (xltypeStr | xltypeInt)
+		return isScalar(type(x));
 	}
 
 	// Type requires allocation.
-	constexpr bool isAlloc(const XLOPER12& x)
+	constexpr bool isAlloc(int type)
 	{
-		switch (type(x)) {
+		switch (type) {
 		case xltypeStr:
 		case xltypeMulti:
 		case xltypeRef:
@@ -39,9 +47,25 @@ namespace xll {
 			return false;
 		}
 	}
+	constexpr bool isAlloc(const XLOPER& x)
+	{
+		return isAlloc(type(x));
+	}
+	constexpr bool isAlloc(const XLOPER12& x)
+	{
+		return isAlloc(type(x));
+	}
 
 	// return XLFree(x) in thread-safe functions
 	// Freed by Excel when no longer needed.
+	constexpr LPXLOPER XLFree(XLOPER& x)
+	{
+		if (isAlloc(x)) {
+			x.xltype |= xlbitXLFree;
+		}
+
+		return &x;
+	}
 	constexpr LPXLOPER12 XLFree(XLOPER12& x)
 	{
 		if (isAlloc(x)) {
@@ -52,6 +76,14 @@ namespace xll {
 	}
 	// return DLLFree(x) in thread-safe functions
 	// Excel calls xlAutoFree12 when no longer needed.
+	constexpr LPXLOPER DLLFree(XLOPER& x)
+	{
+		if (isAlloc(x)) {
+			x.xltype |= xlbitDLLFree;
+		}
+
+		return &x;
+	}
 	constexpr LPXLOPER12 DLLFree(XLOPER12& x)
 	{
 		if (isAlloc(x)) {
@@ -61,6 +93,20 @@ namespace xll {
 		return &x;
 	}
 
+	constexpr int rows(const XLOPER& x) noexcept
+	{
+		switch (type(x)) {
+		case xltypeMulti:
+			return x.val.array.rows;
+		case xltypeSRef:
+			return rows(x.val.sref.ref);
+		case xltypeMissing:
+		case xltypeNil:
+			return 0;
+		}
+
+		return 1;
+	}
 	constexpr int rows(const XLOPER12& x) noexcept
 	{
 		switch (type(x)) {
@@ -74,6 +120,20 @@ namespace xll {
 		}
 
 		return 1;
+	}
+	constexpr int columns(const XLOPER& x) noexcept
+	{
+		switch (type(x)) {
+		case xltypeMulti:
+			return x.val.array.columns;
+		case xltypeSRef:
+			return columns(x.val.sref.ref);
+		case xltypeMissing:
+		case xltypeNil:
+			return 0;
+		default:
+			return 1;
+		}
 	}
 	constexpr int columns(const XLOPER12& x) noexcept
 	{
@@ -89,11 +149,29 @@ namespace xll {
 			return 1;
 		}
 	}
+	constexpr int size(const XLOPER& x) noexcept
+	{
+		return rows(x) * columns(x);
+	}
 	constexpr int size(const XLOPER12& x) noexcept
 	{
 		return rows(x) * columns(x);
 	}
+	
 	// Argument for std::span(ptr, count).
+	constexpr XCHAR count(const XLOPER& x) noexcept // TODO: return int
+	{
+		if (type(x) == xltypeStr)
+			return x.val.str[0];
+		if (type(x) == xltypeMulti)
+			return static_cast<XCHAR>(x.val.array.rows * x.val.array.columns);
+		if (type(x) == xltypeRef)
+			return static_cast<XCHAR>(x.val.mref.lpmref->count);
+		if (type(x) == xltypeBigData)
+			return static_cast<XCHAR>(x.val.bigdata.cbData);
+
+		return 0;
+	}
 	constexpr XCHAR count(const XLOPER12& x) noexcept // TODO: return int
 	{
 		if (type(x) == xltypeStr)
@@ -109,7 +187,15 @@ namespace xll {
 	}
 
 	// STL friendly
+	constexpr const XLOPER* begin(const XLOPER& x) noexcept
+	{
+		return type(x) == xltypeMulti ? x.val.array.lparray : &x;
+	}
 	constexpr const XLOPER12* begin(const XLOPER12& x) noexcept
+	{
+		return type(x) == xltypeMulti ? x.val.array.lparray : &x;
+	}
+	constexpr XLOPER* begin(XLOPER& x) noexcept
 	{
 		return type(x) == xltypeMulti ? x.val.array.lparray : &x;
 	}
@@ -117,7 +203,15 @@ namespace xll {
 	{
 		return type(x) == xltypeMulti ? x.val.array.lparray : &x;
 	}
+	constexpr const XLOPER* end(const XLOPER& x) noexcept
+	{
+		return type(x) == xltypeMulti ? x.val.array.lparray + size(x) : &x + 1;
+	}
 	constexpr const XLOPER12* end(const XLOPER12& x) noexcept
+	{
+		return type(x) == xltypeMulti ? x.val.array.lparray + size(x) : &x + 1;
+	}
+	constexpr XLOPER* end(XLOPER& x) noexcept
 	{
 		return type(x) == xltypeMulti ? x.val.array.lparray + size(x) : &x + 1;
 	}
@@ -152,6 +246,23 @@ namespace xll {
 	constexpr XLOPER12& index(XLOPER12& x, int i, int j) noexcept
 	{
 		return index(x, i * columns(x) + j);
+	}
+
+	constexpr std::string_view view(const XLOPER& x, int count)
+	{
+		if (type(x) == xltypeNil) {
+			return std::string_view{};
+		}
+
+		return std::string_view(x.val.str + 1, count);
+	}
+	constexpr std::string_view view(const XLOPER& x)
+	{
+		if (type(x) == xltypeNil) {
+			return std::string_view{};
+		}
+
+		return std::string_view(x.val.str + 1, count(x));
 	}
 
 	constexpr std::wstring_view view(const XLOPER12& x, int count)

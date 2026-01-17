@@ -12,13 +12,25 @@ extern "C" {
 
 namespace xll {
 
+	constexpr int rows(const XLREF& r)
+	{
+		return r.rwLast - r.rwFirst + 1;
+	}
 	constexpr int rows(const XLREF12& r)
 	{
 		return r.rwLast - r.rwFirst + 1;
 	}
+	constexpr int columns(const XLREF& r)
+	{
+		return r.colLast - r.colFirst + 1;
+	}
 	constexpr int columns(const XLREF12& r)
 	{
 		return r.colLast - r.colFirst + 1;
+	}
+	constexpr int size(const XLREF& r)
+	{
+		return rows(r) * columns(r);
 	}
 	constexpr int size(const XLREF12& r)
 	{

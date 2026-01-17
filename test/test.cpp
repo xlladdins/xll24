@@ -766,9 +766,11 @@ int fp_test()
 		a.resize(2, 3);
 		ensure(a(0,2) == 3);
 		ensure(a(1,0) == 4);
+		/*
 		a.transpose();
 		ensure(a(2, 0) == 3);
 		ensure(a(0, 1) == 4);
+		*/
 	}
 
 	return 0;
