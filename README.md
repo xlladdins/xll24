@@ -24,13 +24,7 @@ in the world, Excel.
 
 ## Install
 
-The xll library requires 64-bit Excel on Windows and Visual Studio 2022.
-Run [`setup`](setup/Release/setup.msi). 
-This installs a template project called `xll` that will
-show up when you create a new project in Visual Studio.
-
-## Use
-
+The xll library requires 64-bit Excel on Windows and Visual Studio 2026.  
 Create a new <a href="https://raw.githubusercontent.com/xlladdins/xll24/master/video/xll_setup.mp4" download>xll project</a> in Visual Studio.
 
 ## Add-In
