@@ -26,8 +26,10 @@ in the world, Excel.
 
 The xll library requires 64-bit Excel on Windows and Visual Studio 2026.  
 Go to <a href="https://github.com/xlladdins/xll_template>xll_template">xll_template</a>
-click on <a href="#" style="background-color: green; color: white; padding: 6px 12px; border-radius: 4px; text-decoration: none;">
-Use this template</a>
+<a href="https://github.com/xlladdins/xll_template" style="background-color: green; color: white; padding: 6px 12px; border-radius: 4px; text-decoration: none;">
+  Use this template
+</a>
+
 
 
 Open Visual Studio 2026 and create a new Empty Project.
