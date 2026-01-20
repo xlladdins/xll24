@@ -25,7 +25,11 @@ in the world, Excel.
 ## Install
 
 The xll library requires 64-bit Excel on Windows and Visual Studio 2026.  
-Create a new <a href="https://raw.githubusercontent.com/xlladdins/xll24/master/video/xll_setup.mp4" download>xll project</a> in Visual Studio.
+Go to <a href="https://github.com/xlladdins/xll_template>xll_template</a>
+click on <button>>style="background-color: green; color: white; padding: 8px 14px; border: none; border-radius: 4px;>Use this template</a>,
+
+
+Open Visual Studio 2026 and create a new Empty Project.
 
 ## Add-In
 
