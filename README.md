@@ -25,11 +25,12 @@ in the world, Excel.
 ## Install
 
 The xll library requires 64-bit Excel on Windows and Visual Studio 2026.  
-Go to <a href="https://github.com/xlladdins/xll_template>xll_template">xll_template</a>
-<a href="https://github.com/xlladdins/xll_template" style="background-color: green; color: white; padding: 6px 12px; border-radius: 4px; text-decoration: none;">
-  Use this template
-</a>
-
+Go to <a href="https://github.com/xlladdins/xll_template>xll_template">xll_template</a>,
+click on `Use this template/Create a new repository`.  
+Fill in your repository and the name you want for the new project, then
+`Create new repository`, Click `Code/Open with Visual Studo`.  
+Locate the `Solution Explorer` tab and double click `xll_template.sln`.  
+Pressing `F5` should build the solution and start the add-in in Excel.
 
 
 Open Visual Studio 2026 and create a new Empty Project.
