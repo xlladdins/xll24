@@ -22,7 +22,7 @@ C, C++, and even Fortran, from Python have written packages to do that.
 The xll library allows you to do that directly from the most popular language
 in the world, Excel.
 
-## Install
+## Use
 
 The xll library requires 64-bit Excel on Windows and Visual Studio 2026.  
 Go to <a href="https://github.com/xlladdins/xll_template>xll_template">xll_template</a>,
@@ -31,9 +31,6 @@ Fill in your repository and the name you want for the new project, then
 `Create new repository`, Click `Code/Open with Visual Studo`.  
 Locate the `Solution Explorer` tab and double click `xll_template.sln`.  
 Pressing `F5` should build the solution and start the add-in in Excel.
-
-
-Open Visual Studio 2026 and create a new Empty Project.
 
 ## Add-In
 
@@ -45,12 +42,12 @@ the xll,
 [looks for](https://learn.microsoft.com/en-us/windows/win32/api/libloaderapi/nf-libloaderapi-getprocaddress) 
 [`xlAutoOpen`](https://learn.microsoft.com/en-us/office/client-developer/excel/xlautoopen), then
 and calls it. There are 7 
-[`xlAuto` functions](https://learn.microsoft.com/en-us/office/client-developer/excel/add-in-manager-and-xll-interface-functions)
+[`xlAutoXXX` functions](https://learn.microsoft.com/en-us/office/client-developer/excel/add-in-manager-and-xll-interface-functions)
 that Excel calls to manage the lifetime of the xll. The xll library implements those for you.
 
 To add a function to be called when Excel calls `xlAutoXXX` create an
-object of type `Auto<XXX>` and specify a function to be called.
-The function takes no arguments and returns 1 to indicate success or 0 for failure.
+object of type `Auto<XXX>` and specify a macro to be called.
+Macros are functions that take no arguments and returns 1 to indicate success or 0 for failure.
 See [`auto.h`](include/auto.h) for the list possible values for `XXX`.
 
 ## Excel
