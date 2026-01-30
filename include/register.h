@@ -5,6 +5,28 @@
 
 namespace xll {
 
+	// Really unregister a function.
+	// https://learn.microsoft.com/en-us/office/client-developer/excel/xlfunregister-form-1
+	// https://docs.microsoft.com/en-us/office/client-developer/excel/known-issues-in-excel-xll-development#unregistering-xll-commands-and-functions
+	// https://stackoverflow.com/questions/15343282/how-to-remove-an-excel-udf-programmatically
+	inline bool XlfUnregister(const OPER& procedure)
+	{
+		OPER regid = Excel(xlfEvaluate, procedure);
+		if (type(regid) != xltypeNum) {
+			OPER err(L"XlfUnregister: procedure not registered: ");
+			XLL_WARNING(view(err & procedure));
+
+			return false;
+		}
+		Excel(xlfSetName, procedure);
+
+		regid = Excel(xlfRegister, Excel(xlGetName),
+			OPER("xlAutoRemove"), OPER(XLL_SHORT), procedure, Missing, OPER(2));
+		Excel(xlfSetName, procedure);
+
+		return Excel(xlfUnregister, regid) == true;
+	}
+
 	// Define hidden name procedure pointing to array of arguments
 	inline int RegProcedure(const Args& args)
 	{
@@ -20,8 +42,6 @@ namespace xll {
 
 		return ret;
 	}
-
-
 
 	inline void procedure(OPER& p)
 	{
@@ -48,8 +68,6 @@ namespace xll {
 	// https://learn.microsoft.com/en-us/office/client-developer/excel/xlfregister-form-1
 	inline OPER XlfRegister(Args* pargs)
 	{
-		XLOPER12 res = { .xltype = xltypeNil };
-
 		pargs->moduleText = Excel(xlGetName);
 		procedure(pargs->procedure);
 		helpTopic(pargs->helpTopic);
@@ -69,6 +87,20 @@ namespace xll {
 		// https://docs.microsoft.com/en-us/office/client-developer/excel/known-issues-in-excel-xll-development#argument-description-string-truncation-in-the-function-wizard
 		as[count] = const_cast<LPXLOPER12>(&Empty);
 
+		// Check if already registered
+		OPER text = pargs->functionText; // functionText
+		OPER reg = Excel(xlfEvaluate, text);
+		if (isNum(reg)) {
+			std::wstring err(view(text));
+			err += L": already defined";
+			XLL_WARNING(err);
+			
+			if (!XlfUnregister(reg)) {
+				// TODO: fails if registered from different xll
+				XLL_ERROR(L"XlfRegister: failed to unregister existing function");
+			}
+		}
+		XLOPER12 res = { .xltype = xltypeNil };
 		const int ret = ::Excel12v(xlfRegister, &res, count, &as[0]);
 
 		ensure_ret(ret); // call to Excel12v succeeded
@@ -76,28 +108,6 @@ namespace xll {
 		ensure_message(type(res) == xltypeNum, "return type of xlfRegister must be the numeric RegisterId");
 
 		return res;
-	}
-	
-	// Really unregister a function.
-	// https://learn.microsoft.com/en-us/office/client-developer/excel/xlfunregister-form-1
-	// https://docs.microsoft.com/en-us/office/client-developer/excel/known-issues-in-excel-xll-development#unregistering-xll-commands-and-functions
-	// https://stackoverflow.com/questions/15343282/how-to-remove-an-excel-udf-programmatically
-	inline bool XlfUnregister(const OPER& procedure)
-	{
-		OPER regid = Excel(xlfEvaluate, procedure);
-		if (type(regid) != xltypeNum) {
-			OPER err(L"XlfUnregister: procedure not registered: ");
-			XLL_WARNING(view(err & procedure));
-			
-			return false;
-		}
-		Excel(xlfSetName, procedure);
-		
-		regid = Excel(xlfRegister, Excel(xlGetName),
-			OPER("xlAutoRemove"), OPER(XLL_SHORT), procedure, Missing, OPER(2));
-		Excel(xlfSetName, procedure);
-
-		return Excel(xlfUnregister, regid) == true;
 	}
 
 } // namespace xll

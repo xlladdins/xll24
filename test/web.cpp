@@ -7,7 +7,7 @@
 using namespace xll;
 
 // Function to perform the computation
-void WINAPI PerformComputation(OPER&& asyncHandle, double input) {
+void WINAPI PerformComputation(XLOPER12 asyncHandle, double input) {
     try {
         // Simulate a time-consuming computation
         std::this_thread::sleep_for(std::chrono::seconds((int)input));

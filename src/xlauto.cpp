@@ -46,6 +46,8 @@ xlAutoOpen(void)
 		ensure(Auto<xll::Register>::Call());
 		ensure(Auto<xll::OpenAfter>::Call());
 
+		OPER o = Excel(xlfGetDocument, 88);
+		o = o;
 		// Excel(xlcOnSheet, Missing, OPER(L"XLL.REGISTER"), true);
 	}
 	catch (const std::exception& ex) {
