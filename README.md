@@ -48,7 +48,7 @@ that Excel calls to manage the lifetime of the xll. The xll library implements t
 To add a function to be called when Excel calls `xlAutoXXX` create an
 object of type `Auto<XXX>` and specify a macro to be called.
 Macros are functions that take no arguments and returns 1 to indicate success or 0 for failure.
-See [`auto.h`](include/auto.h) for the list possible values for `XXX`.
+See [`auto.h`](include/auto.h) for the list of possible values for `XXX`.
 
 ## Excel
 
