@@ -144,9 +144,11 @@ Then implement it.
 int WINAPI xll_macro(void)
 {
 #pragma XLLEXPORT
-	Excel(xlcAlert, "你好 мир"); // UTF-8 string
+	// https://xlladdins.github.io/Excel4Macros/alert.html
+	int ret = Excel(xlcAlert, "你好 мир"); // UTF-8 string
 
-	return 1;
+	// https://learn.microsoft.com/en-us/office/client-developer/excel/calling-into-excel-from-the-dll-or-xll
+	return ret == xlretSuccess; // Return 1 on success, otherwise 0.
 }
 ```
 
