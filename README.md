@@ -40,10 +40,11 @@ When an xll is opened in Excel it
 [dynamically loads](https://learn.microsoft.com/en-us/windows/win32/api/libloaderapi/nf-libloaderapi-loadlibrarya) 
 the xll,
 [looks for](https://learn.microsoft.com/en-us/windows/win32/api/libloaderapi/nf-libloaderapi-getprocaddress) 
-[`xlAutoOpen`](https://learn.microsoft.com/en-us/office/client-developer/excel/xlautoopen), then
-and calls it. There are 7 
+[`xlAutoOpen`](https://learn.microsoft.com/en-us/office/client-developer/excel/xlautoopen)
+and calls it. There are 
 [`xlAutoXXX` functions](https://learn.microsoft.com/en-us/office/client-developer/excel/add-in-manager-and-xll-interface-functions)
-that Excel calls to manage the lifetime of the xll. The xll library implements those for you.
+that Excel calls to manage the lifetime of the xll. The xll library implements those for you and allows you
+to augment them.
 
 To add a function to be called when Excel calls `xlAutoXXX` create an
 object of type `Auto<XXX>` and specify a macro to be called.
