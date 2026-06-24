@@ -26,8 +26,8 @@ in the world, Excel.
 
 The xll library requires 64-bit Excel on Windows and Visual Studio 2026.  
 Go to <a href="https://github.com/xlladdins/xll_template" target="_blank">xll_template</a>,
-click on `Use this template/Create a new repository`.  
-Fill in your repository and the name you want for the new project, then
+click on `Use this template` and select `Create a new repository`.  
+Fill in the name you want for the new project, then
 `Create new repository`, Click `Code/Open with Visual Studo`.  
 Locate the `Solution Explorer` tab and double click `xll_template.sln`.  
 Pressing `F5` should build the solution and start the add-in in Excel.
